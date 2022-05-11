@@ -4,6 +4,7 @@ indicator('4 Scalping', overlay=true, max_lines_count=500, max_bars_back=500)
 
 
 //Envelope
+
 length = input.float(500,'Window Size',maxval=500,minval=0, group="Envelope Ayarları")
 h_bw      = input.float(8.,'Bandwidth', group="Envelope Ayarları")
 mult   = input.float(3., group="Envelope Ayarları") 
@@ -33,7 +34,7 @@ line dn = na
 //----
 cross_up = 0.
 cross_dn = 0.
-if barstate.islast
+if barstate.islast 
     y = array.new_float(0)
     
     sum_e = 0.
@@ -123,6 +124,8 @@ if barstate.islast
 
 
 //kama
+acKama = input(false, title='KAMA Çizgisi Gösterilsin mi?', group="Kama Ayarları")
+
 Length = input.int(21, minval=1, group="Kama Ayarları")
 kama_col = input.color(color.new(color.blue, 0),'Kama Color',inline='col', group="Kama Ayarları")
 xPrice = close
@@ -135,7 +138,7 @@ nnoise = math.sum(xvnoise, Length)
 nefratio = nnoise != 0 ? nsignal / nnoise : 0
 nsmooth = math.pow(nefratio * (nfastend - nslowend) + nslowend, 2)
 nAMA := nz(nAMA[1]) + nsmooth * (xPrice - nz(nAMA[1]))
-plot(nAMA, color=kama_col, title='KAMA',linewidth=3)
+plot(acKama and nAMA ? nAMA : na , color=kama_col, title='KAMA',linewidth=3)
 
 
 
@@ -195,5 +198,41 @@ plot(line1618_2 and acFiboLines and acFlAlt ? line1618_2 : na, title='-0.618', c
 plot(line2000_2 and acFiboLines and acFlAlt ? line2000_2 : na, title='-1.000', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line2272_2 and acFiboLines and acFlAlt ? line2272_2 : na, title='-1.272', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 
+
+//Mavilim
+mavilimnew = input(false, title='Mavilim Yeni Çizgisi Gösterilsin mi?', group="Mavilim Ayarları")
+mavilimold = input(false, title='Mavilim Eski Çizgisi Gösterilsin mi?', group="Mavilim Ayarları")
+fmal = input(1, 'First Moving Average length', group="Mavilim Ayarları")
+smal = input(1, 'Second Moving Average length', group="Mavilim Ayarları")
+tmal = fmal + smal
+Fmal = smal + tmal
+Ftmal = tmal + Fmal
+Smal = Fmal + Ftmal
+
+M1 = ta.wma(close, fmal)
+M2 = ta.wma(M1, smal)
+M3 = ta.wma(M2, tmal)
+M4 = ta.wma(M3, Fmal)
+M5 = ta.wma(M4, Ftmal)
+MAVW = ta.wma(M5, Smal)
+col1 = MAVW > MAVW[1]
+col3 = MAVW < MAVW[1]
+colorM = col1 ? color.lime : col3 ? color.red : color.yellow
+
+plot(mavilimnew and MAVW ? MAVW : na, color=colorM, linewidth=3, title='MAVW')
+
+M12 = ta.wma(close, 3)
+M22 = ta.wma(M12, 5)
+M32 = ta.wma(M22, 8)
+M42 = ta.wma(M32, 13)
+M52 = ta.wma(M42, 21)
+MAVW2 = ta.wma(M52, 34)
+
+plot(mavilimold and MAVW2 ? MAVW2 : na, color=color.new(#00bcd4, 0), linewidth=3, title='MavWOld')
+
+alertcondition(ta.crossover(MAVW, MAVW[1]), title='MAVW BUY', message='MAVW BUY!')
+alertcondition(ta.crossunder(MAVW, MAVW[1]), title='MAVW SELL', message='MAVW SELL!')
+
+alertcondition(ta.cross(MAVW, MAVW[1]), title='Color ALARM', message='MavilimW has changed color!')
 
 //BURADA BİTTİ
