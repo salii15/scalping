@@ -403,7 +403,7 @@ info_textUA = toplaUA //+ myFiyat = "Fiyat: " + str.tostring(close)
 
 
 positionUA = 10
-info_label_offUA = -20 //10
+info_label_offUA = -30 //10
 //info_label_size = input.string(size.normal, options=[size.tiny, size.small, size.normal, size.large, size.huge], title='Liste Panel Büyüklüğü')
 info_panel_xUA = (timenow + math.round(ta.change(time) * info_label_offUA)) - 5  //+10
 info_panel_yUA = (ta.highest(positionUA) + ta.lowest(positionUA))/2
