@@ -2,6 +2,7 @@
 //@version=5
 indicator('4 Scalping', overlay=true, max_lines_count=500, max_bars_back=500)
 
+
 lset(l,x1,y1,x2,y2,col)=>
     line.set_xy1(l,x1,y1)
     line.set_xy2(l,x2,y2)
@@ -14,6 +15,8 @@ var k = 2
 var upper = array.new_line(0) 
 var lower = array.new_line(0) 
 var ln = array.new_line(0)
+
+
 
 length = input.float(500,'Window Size',maxval=500,minval=0, group="Envelope Ayarları")
 h = input(3., 'Bandwidth', group="Envelope Ayarları")
@@ -130,6 +133,7 @@ alertcondition(ta.crossunder(src,cross_dn),'Up','Up')
 
 //kama
 acKama = input(false, title='KAMA Çizgisi Gösterilsin mi?', group="Kama Ayarları")
+
 
 Length = input.int(21, minval=1, group="Kama Ayarları")
 kama_col = input.color(color.new(color.blue, 0),'Kama Color',inline='col', group="Kama Ayarları")
@@ -403,7 +407,7 @@ info_textUA = toplaUA //+ myFiyat = "Fiyat: " + str.tostring(close)
 
 
 positionUA = 10
-info_label_offUA = -30 //10
+info_label_offUA = -20 //10
 //info_label_size = input.string(size.normal, options=[size.tiny, size.small, size.normal, size.large, size.huge], title='Liste Panel Büyüklüğü')
 info_panel_xUA = (timenow + math.round(ta.change(time) * info_label_offUA)) - 5  //+10
 info_panel_yUA = (ta.highest(positionUA) + ta.lowest(positionUA))/2
@@ -412,6 +416,7 @@ info_panel_yUA = (ta.highest(positionUA) + ta.lowest(positionUA))/2
 if acFiboUA
     info_panelUA =  label.new(x=info_panel_xUA, y=info_panel_yUA, text=info_textUA, xloc=xloc.bar_time, yloc=yloc.price, color=color.new(color.black, 0), style=label.style_label_left, textcolor=color.new(color.lime, 0), size=info_label_size) 
     label.delete(info_panelUA[1])
+
 
 
 
