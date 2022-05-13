@@ -263,7 +263,7 @@ volu3 = volume < avrg * 0.5 and close > open
 
 cold1 = #800000
 cold2 = #FF0000
-cold3 = #FF7F00
+cold3 = #ffeb3b
 
 
 colu1 = #006400
