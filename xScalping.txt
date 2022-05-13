@@ -18,15 +18,15 @@ var ln = array.new_line(0)
 
 
 
-length = input.float(500,'Window Size',maxval=500,minval=0, group="Envelope Ayarları")
-h = input(3., 'Bandwidth', group="Envelope Ayarları")
-src = input(close, 'Source', group="Envelope Ayarları")
+length = input.float(500,'Window Size',maxval=500,minval=0, group="Scalping Ayarları")
+h = input(3., 'Bandwidth', group="Scalping Ayarları")
+src = input(close, 'Source', group="Scalping Ayarları")
 
-acEnvelope = input(true, title='Envelope Çizgisi Gösterilsin mi?', group="Envelope Ayarları")
-acUstAlt = input(false, title='Üst Alt İşaretleri Gösterilsin mi?', group="Envelope Ayarları")
+acScalping = input(true, title='Scalping Çizgisi Gösterilsin mi?', group="Scalping Ayarları")
+acUstAlt = input(false, title='Üst Alt İşaretleri Gösterilsin mi?', group="Scalping Ayarları")
 
-ust_col = input.color(color.new(#39ff14,0),'Üst Alt İşaretleri Renkleri',inline='col1', group="Envelope Ayarları")
-alt_col = input.color(color.new(#ff1100,0),'',inline='col1', group="Envelope Ayarları")
+ust_col = input.color(color.new(#39ff14,0),'Üst Alt İşaretleri Renkleri',inline='col1', group="Scalping Ayarları")
+alt_col = input.color(color.new(#ff1100,0),'',inline='col1', group="Scalping Ayarları")
 
 
 if barstate.isfirst
@@ -61,7 +61,7 @@ if barstate.islast
         y2 = sum / sumw
         d = y2 - y1
         
-        if acEnvelope
+        if acScalping
             ml := array.get(ln, i)
             line.set_xy1(ml, n - i + 1, y1)
             line.set_xy2(ml, n - i, y2)
@@ -80,14 +80,14 @@ if barstate.islast
         y1_d
 
 
-//Envelope
+//Scalping
 
-mult   = input.float(3., group="Envelope Ayarları") 
+mult   = input.float(3., group="Scalping Ayarları") 
 
-acLimit = input(false, title='Limit İşaretleri Gösterilsin mi?', group="Envelope Ayarları")
+acLimit = input(false, title='Limit İşaretleri Gösterilsin mi?', group="Scalping Ayarları")
 
-up_col = input.color(color.new(#00bcd4,0),'Limit İşaretleri Renkleri',inline='col2', group="Envelope Ayarları")
-dn_col = input.color(color.new(#00bcd4,0),'',inline='col2', group="Envelope Ayarları")
+up_col = input.color(color.new(#00bcd4,0),'Limit İşaretleri Renkleri',inline='col2', group="Scalping Ayarları")
+dn_col = input.color(color.new(#00bcd4,0),'',inline='col2', group="Scalping Ayarları")
 
 line up = na
 line dn = na
