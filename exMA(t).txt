@@ -4,6 +4,7 @@
 //@version=5
 indicator(title ="exMA(t) - V1.3.10", shorttitle ="exMA(t)", overlay=true, timeframe="", timeframe_gaps=true)
 
+
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
 //src = request.security(syminfo.tickerid, timeframe.period, close)
 
@@ -14,7 +15,7 @@ acFiboLines = input(defval = false, title = 'Fibo Yatay Çizgileri Gözüksün m
 acFlUst = input(defval = true, title = 'Fibo Üst Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlOrta = input(defval = true, title = 'Fibo Orta Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlAlt = input(defval = true, title = 'Fibo Alt Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
-fibLen = input(defval = 144, title = 'Fibo Hesaplama Mum Sayısı', group="Fibo Ayarları")  
+fibLen = input(defval = 200, title = 'Fibo Hesaplama Mum Sayısı', group="Fibo Ayarları")  
 
 
 
