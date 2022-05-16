@@ -1,14 +1,11 @@
-# scalping
-"Scalping Sistemi"  ➤ https://bit.ly/3lhQAjj
-</br>
+# "Scalping Sistemi"  ➤ https://bit.ly/3lhQAjj
 "Vişne Stratejisi" kapsamında;
+</br></br>
 Scalping İndikatörleri:
-</br>
-1) xScalping Kaynak Kodu ➤ https://github.com/ozcanozbek/scalping/blob/main/xScalping.txt
+1) 'xScalping' Kaynak Kodu ➤ https://github.com/ozcanozbek/scalping/blob/main/xScalping.txt
 2) 'exMA(t)' Kaynak Kodu ➤ https://github.com/ozcanozbek/scalping/blob/main/exMA(t).txt
 3) 'xRE(t)' Kaynak Kodu ➤ https://github.com/ozcanozbek/scalping/blob/main/xRE(t).txt
 </br>
-
 Trading View Ekranına Ücretsiz Üyelik için  ➤   https://bit.ly/3FyFAHh
 </br>
 Borsa İhtisas ile ilgili Yazışma Grubum  ➤  https://t.me/OzcanOzbekBorsa
