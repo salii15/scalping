@@ -12,6 +12,7 @@ https://github.com/ozcanozbek/scalping/blob/main/exMA(t).txt
 https://github.com/ozcanozbek/scalping/blob/main/xRE(t).txt
 
 Trading View Ekranına Ücretsiz Üyelik için  ➤   https://bit.ly/3FyFAHh
+</br>
 Borsa İhtisas ile ilgili Yazışma Grubum  ➤  https://t.me/OzcanOzbekBorsa
 Alarm dışında Borsa ile ilgili duyuru Kanalım  ➤   https://t.me/OzcanOzbekKanal
 "BİZ BİZE HELÂL HİSSE" Telegram Gurubu ➤  https://t.me/helalhisseler  
