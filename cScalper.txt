@@ -134,9 +134,9 @@ if barstate.islast
 
 
         if d > 0 and y1_d < 0 and acUstAlt
-            label.new(n - i + 1, src[i]-0.05, '▲', color=#00000000, style=label.style_label_up, textcolor=ust_col, textalign=text.align_center, size = size.huge)
+            label.new(n - i + 1, src[i]-0.1, '▲', color=#00000000, style=label.style_label_up, textcolor=ust_col, textalign=text.align_center, size = size.huge)
         if d < 0 and y1_d > 0 and acUstAlt
-            label.new(n - i + 1, src[i]+0.05, '▼', color=#00000000, style=label.style_label_down, textcolor=alt_col, textalign=text.align_center, size = size.huge)
+            label.new(n - i + 1, src[i]+0.1, '▼', color=#00000000, style=label.style_label_down, textcolor=alt_col, textalign=text.align_center, size = size.huge)
 
         y1 := y2
         y1_d := d
@@ -160,7 +160,7 @@ nnoise = math.sum(xvnoise, Length)
 nefratio = nnoise != 0 ? nsignal / nnoise : 0
 nsmooth = math.pow(nefratio * (nfastend - nslowend) + nslowend, 2)
 nAMA := nz(nAMA[1]) + nsmooth * (xPrice - nz(nAMA[1]))
-plot(acKama and nAMA ? nAMA : na , color=kama_col, title='KAMA',linewidth=2)
+plot(acKama and nAMA ? nAMA : na , color=kama_col, title='KAMA',linewidth=3)
 
 
 
@@ -597,7 +597,7 @@ xMaMum21Src = xMaMumKontrol(xMAMum21)
 xMA_21 = xMaKontrol(xMaTip21, close, length2a) 
 xMA_21Src = request.security(syminfo.tickerid,xMaMum21Src, xMA_21)
 xMA_21_Color_S = xMA_21Src >= xMA_21Src[1] ? xMA_21_Color :xMA_21_Color_koyu
-xMA_21_Plot = plot(xMA_21Src and acxMaCizgisi and acxMa21Cizgisi ? xMA_21Src : na , color=xMA_21_Color_S , linewidth=2, title='xMa21 Çizgisi')
+xMA_21_Plot = plot(xMA_21Src and acxMaCizgisi and acxMa21Cizgisi ? xMA_21Src : na , color=xMA_21_Color_S , linewidth=3, title='xMa21 Çizgisi')
 //xMA_21_Plot = plot(xMA_21Src and acxMaCizgisi and acxMa21Cizgisi ? xMA_21Src : na , color=xMA_21_Color , linewidth=3, title='xMa21 Çizgisi')
 
 length4a = input(50, 'xMA 50', group="xMA50 Değerleri")
@@ -605,14 +605,14 @@ xMaMum50Src = xMaMumKontrol(xMAMum50)
 xMA_50 = xMaKontrol(xMaTip50, close, length4a) 
 xMA_50Src = request.security(syminfo.tickerid,xMaMum50Src, xMA_50)
 xMA_50_Color_S = xMA_50Src >= xMA_50Src[1] ? xMA_50_Color :xMA_50_Color_koyu
-xMA_50_Plot = plot(xMA_50Src and acxMaCizgisi and acxMa50Cizgisi ? xMA_50Src : na , color=xMA_50_Color_S, linewidth=2, title='xMa50 Çizgisi')
+xMA_50_Plot = plot(xMA_50Src and acxMaCizgisi and acxMa50Cizgisi ? xMA_50Src : na , color=xMA_50_Color_S, linewidth=3, title='xMa50 Çizgisi')
 
 length6a = input(100, 'xMA 100', group="xMA100 Değerleri")
 xMaMum100Src = xMaMumKontrol(xMAMum100)
 xMA_100 = xMaKontrol(xMaTip100, close, length6a) 
 xMA_100Src = request.security(syminfo.tickerid,xMaMum100Src, xMA_100)
 xMA_100_Color_S = xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
-xMA_100_Plot = plot(xMA_100Src and acxMaCizgisi and acxMa100Cizgisi ? xMA_100Src : na , color=xMA_100_Color_S, linewidth=2, title='xMa100 Çizgisi')
+xMA_100_Plot = plot(xMA_100Src and acxMaCizgisi and acxMa100Cizgisi ? xMA_100Src : na , color=xMA_100_Color_S, linewidth=4, title='xMa100 Çizgisi')
 
 
 length8a = input(200, 'xMA 200', group="xMA200 Değerleri")
@@ -620,7 +620,7 @@ xMaMum200Src = xMaMumKontrol(xMAMum200)
 xMA_200 = xMaKontrol(xMaTip200, close, length8a) 
 xMA_200Src = request.security(syminfo.tickerid,xMaMum200Src, xMA_200)
 xMA_200_Color_S = xMA_200Src >= xMA_200Src[1] ? xMA_200_Color :xMA_200_Color_koyu
-xMA_200_Plot = plot(xMA_200Src and acxMaCizgisi and acxMa200Cizgisi ? xMA_200Src : na , color=xMA_200_Color_S, linewidth=2, title='xMa200 Çizgisi')
+xMA_200_Plot = plot(xMA_200Src and acxMaCizgisi and acxMa200Cizgisi ? xMA_200Src : na , color=xMA_200_Color_S, linewidth=4, title='xMa200 Çizgisi')
 
 
 
