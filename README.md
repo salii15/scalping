@@ -5,6 +5,7 @@ Scalping İndikatörleri:
 1) 'xScalping' Kaynak Kodu ➤ https://github.com/ozcanozbek/scalping/blob/main/xScalping.txt
 2) 'exMA(t)' Kaynak Kodu ➤ https://github.com/ozcanozbek/scalping/blob/main/exMA(t).txt
 3) 'xRE(t)' Kaynak Kodu ➤ https://github.com/ozcanozbek/scalping/blob/main/xRE(t).txt
+4) 'cScalper' Kaynak Kodu ➤ https://github.com/ozcanozbek/scalping/blob/main/cScalper.txt
 </br>
 Trading View Ekranına Ücretsiz Üyelik için  ➤   https://bit.ly/3FyFAHh
 </br>
