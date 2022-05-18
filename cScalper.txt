@@ -1,6 +1,6 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 //@version=5
-indicator(title ="cScalper - V1.1.0", shorttitle = "cScalper", overlay=true, max_lines_count=500, max_bars_back=500)
+indicator(title ="cScalper - V1.1.0", shorttitle = "cScalper", overlay=true, max_lines_count=300, max_bars_back=300)
 
 xMumKontrol(xMumTip)=>
     string xMA = switch xMumTip
@@ -81,7 +81,7 @@ var ln = array.new_line(0)
 
 
 
-length = input.float(500,'Window Size',maxval=500,minval=0, group="Scalper Çizgisi Ayarları")
+length = input.float(300,'Window Size',maxval=300,minval=0, group="Scalper Çizgisi Ayarları")
 h = input(8., 'Bandwidth', group="Scalper Çizgisi Ayarları")
 src = input(close, 'Source', group="Scalper Çizgisi Ayarları")
 
@@ -113,10 +113,10 @@ line l = na
 line ml = na
 label lb = na
 if barstate.islast
-    for i = 0 to math.min(499, n - 1) by 1
+    for i = 0 to math.min(299, n - 1) by 1
         sum = 0.
         sumw = 0.
-        for j = 0 to math.min(499, n - 1) by 1
+        for j = 0 to math.min(299, n - 1) by 1
             w = math.exp(-(math.pow(i - j, 2) / (h * h * 2)))
             sum += src[j] * w
             sumw += w
@@ -621,7 +621,5 @@ xMA_200 = xMaKontrol(xMaTip200, close, length8a)
 xMA_200Src = request.security(syminfo.tickerid,xMaMum200Src, xMA_200)
 xMA_200_Color_S = xMA_200Src >= xMA_200Src[1] ? xMA_200_Color :xMA_200_Color_koyu
 xMA_200_Plot = plot(xMA_200Src and acxMaCizgisi and acxMa200Cizgisi ? xMA_200Src : na , color=xMA_200_Color_S, linewidth=4, title='xMa200 Çizgisi')
-
-
 
 //BURADA BİTTİ
