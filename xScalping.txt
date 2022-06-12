@@ -1,6 +1,6 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 //@version=5
-indicator(title ="xScalping - V1.1.1", shorttitle = "xScalping", overlay=true, max_lines_count=500, max_bars_back=500)
+indicator(title ="xScalping - V1.2.1", shorttitle = "xScalping", overlay=true, max_lines_count=500, max_bars_back=500)
 
 
 lset(l,x1,y1,x2,y2,col)=>
@@ -452,6 +452,85 @@ myRsiEmaLine = myRsi1S >= myEma121S ? high : low
 
 myRsiEmaCizgim = plot(acRsiEma ? myRsi1S >= myEma121S ? high : low : na, color=myRsiColorTek, linewidth=acRsiEmaLW, title='RsiEma Cizgisi')
 
+
+
+//Trendlines © LuxAlgo
+acTrendlines = input(defval = false, title = 'Trendlines Çizgileri Gösterilsin mi?', group="Trendlines") 
+acTrendlinesT = input(defval = false, title = 'Trendlines Çizgileri Tahminleri Gösterilsin mi?', group="Trendlines") 
+acTrendlinesB = input(defval = false, title = 'Trendlines Break İşaretleri Gösterilsin mi?', group="Trendlines") 
+tlength = input.int(14,"TrendLines length", group = "Trendlines")
+tk      = input.float(1.,'Slope',minval=0,step=.1, group = "Trendlines")
+method = input.string('Atr','Slope Calculation Method',
+  options=['Atr','Stdev','Linreg'], group = "Trendlines")
+show   = input(false,'Show Only Confirmed Breakouts', group = "Trendlines")
+//----
+tupper = 0.,tlower = 0.
+slope_ph = 0.,slope_pl = 0.
+//src = close
+nbar = bar_index
+//----
+ph = ta.pivothigh(tlength,tlength)
+pl = ta.pivotlow(tlength,tlength)
+slope = switch method
+    'Atr'      => ta.atr(tlength)/tlength*tk
+    'Stdev'    => ta.stdev(src,tlength)/tlength*tk
+    'Linreg'   => math.abs(ta.sma(src*bar_index,tlength)-ta.sma(src,tlength)*ta.sma(bar_index,tlength))/ta.variance(nbar,tlength)/2*tk
+
+slope_ph := ph ? slope : slope_ph[1]
+slope_pl := pl ? slope : slope_pl[1]
+
+tupper := ph ? ph : tupper[1] - slope_ph
+tlower := pl ? pl : tlower[1] + slope_pl
+//----
+single_upper = 0
+single_lower = 0
+single_upper := src[tlength] > tupper ? 0 : ph ? 1 : single_upper[1]
+single_lower := src[tlength] < tlower ? 0 : pl ? 1 : single_lower[1]
+upper_breakout = single_upper[1] and src[tlength] > tupper and (show ? src > src[tlength] : 1)
+lower_breakout = single_lower[1] and src[tlength] < tlower and (show ? src < src[tlength] : 1)
+plotshape(upper_breakout and acTrendlinesB ? low[tlength] : na,"Upper Break",shape.labelup,location.absolute,#056656,-tlength,text="AL",textcolor=color.white,size=size.small)
+plotshape(lower_breakout and acTrendlinesB ? high[tlength] : na,"Lower Break",shape.labeldown,location.absolute,#801922,-tlength,text="SAT",textcolor=color.white,size=size.small)
+//----
+var line up_l = na
+var line dn_l = na
+var label recent_up_break = na
+var label recent_dn_break = na
+
+if ph[1]
+    line.delete(up_l[1])
+    label.delete(recent_up_break[1])
+    
+    if acTrendlinesT == true
+        up_l := line.new(n-tlength-1,ph[1],nbar-tlength,tupper,color=#26a69a,
+          extend=extend.right,style=line.style_dashed)
+if pl[1]
+    line.delete(dn_l[1])
+    label.delete(recent_dn_break[1])
+    
+    if acTrendlinesT == true
+        dn_l := line.new(nbar-tlength-1,pl[1],nbar-tlength,tlower,color=#ef5350,
+          extend=extend.right,style=line.style_dashed)
+
+if ta.crossover(src,tupper-slope_ph*tlength)
+    label.delete(recent_up_break[1])
+    
+    if acTrendlinesB == true
+        recent_up_break := label.new(nbar,low,'A L \n' + str.tostring(close, "#.00"),color=#056656,
+          textcolor=color.white,style=label.style_label_up,size=size.normal)
+
+if ta.crossunder(src,tlower+slope_pl*tlength)
+    label.delete(recent_dn_break[1])
+
+    if acTrendlinesB == true
+        recent_dn_break := label.new(nbar,high,'S A T \n' + str.tostring(close, "#.00"),color=#801922,
+          textcolor=color.yellow,style=label.style_label_down,size=size.normal)
+    
+//----
+plot(tupper and acTrendlines ? tupper : na,'Upper',color = ph ? na : #7ef558,offset=-tlength,linewidth=2)
+plot(tlower and acTrendlines ? tlower : na,'Lower',color = pl ? na : #ff0000,offset=-tlength,linewidth=2)
+
+alertcondition(ta.crossover(src,tupper-slope_ph*tlength),'Düşeni Yukarı Kırdı','Düşeni Yukarı Kırdı {{ticker}}, FİYAT={{close}}')
+alertcondition(ta.crossunder(src,tlower+slope_pl*tlength),'Çıkanı Aşağı Kırdı','Çıkanı Aşağı Kırdı {{ticker}}, FİYAT={{close}}')
 
 
 
