@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exMA(t) - V1.4.1", shorttitle ="exMA(t)", overlay=true, timeframe="", timeframe_gaps=true)
+indicator(title ="exMA(t) - V1.4.1", overlay=true, timeframe="", timeframe_gaps=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
