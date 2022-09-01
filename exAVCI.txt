@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI - V1.1.1", overlay=true)
+indicator(title ="exAVCI - V1.1.2", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -85,7 +85,8 @@ acxMa13Cizgisi = input(defval = true, title = 'xMA13 Çizgisi Gözüksün mü?',
 acxMa21Cizgisi = input(defval = true, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA21 Çizgisi")   
 
 acxMa100Cizgisi = input(defval = true, title = 'xMA100 Çizgisi Gözüksün mü?', group="xMA100 Çizgisi")   
-acxMa100CizgisiRSIbg = input.bool(true, title='Arka Plan (Rsi/Ema Çizgisi ile) Renklensin mi?', group="xMA100 Çizgisi")
+acxMa100CizgisiRSI = input.bool(defval = true, title = 'xMA100 Çizgisi (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
+acxMa100CizgisiRSIbg = input.bool(false, title='Arka Plan (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
 
 acxMa377Cizgisi = input(defval = true, title = 'xMA377 Çizgisi Gözüksün mü?', group="xMA377 Çizgisi")   
 
@@ -123,8 +124,13 @@ source_100 = input.source(defval=close, title='xMA 100 Kaynağı', group="xMA100
 xMaMum100Src = xMaMumKontrol(xMAMum100)
 xMA_100 = xMaKontrol(xMaTip100, source_100, length6a) 
 xMA_100Src = request.security(syminfo.tickerid,xMaMum100Src, xMA_100)
-xMA_100_Color_S = xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
-xMA_100_Plot = plot(xMA_100Src and acxMaCizgisi and acxMa100Cizgisi ? xMA_100Src : na , color=xMA_100_Color_S, linewidth=4, title='xMa100 Çizgisi')
+//xMA_100_Color_S = xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
+
+
+//barajRsi = ta.rsi(close,myRsiUzunluk)
+//barajRengi = barajRsi <= acS and barajRsi > acA ? rsiUstBarajRenk : barajRsi <= acA and barajRsi > acAA ? rsiBarajArasiRenk : barajRsi <= acAA and barajRsi > acCAA ? rsiAltBarajRenk : na
+//xMA_100_Color_S = acxMa100CizgisiRSI ? barajRengi : xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
+//xMA_100_Plot = plot(xMA_100Src and acxMaCizgisi and acxMa100Cizgisi ? xMA_100Src : na , color=xMA_100_Color_S, linewidth=4, title='xMa100 Çizgisi')
 
 length8a = input(377, 'xMA 200', group="xMA200 Değerleri")
 source_377 = input.source(defval=close, title='xMA 377 Kaynağı', group="xMA377 Değerleri")
@@ -218,12 +224,6 @@ xMA_21_RenkDegisimiY = xMA_21_Color_S != xMA_21_Color_S[1] and xMA_21Src >= xMA_
 plotshape(xMA_21_RenkDegisimiA and acxMa21Cizgisi and acxMaRenkler and acxMaARenkler and acxMa21ARenkler ? xMA_21_RenkDegisimiA : na , title = 'xMa21 Aşağı Renk Değişimi', text='', style=xMaAStyleRenk , location=xMaALocationRenk, color=xMA_21_Color, offset=0, size=xMaASizeRenk)
 plotshape(xMA_21_RenkDegisimiY and acxMa21Cizgisi and acxMaRenkler and acxMaYRenkler and acxMa21YRenkler ? xMA_21_RenkDegisimiY : na , title = 'xMa21 Yukarı Renk Değişimi', text='', style=xMaYStyleRenk , location=xMaYLocationRenk, color=xMA_21_Color, offset=0, size=xMaYSizeRenk)
 
-
-
-xMA_100_RenkDegisimiA = xMA_100_Color_S != xMA_100_Color_S[1] and xMA_100Src < xMA_100Src[1]
-xMA_100_RenkDegisimiY = xMA_100_Color_S != xMA_100_Color_S[1] and xMA_100Src >= xMA_100Src[1]
-plotshape(xMA_100_RenkDegisimiA and acxMa100Cizgisi and acxMaRenkler and acxMaARenkler and acxMa100ARenkler ? xMA_100_RenkDegisimiA : na , title = 'xMa100 Aşağı Renk Değişimi', text='', style=xMaAStyleRenk , location=xMaALocationRenk, color=xMA_100_Color, offset=0, size=xMaASizeRenk)
-plotshape(xMA_100_RenkDegisimiY and acxMa100Cizgisi and acxMaRenkler and acxMaYRenkler and acxMa100YRenkler ? xMA_100_RenkDegisimiY : na , title = 'xMa100 Yukarı Renk Değişimi', text='', style=xMaYStyleRenk , location=xMaYLocationRenk, color=xMA_100_Color, offset=0, size=xMaYSizeRenk)
 
 
 xMA_377_RenkDegisimiA = xMA_377_Color_S != xMA_377_Color_S[1] and xMA_377Src < xMA_377Src[1]
@@ -336,7 +336,13 @@ barajRsi = ta.rsi(close,myRsiUzunluk)
 barajRengi = barajRsi <= acS and barajRsi > acA ? rsiUstBarajRenk : barajRsi <= acA and barajRsi > acAA ? rsiBarajArasiRenk : barajRsi <= acAA and barajRsi > acCAA ? rsiAltBarajRenk : na
 bgcolor(acxMa100CizgisiRSIbg  ? barajRengi : na,title = 'xMA100 Arka Plan Rengi')
 
+xMA_100_Color_S = acxMa100CizgisiRSI ? barajRengi : xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
+xMA_100_Plot = plot(xMA_100Src and acxMaCizgisi and acxMa100Cizgisi ? xMA_100Src : na , color=xMA_100_Color_S, linewidth=4, title='xMa100 Çizgisi')
 
+xMA_100_RenkDegisimiA = xMA_100_Color_S != xMA_100_Color_S[1] and xMA_100Src < xMA_100Src[1]
+xMA_100_RenkDegisimiY = xMA_100_Color_S != xMA_100_Color_S[1] and xMA_100Src >= xMA_100Src[1]
+plotshape(xMA_100_RenkDegisimiA and acxMa100Cizgisi and acxMaRenkler and acxMaARenkler and acxMa100ARenkler ? xMA_100_RenkDegisimiA : na , title = 'xMa100 Aşağı Renk Değişimi', text='', style=xMaAStyleRenk , location=xMaALocationRenk, color=xMA_100_Color, offset=0, size=xMaASizeRenk)
+plotshape(xMA_100_RenkDegisimiY and acxMa100Cizgisi and acxMaRenkler and acxMaYRenkler and acxMa100YRenkler ? xMA_100_RenkDegisimiY : na , title = 'xMa100 Yukarı Renk Değişimi', text='', style=xMaYStyleRenk , location=xMaYLocationRenk, color=xMA_100_Color, offset=0, size=xMaYSizeRenk)
 
 
 // R/E 1
