@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI - V1.1.3", overlay=true)
+indicator(title ="exAVCI - V1.1.4", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -16,6 +16,7 @@ acFlUst = input(defval = false, title = 'Fibo Üst Yatay Çizgileri Gözüksün 
 acFlOrta = input(defval = true, title = 'Fibo Orta Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlAlt = input(defval = false, title = 'Fibo Alt Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 fibLen = input(defval = 200, title = 'Fibo Hesaplama Mum Sayısı', group="Fibo Ayarları")  
+acFkes = input(defval = false, title = 'Fibo Kesmeleri (Sarı ve Turuncu) Gözüksün mü?', group="Fibo Ayarları")   
 
 
 //Tablo
@@ -279,6 +280,42 @@ plot(line1414_2 and acFiboLines and acFlAlt ? line1414_2 : na, title='-0.414', c
 plot(line1618_2 and acFiboLines and acFlAlt ? line1618_2 : na, title='-0.618', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line2000_2 and acFiboLines and acFlAlt ? line2000_2 : na, title='-1.000', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line2272_2 and acFiboLines and acFlAlt ? line2272_2 : na, title='-1.272', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
+
+
+
+// FİBO Turuncu ve Sarı Kesmeler
+
+kesYsari = ta.cross(src , line1000) 
+
+
+kesYturuncuY = ta.crossover(src , line0786) 
+kesYturuncuA = ta.crossunder(src , line0786) 
+
+
+kesAturuncuY = ta.crossover(src , line0236) 
+kesAturuncuA = ta.crossunder(src , line0236) 
+
+
+kesAsari = ta.cross(src , line0000) 
+
+
+
+plotshape(acFkes ? kesYsari : na ,title ='Fibo Üst Sarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.yellow, 0), offset=0, size=xMaASize)
+
+plotshape(acFkes ? kesYturuncuY : na ,title ='Fibo Üst Turuncu Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.orange, 0), offset=0, size=xMaASize)
+plotshape(acFkes ? kesYturuncuA : na ,title ='Fibo Üst Turuncu Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.orange, 0), offset=0, size=xMaASize)
+
+plotshape(acFkes  ? kesAturuncuY : na ,title ='Fibo Alt Turuncu Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.orange, 0), offset=0, size=xMaYSize)
+plotshape(acFkes  ? kesAturuncuA : na ,title ='Fibo Alt Turuncu Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.orange, 0), offset=0, size=xMaYSize)
+
+plotshape(acFkes  ? kesAsari : na ,title ='Fibo Alt Sarı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.yellow, 0), offset=0, size=xMaYSize)
+
+
+//alertcondition( ta.cross(src , line1000) , title = "Fibo Üst Sarı Kes", message = 'Fibo Üst Sarı Kes {{ticker}}, FİYAT={{close}}')
+//alertcondition( ta.cross(src , line0786) , title = "Fibo Üst Turuncu Kes", message = 'Fibo Üst Turuncu Kes {{ticker}}, FİYAT={{close}}')
+alertcondition( ta.cross(src , line0236) , title = "Fibo Alt Turuncu Kes", message = 'Fibo Alt Turuncu Kes {{ticker}}, FİYAT={{close}}')
+//alertcondition( ta.cross(src , line0000) , title = "Fibo Alt Sarı Kes'", message = 'Fibo Alt Sarı Kes {{ticker}}, FİYAT={{close}}')
+
 
 //VBCB
 
@@ -863,11 +900,6 @@ if barstate.islast
         table.cell(tblPanoMobil, 0, 10, "ADX", text_color = color.white, text_size = tsize, bgcolor=color.maroon)
         table.cell(tblPanoMobil, 0, 11, tAdx , text_color = color.black, text_size = tsize, bgcolor=myColorAdx)
 
-
-
-
-
-//BURADA BİTTİ
 
 
 //BURADA BİTTİ
