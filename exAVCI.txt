@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI - V1.1.2", overlay=true)
+indicator(title ="exAVCI - V1.1.3", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -96,10 +96,10 @@ xMA_100_Color = color.new(color.blue, 0)
 xMA_377_Color = color.new(#be660b, 0)
 
 
-xMA_13_Color_koyu = color.new(color.lime, 0)
-xMA_21_Color_koyu = color.new(color.white, 0)
-xMA_100_Color_koyu = color.new(color.blue, 0)
-xMA_377_Color_koyu = color.new(#be660b, 0)
+xMA_13_Color_koyu = color.new(color.lime, 50)
+xMA_21_Color_koyu = color.new(color.white, 50)
+xMA_100_Color_koyu = color.new(color.blue, 50)
+xMA_377_Color_koyu = color.new(#be660b, 50)
 
 
 
