@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI - V1.1.4", overlay=true)
+indicator(title ="exAVCI - V1.1.5", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -86,20 +86,20 @@ acxMa13Cizgisi = input(defval = true, title = 'xMA13 Çizgisi Gözüksün mü?',
 acxMa21Cizgisi = input(defval = true, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA21 Çizgisi")   
 
 acxMa100Cizgisi = input(defval = true, title = 'xMA100 Çizgisi Gözüksün mü?', group="xMA100 Çizgisi")   
-acxMa100CizgisiRSI = input.bool(defval = true, title = 'xMA100 Çizgisi (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
-acxMa100CizgisiRSIbg = input.bool(false, title='Arka Plan (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
+acxMa100CizgisiRSI = input.bool(defval = false, title = 'xMA100 Çizgisi (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
+acxMa100CizgisiRSIbg = input.bool(true, title='Arka Plan (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
 
 acxMa377Cizgisi = input(defval = true, title = 'xMA377 Çizgisi Gözüksün mü?', group="xMA377 Çizgisi")   
 
 xMA_13_Color = color.new(color.lime, 0)
 xMA_21_Color = color.new(color.white, 0)
-xMA_100_Color = color.new(color.blue, 0)
+xMA_100_Color = color.new(color.lime, 0)
 xMA_377_Color = color.new(#be660b, 0)
 
 
 xMA_13_Color_koyu = color.new(color.lime, 50)
 xMA_21_Color_koyu = color.new(color.white, 50)
-xMA_100_Color_koyu = color.new(color.blue, 50)
+xMA_100_Color_koyu = color.new(#ff0000, 0)
 xMA_377_Color_koyu = color.new(#be660b, 50)
 
 
@@ -365,9 +365,9 @@ acAA = input.int(defval = 45, title = '(alt baraj) Aşırı Alım Çizgisi % De�
 acCAA = input.int(defval = 30, title = 'Çok Aşırı Alım Çizgisi % Değeri', group="Rsi/Ema Genel Değerleri")   
 
 //RSI baraj Renk
-rsiUstBarajRenk = input.color(color.new(#00897b,50),"RSI (üst baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
-rsiBarajArasiRenk = input.color(color.new(#00bcd4,50),"RSI (baraj arası) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
-rsiAltBarajRenk = input.color(color.new(#880e4f,50),"RSI (alt baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
+rsiUstBarajRenk = input.color(color.new(#00897b,67),"RSI (üst baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
+rsiBarajArasiRenk = input.color(color.new(#00bcd4,67),"RSI (baraj arası) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
+rsiAltBarajRenk = input.color(color.new(#880e4f,67),"RSI (alt baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
 
 barajRsi = ta.rsi(close,myRsiUzunluk)
 barajRengi = barajRsi <= acS and barajRsi > acA ? rsiUstBarajRenk : barajRsi <= acA and barajRsi > acAA ? rsiBarajArasiRenk : barajRsi <= acAA and barajRsi > acCAA ? rsiAltBarajRenk : na
@@ -899,6 +899,7 @@ if barstate.islast
 
         table.cell(tblPanoMobil, 0, 10, "ADX", text_color = color.white, text_size = tsize, bgcolor=color.maroon)
         table.cell(tblPanoMobil, 0, 11, tAdx , text_color = color.black, text_size = tsize, bgcolor=myColorAdx)
+
 
 
 
