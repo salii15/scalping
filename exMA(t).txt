@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exMA(t) - V1.4.1", overlay=true, timeframe="", timeframe_gaps=true)
+indicator(title ="exMA(t) - V1.4.2", overlay=true, timeframe="", timeframe_gaps=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -20,15 +20,15 @@ fibLen = input(defval = 200, title = 'Fibo Hesaplama Mum Sayısı', group="Fibo 
 
 
 //TimeFrame
-string xMAMum9 = input.timeframe(defval = "Grafik", title = "xMA9 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA9 Değerleri")
-string xMAMum13 = input.timeframe(defval = "Grafik", title = "xMA13 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA13 Değerleri")
-string xMAMum21 = input.timeframe(defval = "Grafik", title = "xMA21 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA21 Değerleri")
-string xMAMum34 = input.timeframe(defval = "Grafik", title = "xMA34 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA34 Değerleri")
-string xMAMum50 = input.timeframe(defval = "Grafik", title = "xMA50 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA50 Değerleri")
-string xMAMum89 = input.timeframe(defval = "Grafik", title = "xMA89 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA89 Değerleri")
-string xMAMum100 = input.timeframe(defval = "Grafik", title = "xMA100 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA100 Değerleri")
-string xMAMum144 = input.timeframe(defval = "Grafik", title = "xMA144 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA144 Değerleri")
-string xMAMum200 = input.timeframe(defval = "Grafik", title = "xMA200 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA200 Değerleri")
+string xMAMum9 = input.timeframe(defval = "Grafik", title = "xMA9 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA9 Değerleri")
+string xMAMum13 = input.timeframe(defval = "Grafik", title = "xMA13 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA13 Değerleri")
+string xMAMum21 = input.timeframe(defval = "Grafik", title = "xMA21 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA21 Değerleri")
+string xMAMum34 = input.timeframe(defval = "Grafik", title = "xMA34 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA34 Değerleri")
+string xMAMum50 = input.timeframe(defval = "Grafik", title = "xMA50 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA50 Değerleri")
+string xMAMum89 = input.timeframe(defval = "Grafik", title = "xMA89 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA89 Değerleri")
+string xMAMum100 = input.timeframe(defval = "Grafik", title = "xMA100 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA100 Değerleri")
+string xMAMum144 = input.timeframe(defval = "Grafik", title = "xMA144 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA144 Değerleri")
+string xMAMum200 = input.timeframe(defval = "Grafik", title = "xMA200 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA200 Değerleri")
 
 
 
@@ -71,9 +71,11 @@ xMaKontrol(xMaTip, mySrc, len)=>
 xMaMumKontrol(xMaMumTip)=>
     string xMA = switch xMaMumTip
         "1 Dakika" => "1"
+        "3 Dakika" => "3"
         "5 Dakika" => "5"
         "15 Dakika" => "15"
         "30 Dakika" => "30"
+        "1 Saat" => "60" 
         "2 Saat" => "120" 
         "4 Saat" => "240" 
         "1 Gün" => "D"
