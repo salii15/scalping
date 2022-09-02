@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI - V1.1.5", overlay=true)
+indicator(title ="exAVCI - V1.1.7", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -22,6 +22,10 @@ acFkes = input(defval = false, title = 'Fibo Kesmeleri (Sarı ve Turuncu) Gözü
 //Tablo
 acTabloPanoOzet = input(defval = true, title = 'Direnç, Destek ve Fiyat Tablosu Gösterilsin mi?', group="Tablo Ayarları")  
 acTabloPanoMobil = input(defval = false, title = 'Direnç, Destek ve Fiyat Tablosu Mobil Gösterilsin mi?', group="Tablo Ayarları")  
+
+acTablo = input(defval = true, title = 'RSI Tablosu, Gösterilsin mi?', group="Tablo Ayarları")  
+acTabloMobil = input(defval = false, title = 'RSI Tablosu, Mobil Gösterilsin mi?', group="Tablo Ayarları")  
+
 
 
 acAltinCizgi = input(defval = false, title = 'Altın Cizgisi Gözüksün mü?', group="Altın Çizgi Ayarları") 
@@ -452,7 +456,7 @@ float ma1 = switch boyaBir
 	"xMA200" => xMA_377Src
 	"xMum" => close
 	
-ilk = plot(acBoyama and acxMaCizgisi ? ma1 : na, color = color.new(color.white, 100))
+ilk = plot(acBoyama ? ma1 : na, color = color.new(color.white, 100))
 
 float ba2 = switch boyaIki
 	"xMA13" => xMA_13
@@ -468,7 +472,7 @@ float ma2 = switch boyaIki
 	"xMA377" => xMA_377Src
 	"xMum" => close
 
-son = plot(acBoyama and acxMaCizgisi ? ma2 : na, color = color.new(color.white, 100))
+son = plot(acBoyama ? ma2 : na, color = color.new(color.white, 100))
 
 //myBoya = acBoyama ? ba1 >= ba2 ? myRenkBir : myRenkIki : color.new(color.white, 100)
 myBoya = ba1 >= ba2 ? myRenkBir : myRenkIki 
@@ -499,7 +503,7 @@ float ma12 = switch boyaBir2
 	"xMA377" => xMA_377Src
 	"xMum" => close
 	
-ilk2 = plot(acBoyama2 and acxMaCizgisi ? ma12 : na, color = color.new(color.white, 100))
+ilk2 = plot(acBoyama2  ? ma12 : na, color = color.new(color.white, 100))
 
 float ba22 = switch boyaIki2
 	"xMA13" => xMA_13
@@ -515,7 +519,7 @@ float ma22 = switch boyaIki2
 	"xMA377" => xMA_377Src
 	"xMum" => close
 
-son2 = plot(acBoyama2 and acxMaCizgisi ? ma22 : na, color = color.new(color.white, 100))
+son2 = plot(acBoyama2 ? ma22 : na, color = color.new(color.white, 100))
 
 //myBoya = acBoyama ? ba1 >= ba2 ? myRenkBir : myRenkIki : color.new(color.white, 100)
 myBoya2 = ba12 >= ba22 ? myRenkBir2 : myRenkIki2 
@@ -874,6 +878,44 @@ if src <= line1414_2
 
 
 
+
+renkVer(my1Close,my1RsiUzun) => 
+    my1Rsi = ta.rsi(my1Close,my1RsiUzun)
+    my1Rsi > acS ? rsiUstBarajRenk : my1Rsi < acAA ? rsiAltBarajRenk : rsiBarajArasiRenk
+
+//Formül
+customFunc() => [renkVer(close,myRsiUzunluk), str.tostring(math.round(ta.rsi(close,myRsiUzunluk)),"#")]
+
+kPeryod = (timeframe.period == "1S" or timeframe.period == "5S") ? "5S" : timeframe.period == "10S" ? "10S" : timeframe.period == "15S" ? "15S" : timeframe.period == "30S" ? "30S" : "1"
+kMetin =  (timeframe.period == "1S" or timeframe.period == "5S") ? "5s" : timeframe.period == "10S" ? "10s" : timeframe.period == "15S" ? "15s" : timeframe.period == "30S" ? "30s" : "1d"
+
+
+[t00,r00] = request.security(syminfo.tickerid, kPeryod, customFunc()) 
+[t01,r01] = request.security(syminfo.tickerid, "1", customFunc()) 
+[t02,r02] = request.security(syminfo.tickerid, "5", customFunc())
+[t03,r03] = request.security(syminfo.tickerid, "15", customFunc())
+[t04,r04] = request.security(syminfo.tickerid, "20", customFunc())
+[t05,r05] = request.security(syminfo.tickerid, "30", customFunc())
+[t06,r06] = request.security(syminfo.tickerid, "60", customFunc())
+[t07,r07] = request.security(syminfo.tickerid, "120", customFunc())
+[t08,r08] = request.security(syminfo.tickerid, "180", customFunc())
+[t09,r09] = request.security(syminfo.tickerid, "240", customFunc())
+[t10,r10] = request.security(syminfo.tickerid, "D", customFunc())
+[t11,r11] = request.security(syminfo.tickerid, "3D", customFunc())
+[t12,r12] = request.security(syminfo.tickerid, "W", customFunc())
+[t13,r13] = request.security(syminfo.tickerid, "M", customFunc())
+
+
+
+var table tblDetay = table.new(position.top_right, 14, 2, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
+table.clear(tblDetay, 0, 0, 13, 1)
+
+var table tblMobil = table.new(position.bottom_left, 2, 14, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
+table.clear(tblMobil, 0, 0, 1, 13)
+
+
+
+
 if barstate.islast
 
     if acTabloPanoOzet or acTabloPanoMobil 
@@ -900,6 +942,67 @@ if barstate.islast
         table.cell(tblPanoMobil, 0, 10, "ADX", text_color = color.white, text_size = tsize, bgcolor=color.maroon)
         table.cell(tblPanoMobil, 0, 11, tAdx , text_color = color.black, text_size = tsize, bgcolor=myColorAdx)
 
+    if acTablo
+        table.cell(tblDetay, 0, 0, kMetin , text_color = color.yellow, text_size = size.normal, bgcolor=t00  )
+        table.cell(tblDetay, 1, 0, "1d", text_color = color.yellow, text_size = size.normal, bgcolor=t01 )
+        table.cell(tblDetay, 2, 0, "5d", text_color = color.yellow, text_size = size.normal, bgcolor=t02  )
+        table.cell(tblDetay, 3, 0, "15d", text_color = color.yellow, text_size = size.normal, bgcolor=t03 )
+        table.cell(tblDetay, 4, 0, "20d", text_color = color.yellow, text_size = size.normal, bgcolor=t04 )
+        table.cell(tblDetay, 5, 0, "30d", text_color = color.yellow, text_size = size.normal, bgcolor=t04  )
+        table.cell(tblDetay, 6, 0, "1S", text_color = color.yellow, text_size = size.normal, bgcolor=t05  )
+        table.cell(tblDetay, 7, 0, "2S", text_color = color.yellow, text_size = size.normal, bgcolor=t06 )
+        table.cell(tblDetay, 8, 0, "3S", text_color = color.yellow, text_size = size.normal, bgcolor=t07  )
+        table.cell(tblDetay, 9, 0, "4S", text_color = color.yellow, text_size = size.normal, bgcolor=t08 )
+        table.cell(tblDetay, 10, 0, "1G", text_color = color.yellow, text_size = size.normal, bgcolor=t09  )
+        table.cell(tblDetay, 11, 0, "3G", text_color = color.yellow, text_size = size.normal, bgcolor=t10  )
+        table.cell(tblDetay, 12, 0, "1H", text_color = color.yellow, text_size = size.normal, bgcolor=t11  )
+        table.cell(tblDetay, 13, 0, "1A", text_color = color.yellow, text_size = size.normal, bgcolor=t12  )
+
+        table.cell(tblDetay, 0, 1, r00 , text_color = color.yellow, text_size = size.normal, bgcolor=t00  )
+        table.cell(tblDetay, 1, 1, r01, text_color = color.yellow, text_size = size.normal, bgcolor=t01 )
+        table.cell(tblDetay, 2, 1, r02, text_color = color.yellow, text_size = size.normal, bgcolor=t02  )
+        table.cell(tblDetay, 3, 1, r03, text_color = color.yellow, text_size = size.normal, bgcolor=t03  )
+        table.cell(tblDetay, 4, 1, r04, text_color = color.yellow, text_size = size.normal, bgcolor=t04  )
+        table.cell(tblDetay, 5, 1, r05, text_color = color.yellow, text_size = size.normal, bgcolor=t04  )
+        table.cell(tblDetay, 6, 1, r06, text_color = color.yellow, text_size = size.normal, bgcolor=t05  )
+        table.cell(tblDetay, 7, 1, r07, text_color = color.yellow, text_size = size.normal, bgcolor=t06  )
+        table.cell(tblDetay, 8, 1, r08, text_color = color.yellow, text_size = size.normal, bgcolor=t07  )
+        table.cell(tblDetay, 9, 1, r09, text_color = color.yellow, text_size = size.normal, bgcolor=t08  )
+        table.cell(tblDetay, 10, 1, r10, text_color = color.yellow, text_size = size.normal, bgcolor=t09  )
+        table.cell(tblDetay, 11, 1, r11, text_color = color.yellow, text_size = size.normal, bgcolor=t10  )
+        table.cell(tblDetay, 12, 1, r12, text_color = color.yellow, text_size = size.normal, bgcolor=t11  )
+        table.cell(tblDetay, 13, 1, r13, text_color = color.yellow, text_size = size.normal, bgcolor=t12  )
+        
+    if acTabloMobil    
+        table.cell(tblMobil, 0, 0, kMetin , text_color = color.yellow, text_size = size.small, bgcolor=t00  )
+        table.cell(tblMobil, 0, 1, "1d", text_color = color.yellow, text_size = size.small, bgcolor=t01  )
+        table.cell(tblMobil, 0, 2, "5d", text_color = color.yellow, text_size = size.small, bgcolor=t02  )
+        table.cell(tblMobil, 0, 3, "15d", text_color = color.yellow, text_size = size.small, bgcolor=t03  )
+        table.cell(tblMobil, 0, 4, "20d", text_color = color.yellow, text_size = size.small, bgcolor=t04  )
+        table.cell(tblMobil, 0, 5, "30d", text_color = color.yellow, text_size = size.small, bgcolor=t04)
+        table.cell(tblMobil, 0, 6, "1S", text_color = color.yellow, text_size = size.small, bgcolor=t05  )
+        table.cell(tblMobil, 0, 7, "2S", text_color = color.yellow, text_size = size.small, bgcolor=t06  )
+        table.cell(tblMobil, 0, 8, "3S", text_color = color.yellow, text_size = size.small, bgcolor=t07  )
+        table.cell(tblMobil, 0, 9, "4S", text_color = color.yellow, text_size = size.small, bgcolor=t08  )
+        table.cell(tblMobil, 0, 10, "1G", text_color = color.yellow, text_size = size.small, bgcolor=t09  )
+        table.cell(tblMobil, 0, 11, "3G", text_color = color.yellow, text_size = size.small, bgcolor=t10 )
+        table.cell(tblMobil, 0, 12, "1H", text_color = color.yellow, text_size = size.small, bgcolor=t11  )
+        table.cell(tblMobil, 0, 13, "1A", text_color = color.yellow, text_size = size.small, bgcolor=t12  )
+
+        table.cell(tblMobil, 1, 0, r00 , text_color = color.yellow, text_size = size.small, bgcolor=t00  )
+        table.cell(tblMobil, 1, 1, r01, text_color = color.yellow, text_size = size.small, bgcolor=t01  )
+        table.cell(tblMobil, 1, 2, r02, text_color = color.yellow, text_size = size.small, bgcolor=t02  )
+        table.cell(tblMobil, 1, 3, r03, text_color = color.yellow, text_size = size.small, bgcolor=t03  )
+        table.cell(tblMobil, 1, 4, r04, text_color = color.yellow, text_size = size.small, bgcolor=t04  )
+        table.cell(tblMobil, 1, 5, r05, text_color = color.yellow, text_size = size.small, bgcolor=t04  )
+        table.cell(tblMobil, 1, 6, r06, text_color = color.yellow, text_size = size.small, bgcolor=t05 )
+        table.cell(tblMobil, 1, 7, r07, text_color = color.yellow, text_size = size.small, bgcolor=t06 )
+        table.cell(tblMobil, 1, 8, r08, text_color = color.yellow, text_size = size.small, bgcolor=t07  )
+        table.cell(tblMobil, 1, 9, r09, text_color = color.yellow, text_size = size.small, bgcolor=t08 )
+        table.cell(tblMobil, 1, 10, r10, text_color = color.yellow, text_size = size.small, bgcolor=t09  )
+        table.cell(tblMobil, 1, 11, r11, text_color = color.yellow, text_size = size.small, bgcolor=t10  )
+        table.cell(tblMobil, 1, 12, r12, text_color = color.yellow, text_size = size.small, bgcolor=t11 )
+        table.cell(tblMobil, 1, 13, r13, text_color = color.yellow, text_size = size.small, bgcolor=t12  )
 
 
 
