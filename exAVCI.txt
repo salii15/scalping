@@ -2,13 +2,33 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI - V1.1.8", overlay=true)
+indicator(title ="exAVCI - V1.1.10", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
 //src = request.security(syminfo.tickerid, timeframe.period, close)
 
 src = input.source(close, "Kaynak", group="Kaynak Çeşitleri")
+
+
+
+acxMaCizgisi = input(defval = true, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
+
+acxMa13Cizgisi = input(defval = false, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA13 Çizgisi")   
+
+acxMa21Cizgisi = input(defval = true, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA21 Çizgisi")   
+acMumRenk21 = input(true, title='xMA21 Çizgisi (Adx ve Efi ile) Renklensin mi?', group="xMA21 Çizgisi")
+
+
+acxMa100Cizgisi = input(defval = true, title = 'xMA100 Çizgisi Gözüksün mü?', group="xMA100 Çizgisi")   
+acxMa100CizgisiRSI = input.bool(defval = true, title = 'xMA100 Çizgisi (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
+acxMa100CizgisiRSIbg = input.bool(false, title='Arka Plan (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
+
+acxMa377Cizgisi = input(defval = true, title = 'xMA377 Çizgisi Gözüksün mü?', group="xMA377 Çizgisi")   
+acMumRenk200 = input.bool(true, title='xMA377 Çizgisi (Altın ve nQQE ile) Renklensin mi?', group="xMA377 Çizgisi")
+
+
+
 
 // Fibo Ayarları
 acFiboLines = input(defval = true, title = 'Fibo Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
@@ -28,7 +48,7 @@ acTabloMobil = input(defval = false, title = 'RSI Tablosu, Mobil Gösterilsin mi
 
 
 
-acAltinCizgi = input(defval = false, title = 'Altın Cizgisi Gözüksün mü?', group="Altın Çizgi Ayarları") 
+acAltinCizgi = input(defval = true, title = 'Altın Cizgisi Gözüksün mü?', group="Altın Çizgi Ayarları") 
 
 
 //TimeFrame
@@ -86,16 +106,164 @@ xMaMumKontrol(xMaMumTip)=>
         => str.tostring(timeframe.period)
 
 
-acxMaCizgisi = input(defval = true, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
 
-acxMa13Cizgisi = input(defval = false, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA13 Çizgisi")   
-acxMa21Cizgisi = input(defval = false, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA21 Çizgisi")   
+//FONKSIYONLAR
 
-acxMa100Cizgisi = input(defval = true, title = 'xMA100 Çizgisi Gözüksün mü?', group="xMA100 Çizgisi")   
-acxMa100CizgisiRSI = input.bool(defval = false, title = 'xMA100 Çizgisi (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
-acxMa100CizgisiRSIbg = input.bool(false, title='Arka Plan (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
 
-acxMa377Cizgisi = input(defval = true, title = 'xMA377 Çizgisi Gözüksün mü?', group="xMA377 Çizgisi")   
+//Altın Çizgisi
+srcAltin = input.source(defval=hlcc4, title='Source', group="Altın Çizgi Ayarları")
+per = input.int(defval=230, minval=1, title='Örnekleme periyodu', group="Altın Çizgi Ayarları")
+mult = input.float(defval=2.0, minval=0.1, title='Aralık carpanı', group="Altın Çizgi Ayarları")
+
+
+smoothrng(x, t, m) =>
+    wper = t * 2 - 1
+    avrng = ta.ema(math.abs(x - x[1]), t)
+    smoothrng = ta.ema(avrng, wper) * m
+    smoothrng
+smrng = smoothrng(srcAltin, per, mult)
+
+rngfilt(x, r) =>
+    rngfilt = x
+    rngfilt := x > nz(rngfilt[1]) ? x - r < nz(rngfilt[1]) ? nz(rngfilt[1]) : x - r : x + r > nz(rngfilt[1]) ? nz(rngfilt[1]) : x + r
+    rngfilt
+filt = rngfilt(srcAltin, smrng)
+
+
+// Filter Direction
+upward = 0.0
+upward := filt > filt[1] ? nz(upward[1]) + 1 : filt < filt[1] ? 0 : nz(upward[1])
+downward = 0.0
+downward := filt < filt[1] ? nz(downward[1]) + 1 : filt > filt[1] ? 0 : nz(downward[1])
+
+
+// Colors
+fColour = color.new(color.orange,0) 
+filtcolor = upward > 0 ? color.new(color.lime,0) : downward > 0 ? color.new(#ff0000,0) : color.new(color.orange,0)
+filtplot = plot(filt and acAltinCizgi ? filt : na, color=filtcolor, linewidth=3, title='Altın Cizgisi',style = plot.style_stepline, trackprice=false)
+
+
+//nQQE 
+srcNqq = input(close, group="nQQE Ayarlar")
+lengthNqq = input.int(14, 'RSI Length', minval=1, group="nQQE Ayarlar")
+SSF = input.int(2, 'SF RSI SMoothing Factor', minval=1, group="nQQE Ayarlar")
+RSII = ta.ema(ta.rsi(srcNqq, lengthNqq), SSF)
+TR = math.abs(RSII - RSII[1])
+wwalpha = 1 / lengthNqq
+WWMA = 0.0
+WWMA := wwalpha * TR + (1 - wwalpha) * nz(WWMA[1])
+ATRRSI = 0.0
+ATRRSI := wwalpha * WWMA + (1 - wwalpha) * nz(ATRRSI[1])
+QQEF = ta.ema(ta.rsi(srcNqq, lengthNqq), SSF)
+QUP = QQEF + ATRRSI * 4.236
+QDN = QQEF - ATRRSI * 4.236
+QQES = 0.0
+QQES := QUP < nz(QQES[1]) ? QUP : QQEF > nz(QQES[1]) and QQEF[1] < nz(QQES[1]) ? QDN : QDN > nz(QQES[1]) ? QDN : QQEF < nz(QQES[1]) and QQEF[1] > nz(QQES[1]) ? QUP : nz(QQES[1])
+
+myNQQE = ((QQEF >= QQES) ? color.new(color.lime, 0) : color.new(#ff0000,0))
+//plot(10, color=myNQQE, linewidth=4)
+
+//myAltinNqqeColor =  ((QQEF >= QQES) and (upward > 0  or filtcolor == fColour )) ?  color.new(color.lime, 0) : ((QQEF < QQES) and downward > 0) ? color.new(color.red, 0) : color.new(color.orange, 0)
+myAltinNqqeColor =  ((QQEF >= QQES) and (upward > 0 or filtcolor == fColour )) ?  color.new(color.lime, 0) : ((QQEF < QQES) and (downward > 0  or filtcolor == fColour )) ? color.new(color.red, 0) : color.new(color.orange, 0)
+myAltinNqqeColorYesil =  ((QQEF >= QQES) and (upward > 0 or filtcolor == fColour )) ?  color.new(color.lime, 66) : ((QQEF < QQES) and (downward > 0  or filtcolor == fColour )) ? color.new(color.red, 100) : color.new(color.orange, 100)
+
+myAltinNqqeColorTurkuaz =  ((QQEF >= QQES) and (upward > 0 or filtcolor == fColour )) ?  color.new(#00bcd4,70) : na
+
+
+
+
+//EFI
+var cumVol = 0.
+cumVol += nz(volume)
+//if barstate.islast and cumVol == 0
+//    runtime.error("Hacim Verisine Erişilemiyor!")
+lengthEfi = input.int(5, minval=1, title = "EFI Uzunluğu", group="EFI Ayarları")
+efi = ta.ema(ta.change(close) * cumVol, lengthEfi)
+myColorY = efi>=0 and efi>efi[1] ? color.white : color.white
+myColorD = efi<0 and efi<=efi[1] ? color.red : color.red
+myColorAdx =  efi>=0 ? myColorY : myColorD
+
+
+//DMI 
+//lensig = input.int(14, title="ADX Smoothing", minval=1, maxval=50, group="DMI Ayarlar")
+//lenDmi = input.int(14, minval=1, title="DI Length", group="DMI Ayarlar")
+//up = ta.change(high)
+//down = -ta.change(low)
+//plusDM = na(up) ? na : (up > down and up > 0 ? up : 0)
+//minusDM = na(down) ? na : (down > up and down > 0 ? down : 0)
+//trur = ta.rma(ta.tr, lenDmi)
+//plus = fixnan(100 * ta.rma(plusDM, lenDmi) / trur)
+//minus = fixnan(100 * ta.rma(minusDM, lenDmi) / trur)
+//sum = plus + minus
+//adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), lensig)
+//myColorAdx := (plus >= minus and adx[1]<adx) ?  color.new(color.lime,0) : (efi>=0) ? myColorY : adx<15.0 ? myColorD :  color.new(#880e4f,0)
+
+
+
+//ADX
+lenDMI = input(14,title = "ADX Uzunluğu", group="ADX Ayarları")
+th = input(20,title = "ADX th Değeri", group="ADX Ayarları")
+
+myAdxYesilRenk = input.color(color.new(color.lime,0),"Adx Yükseliyor", group="ADX Ayarları")
+myAdxBeyazRenk = input.color(color.new(color.white,0),"Adx efi>0 Durumunda", group="ADX Ayarları")
+myAdxKirmiziRenk = input.color(color.new(color.red,0),"Adx Düşüyor", group="ADX Ayarları")
+
+myadxDusuyorBarajFloat = input.float(defval=15.0,title="Adx Düşüş İştah Barajı", group="ADX Ayarları")
+myAdxKoyuKirmiziRenk = input.color(color.new(#880e4f,0),"Adx Hızlı Düşüyor", group="ADX Ayarları")
+
+
+hesaplaDX(myLen) =>
+    TrueRange = math.max(math.max(high - low, math.abs(high - nz(close[1]))), math.abs(low - nz(close[1])))
+    DirectionalMovementPlus = high - nz(high[1]) > nz(low[1]) - low ? math.max(high - nz(high[1]), 0) : 0
+    DirectionalMovementMinus = nz(low[1]) - low > high - nz(high[1]) ? math.max(nz(low[1]) - low, 0) : 0
+    
+    SmoothedTrueRange = 0.0
+    SmoothedTrueRange := nz(SmoothedTrueRange[1]) - nz(SmoothedTrueRange[1]) / myLen + TrueRange
+    
+    SmoothedDirectionalMovementPlus = 0.0
+    SmoothedDirectionalMovementPlus := nz(SmoothedDirectionalMovementPlus[1]) - nz(SmoothedDirectionalMovementPlus[1]) / myLen + DirectionalMovementPlus
+    
+    SmoothedDirectionalMovementMinus = 0.0
+    SmoothedDirectionalMovementMinus := nz(SmoothedDirectionalMovementMinus[1]) - nz(SmoothedDirectionalMovementMinus[1]) / myLen + DirectionalMovementMinus
+
+    DIPlus = SmoothedDirectionalMovementPlus / SmoothedTrueRange * 100
+    DIMinus = SmoothedDirectionalMovementMinus / SmoothedTrueRange * 100
+    
+    DX = math.abs(DIPlus - DIMinus) / (DIPlus + DIMinus) * 100
+    
+    ta.sma(DX, lenDMI)
+    
+
+myAdx = hesaplaDX(lenDMI)
+
+
+myAdxRenk = color.new(color.yellow,0)
+if efi>0 
+    myAdxRenk := myAdxBeyazRenk
+if efi>0 and myAdx>myAdx[1]
+    myAdxRenk := myAdxYesilRenk
+if efi<0 
+    myAdxRenk := myAdxKirmiziRenk
+if efi<0 and myAdx>=myadxDusuyorBarajFloat
+    myAdxRenk := myAdxKoyuKirmiziRenk
+
+myColorAdx :=  myAdxRenk   
+//plot(myAdx and acCizgiEFI ? myAdx : na , color=myAdxRenk, title='ADX',linewidth=2, style=plot.style_circles)
+
+
+
+//MFI
+lengthMFI = input.int(title="Uzunluk", defval=14, minval=1, maxval=2000, group="MFI Ayarları")
+srcMFI = hlc3
+myMFI = ta.mfi(srcMFI, lengthMFI)
+
+
+
+
+
+
+
+
 
 xMA_13_Color = color.new(color.lime, 0)
 xMA_21_Color = color.new(color.white, 0)
@@ -104,7 +272,7 @@ xMA_377_Color = color.new(color.white, 0)
 
 
 xMA_13_Color_koyu = color.new(color.lime, 50)
-xMA_21_Color_koyu = color.new(color.white, 50)
+xMA_21_Color_koyu = color.new(#ff0000, 0)
 xMA_100_Color_koyu = color.new(#ff0000, 0)
 xMA_377_Color_koyu = color.new(color.white, 50)
 
@@ -123,8 +291,8 @@ source_21 = input.source(defval=close, title='xMA 21 Kaynağı', group="xMA21 De
 xMaMum21Src = xMaMumKontrol(xMAMum21)
 xMA_21 = xMaKontrol(xMaTip21, source_21, length2a) 
 xMA_21Src = request.security(syminfo.tickerid,xMaMum21Src, xMA_21)
-xMA_21_Color_S = xMA_21Src >= xMA_21Src[1] ? xMA_21_Color :xMA_21_Color_koyu
-xMA_21_Plot = plot(xMA_21Src and acxMaCizgisi and acxMa21Cizgisi ? xMA_21Src : na , color=xMA_21_Color_S , linewidth=3, title='xMa21 Çizgisi')
+xMA_21_Color_S = acMumRenk21 ? myColorAdx : xMA_21Src >= xMA_21Src[1] ? xMA_21_Color :xMA_21_Color_koyu
+xMA_21_Plot = plot(xMA_21Src and acxMaCizgisi and acxMa21Cizgisi ? xMA_21Src : na , color=xMA_21_Color_S , linewidth=2, title='xMa21 Çizgisi', style = plot.style_circles)
 
 length6a = input(100, 'xMA 100', group="xMA100 Değerleri")
 source_100 = input.source(defval=close, title='xMA 100 Kaynağı', group="xMA100 Değerleri")
@@ -139,13 +307,15 @@ xMA_100Src = request.security(syminfo.tickerid,xMaMum100Src, xMA_100)
 //xMA_100_Color_S = acxMa100CizgisiRSI ? barajRengi : xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
 //xMA_100_Plot = plot(xMA_100Src and acxMaCizgisi and acxMa100Cizgisi ? xMA_100Src : na , color=xMA_100_Color_S, linewidth=4, title='xMa100 Çizgisi')
 
-length8a = input(377, 'xMA 200', group="xMA200 Değerleri")
+length8a = input(377, 'xMA 377', group="xMA377 Değerleri")
 source_377 = input.source(defval=close, title='xMA 377 Kaynağı', group="xMA377 Değerleri")
 xMaMum377Src = xMaMumKontrol(xMAMum377)
 xMA_377 = xMaKontrol(xMaTip377, source_377, length8a) 
 xMA_377Src = request.security(syminfo.tickerid,xMaMum377Src, xMA_377)
-xMA_377_Color_S = xMA_377Src >= xMA_377Src[1] ? xMA_377_Color :xMA_377_Color_koyu
+xMA_377_Color_S = acMumRenk200 ? myAltinNqqeColor : xMA_377Src >= xMA_377Src[1] ? xMA_377_Color :xMA_377_Color_koyu
 xMA_377_Plot = plot(xMA_377Src and acxMaCizgisi and acxMa377Cizgisi ? xMA_377Src : na , color=xMA_377_Color_S, linewidth=4, title='xMa377 Çizgisi')
+
+
 
 kesAxMA_13 = ta.crossunder(src , xMA_13Src) 
 kesAxMA_21 = ta.crossunder(src , xMA_21Src) 
@@ -154,22 +324,25 @@ kesAxMA_377 = ta.crossunder(src , xMA_377Src)
 
 kesYxMA_13 = ta.crossover(src , xMA_13Src) 
 kesYxMA_21 = ta.crossover(src , xMA_21Src) 
-kesYxMA_100 = ta.crossover(src , xMA_100Src) 
+kesYxMA_100 = ta.crossover(high , xMA_100Src) 
 kesYxMA_377 = ta.crossover(src , xMA_377Src) 
 
 
+alertcondition(kesYxMA_100 , title = "AL xMA100 Yukarı Kesti", message = 'AL xMA100 Yukarı Kesti {{ticker}}, FİYAT={{close}}')
+
+
 xMaAStyle = shape.triangledown
-xMaASize = size.small
+xMaASize = size.normal
 xMaAColor = color.red
 xMaALocation = location.abovebar
 
 xMaYStyle = shape.triangleup
-xMaYSize = size.small
+xMaYSize = size.normal
 xMaYColor = color.lime
 xMaYLocation = location.belowbar
 
 
-acxMaKesmeler = input(defval = false, title = 'xMA Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMaKesmeler = input(defval = true, title = 'xMA Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaAKesmeler = input(defval = true, title = 'xMA Aşağı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaYKesmeler = input(defval = true, title = 'xMA Yukarı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa13AKesmeler = input(defval = false, title = 'xMA13 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
@@ -177,19 +350,20 @@ acxMa13YKesmeler = input(defval = false, title = 'xMA13 Yukarı Kesme İşareti 
 acxMa21AKesmeler = input(defval = false, title = 'xMA21 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa21YKesmeler = input(defval = false, title = 'xMA21 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa100AKesmeler = input(defval = false, title = 'xMA100 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa100YKesmeler = input(defval = false, title = 'xMA100 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMa100YKesmeler = input(defval = true, title = 'xMA100 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa377AKesmeler = input(defval = false, title = 'xMA377 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa377YKesmeler = input(defval = false, title = 'xMA377 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 
-plotshape(kesAxMA_13 and acxMa13Cizgisi and acxMaKesmeler and acxMaAKesmeler and acxMa13AKesmeler ? kesAxMA_13 : na ,title ='xMa13 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_13_Color, offset=0, size=xMaASize)
-plotshape(kesAxMA_21 and acxMa21Cizgisi and acxMaKesmeler and acxMaAKesmeler and acxMa21AKesmeler ? kesAxMA_21 : na ,title ='xMa21 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_21_Color, offset=0, size=xMaASize)
-plotshape(kesAxMA_100 and acxMa100Cizgisi and acxMaKesmeler and acxMaAKesmeler and acxMa100AKesmeler ? kesAxMA_100 : na ,title ='xMa100 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_100_Color, offset=0, size=xMaASize)
-plotshape(kesAxMA_377 and acxMa377Cizgisi and acxMaKesmeler and acxMaAKesmeler and acxMa377AKesmeler ? kesAxMA_377 : na ,title ='xMa377 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_377_Color, offset=0, size=xMaASize)
+plotshape(kesAxMA_13 and acxMaKesmeler and acxMaAKesmeler and acxMa13AKesmeler ? kesAxMA_13 : na ,title ='xMa13 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_13_Color, offset=0, size=xMaASize)
+plotshape(kesAxMA_21 and acxMaKesmeler and acxMaAKesmeler and acxMa21AKesmeler ? kesAxMA_21 : na ,title ='xMa21 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_21_Color, offset=0, size=xMaASize)
+plotshape(kesAxMA_100 and acxMaKesmeler and acxMaAKesmeler and acxMa100AKesmeler ? kesAxMA_100 : na ,title ='xMa100 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_100_Color, offset=0, size=xMaASize)
+plotshape(kesAxMA_377 and acxMaKesmeler and acxMaAKesmeler and acxMa377AKesmeler ? kesAxMA_377 : na ,title ='xMa377 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_377_Color, offset=0, size=xMaASize)
 
-plotshape(kesYxMA_13 and acxMa13Cizgisi and acxMaKesmeler and acxMaYKesmeler and acxMa13YKesmeler ? kesYxMA_13 : na ,title ='xMa13 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_13_Color, offset=0, size=xMaYSize)
-plotshape(kesYxMA_21 and acxMa21Cizgisi and acxMaKesmeler and acxMaYKesmeler and acxMa21YKesmeler ? kesYxMA_21 : na ,title ='xMa21 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_21_Color, offset=0, size=xMaYSize)
-plotshape(kesYxMA_100 and acxMa100Cizgisi  and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_100_Color, offset=0, size=xMaYSize)
-plotshape(kesYxMA_377 and acxMa377Cizgisi and acxMaKesmeler and acxMaYKesmeler and acxMa377YKesmeler ? kesYxMA_377 : na ,title ='xMa377 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_377_Color, offset=0, size=xMaYSize)
+plotshape(kesYxMA_13 and acxMaKesmeler and acxMaYKesmeler and acxMa13YKesmeler ? kesYxMA_13 : na ,title ='xMa13 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_13_Color, offset=0, size=xMaYSize)
+plotshape(kesYxMA_21 and acxMaKesmeler and acxMaYKesmeler and acxMa21YKesmeler ? kesYxMA_21 : na ,title ='xMa21 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_21_Color, offset=0, size=xMaYSize)
+plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=location.bottom, color=#FF5252, offset=0, size=xMaYSize)
+//plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_100_Color, offset=0, size=xMaYSize)
+plotshape(kesYxMA_377 and acxMaKesmeler and acxMaYKesmeler and acxMa377YKesmeler ? kesYxMA_377 : na ,title ='xMa377 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_377_Color, offset=0, size=xMaYSize)
 
 
 
@@ -319,7 +493,7 @@ plotshape(acFkes  ? kesAsari : na ,title ='Fibo Alt Sarı Kes', text='', style=x
 
 //alertcondition( ta.cross(src , line1000) , title = "Fibo Üst Sarı Kes", message = 'Fibo Üst Sarı Kes {{ticker}}, FİYAT={{close}}')
 //alertcondition( ta.cross(src , line0786) , title = "Fibo Üst Turuncu Kes", message = 'Fibo Üst Turuncu Kes {{ticker}}, FİYAT={{close}}')
-alertcondition( ta.cross(src , line0236) , title = "Fibo Alt Turuncu Kes", message = 'Fibo Alt Turuncu Kes {{ticker}}, FİYAT={{close}}')
+//alertcondition( ta.cross(src , line0236) , title = "Fibo Alt Turuncu Kes", message = 'Fibo Alt Turuncu Kes {{ticker}}, FİYAT={{close}}')
 //alertcondition( ta.cross(src , line0000) , title = "Fibo Alt Sarı Kes'", message = 'Fibo Alt Sarı Kes {{ticker}}, FİYAT={{close}}')
 
 
@@ -371,12 +545,12 @@ acAA = input.int(defval = 45, title = '(alt baraj) Aşırı Alım Çizgisi % De�
 acCAA = input.int(defval = 30, title = 'Çok Aşırı Alım Çizgisi % Değeri', group="Rsi/Ema Genel Değerleri")   
 
 //RSI baraj Renk
-rsiUstBarajRenk = input.color(color.new(#00897b,67),"RSI (üst baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
-rsiBarajArasiRenk = input.color(color.new(#00bcd4,67),"RSI (baraj arası) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
-rsiAltBarajRenk = input.color(color.new(#880e4f,67),"RSI (alt baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
+rsiUstBarajRenk = input.color(color.new(#00897b,0),"RSI (üst baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
+rsiBarajArasiRenk = input.color(color.new(#00bcd4,0),"RSI (baraj arası) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
+rsiAltBarajRenk = input.color(color.new(#880e4f,0),"RSI (alt baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
 
 barajRsi = ta.rsi(close,myRsiUzunluk)
-barajRengi = barajRsi <= acS and barajRsi > acA ? rsiUstBarajRenk : barajRsi <= acA and barajRsi > acAA ? rsiBarajArasiRenk : barajRsi <= acAA and barajRsi > acCAA ? rsiAltBarajRenk : na
+barajRengi = barajRsi <= acS and barajRsi > acA ? rsiUstBarajRenk : barajRsi <= acA and barajRsi > acAA ? rsiBarajArasiRenk : barajRsi <= acAA and barajRsi > acCAA ? rsiAltBarajRenk : color.new(#00bcd4,0)
 bgcolor(acxMa100CizgisiRSIbg  ? barajRengi : na,title = 'xMA100 Arka Plan Rengi')
 
 xMA_100_Color_S = acxMa100CizgisiRSI ? barajRengi : xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
@@ -483,7 +657,7 @@ fill(ilk, son , title = 'Birinci Bölge', color = myBoya, fillgaps = true, trans
 
 //BOYAMALAR 2
 
-acBoyama2 = input(defval = true, title = 'Boyama Gözüksün mü?', group="2. Boyama Bölümü")   
+acBoyama2 = input(defval = false, title = 'Boyama Gözüksün mü?', group="2. Boyama Bölümü")   
 
 string boyaBir2 = input.string(defval = "xMA13", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum"] , group="2. Boyama Bölümü")
 string boyaIki2 = input.string(defval = "xMA21", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum"] , group="2. Boyama Bölümü")
@@ -527,156 +701,6 @@ son2 = plot(acBoyama2 ? ma22 : na, color = color.new(color.white, 100))
 myBoya2 = ba12 >= ba22 ? myRenkBir2 : myRenkIki2 
 fill(ilk2, son2 , title = 'İkinci Bölge', color = myBoya2, fillgaps = true, transp=75)
 
-
-//FONKSIYONLAR
-
-
-//Altın Çizgisi
-srcAltin = input.source(defval=hlcc4, title='Source', group="Altın Çizgi Ayarları")
-per = input.int(defval=230, minval=1, title='Örnekleme periyodu', group="Altın Çizgi Ayarları")
-mult = input.float(defval=2.0, minval=0.1, title='Aralık carpanı', group="Altın Çizgi Ayarları")
-
-
-smoothrng(x, t, m) =>
-    wper = t * 2 - 1
-    avrng = ta.ema(math.abs(x - x[1]), t)
-    smoothrng = ta.ema(avrng, wper) * m
-    smoothrng
-smrng = smoothrng(srcAltin, per, mult)
-
-rngfilt(x, r) =>
-    rngfilt = x
-    rngfilt := x > nz(rngfilt[1]) ? x - r < nz(rngfilt[1]) ? nz(rngfilt[1]) : x - r : x + r > nz(rngfilt[1]) ? nz(rngfilt[1]) : x + r
-    rngfilt
-filt = rngfilt(srcAltin, smrng)
-
-
-// Filter Direction
-upward = 0.0
-upward := filt > filt[1] ? nz(upward[1]) + 1 : filt < filt[1] ? 0 : nz(upward[1])
-downward = 0.0
-downward := filt < filt[1] ? nz(downward[1]) + 1 : filt > filt[1] ? 0 : nz(downward[1])
-
-
-// Colors
-fColour = color.new(color.orange,0) 
-filtcolor = upward > 0 ? color.new(color.lime,0) : downward > 0 ? color.new(#ff0000,0) : color.new(color.orange,0)
-filtplot = plot(filt and acAltinCizgi ? filt : na, color=filtcolor, linewidth=3, title='Altın Cizgisi',style = plot.style_line, trackprice=false)
-
-
-//nQQE 
-srcNqq = input(close, group="nQQE Ayarlar")
-lengthNqq = input.int(14, 'RSI Length', minval=1, group="nQQE Ayarlar")
-SSF = input.int(2, 'SF RSI SMoothing Factor', minval=1, group="nQQE Ayarlar")
-RSII = ta.ema(ta.rsi(srcNqq, lengthNqq), SSF)
-TR = math.abs(RSII - RSII[1])
-wwalpha = 1 / lengthNqq
-WWMA = 0.0
-WWMA := wwalpha * TR + (1 - wwalpha) * nz(WWMA[1])
-ATRRSI = 0.0
-ATRRSI := wwalpha * WWMA + (1 - wwalpha) * nz(ATRRSI[1])
-QQEF = ta.ema(ta.rsi(srcNqq, lengthNqq), SSF)
-QUP = QQEF + ATRRSI * 4.236
-QDN = QQEF - ATRRSI * 4.236
-QQES = 0.0
-QQES := QUP < nz(QQES[1]) ? QUP : QQEF > nz(QQES[1]) and QQEF[1] < nz(QQES[1]) ? QDN : QDN > nz(QQES[1]) ? QDN : QQEF < nz(QQES[1]) and QQEF[1] > nz(QQES[1]) ? QUP : nz(QQES[1])
-
-myNQQE = ((QQEF >= QQES) ? color.new(color.lime, 0) : color.new(#ff0000,0))
-//plot(10, color=myNQQE, linewidth=4)
-
-//myAltinNqqeColor =  ((QQEF >= QQES) and (upward > 0  or filtcolor == fColour )) ?  color.new(color.lime, 0) : ((QQEF < QQES) and downward > 0) ? color.new(color.red, 0) : color.new(color.orange, 0)
-myAltinNqqeColor =  ((QQEF >= QQES) and (upward > 0 or filtcolor == fColour )) ?  color.new(color.lime, 0) : ((QQEF < QQES) and (downward > 0  or filtcolor == fColour )) ? color.new(color.red, 0) : color.new(color.orange, 0)
-myAltinNqqeColorYesil =  ((QQEF >= QQES) and (upward > 0 or filtcolor == fColour )) ?  color.new(color.lime, 66) : ((QQEF < QQES) and (downward > 0  or filtcolor == fColour )) ? color.new(color.red, 100) : color.new(color.orange, 100)
-
-myAltinNqqeColorTurkuaz =  ((QQEF >= QQES) and (upward > 0 or filtcolor == fColour )) ?  color.new(#00bcd4,70) : na
-
-
-
-
-//EFI
-var cumVol = 0.
-cumVol += nz(volume)
-//if barstate.islast and cumVol == 0
-//    runtime.error("Hacim Verisine Erişilemiyor!")
-lengthEfi = input.int(5, minval=1, title = "EFI Uzunluğu", group="EFI Ayarları")
-efi = ta.ema(ta.change(close) * cumVol, lengthEfi)
-myColorY = efi>=0 and efi>efi[1] ? color.white : color.white
-myColorD = efi<0 and efi<=efi[1] ? color.red : color.red
-myColorAdx =  efi>=0 ? myColorY : myColorD
-
-
-//DMI 
-//lensig = input.int(14, title="ADX Smoothing", minval=1, maxval=50, group="DMI Ayarlar")
-//lenDmi = input.int(14, minval=1, title="DI Length", group="DMI Ayarlar")
-//up = ta.change(high)
-//down = -ta.change(low)
-//plusDM = na(up) ? na : (up > down and up > 0 ? up : 0)
-//minusDM = na(down) ? na : (down > up and down > 0 ? down : 0)
-//trur = ta.rma(ta.tr, lenDmi)
-//plus = fixnan(100 * ta.rma(plusDM, lenDmi) / trur)
-//minus = fixnan(100 * ta.rma(minusDM, lenDmi) / trur)
-//sum = plus + minus
-//adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), lensig)
-//myColorAdx := (plus >= minus and adx[1]<adx) ?  color.new(color.lime,0) : (efi>=0) ? myColorY : adx<15.0 ? myColorD :  color.new(#880e4f,0)
-
-
-
-//ADX
-lenDMI = input(14,title = "ADX Uzunluğu", group="ADX Ayarları")
-th = input(20,title = "ADX th Değeri", group="ADX Ayarları")
-
-myAdxYesilRenk = input.color(color.new(color.lime,0),"Adx Yükseliyor", group="ADX Ayarları")
-myAdxBeyazRenk = input.color(color.new(color.white,0),"Adx efi>0 Durumunda", group="ADX Ayarları")
-myAdxKirmiziRenk = input.color(color.new(color.red,0),"Adx Düşüyor", group="ADX Ayarları")
-
-myadxDusuyorBarajFloat = input.float(defval=15.0,title="Adx Düşüş İştah Barajı", group="ADX Ayarları")
-myAdxKoyuKirmiziRenk = input.color(color.new(#880e4f,0),"Adx Hızlı Düşüyor", group="ADX Ayarları")
-
-
-hesaplaDX(myLen) =>
-    TrueRange = math.max(math.max(high - low, math.abs(high - nz(close[1]))), math.abs(low - nz(close[1])))
-    DirectionalMovementPlus = high - nz(high[1]) > nz(low[1]) - low ? math.max(high - nz(high[1]), 0) : 0
-    DirectionalMovementMinus = nz(low[1]) - low > high - nz(high[1]) ? math.max(nz(low[1]) - low, 0) : 0
-    
-    SmoothedTrueRange = 0.0
-    SmoothedTrueRange := nz(SmoothedTrueRange[1]) - nz(SmoothedTrueRange[1]) / myLen + TrueRange
-    
-    SmoothedDirectionalMovementPlus = 0.0
-    SmoothedDirectionalMovementPlus := nz(SmoothedDirectionalMovementPlus[1]) - nz(SmoothedDirectionalMovementPlus[1]) / myLen + DirectionalMovementPlus
-    
-    SmoothedDirectionalMovementMinus = 0.0
-    SmoothedDirectionalMovementMinus := nz(SmoothedDirectionalMovementMinus[1]) - nz(SmoothedDirectionalMovementMinus[1]) / myLen + DirectionalMovementMinus
-
-    DIPlus = SmoothedDirectionalMovementPlus / SmoothedTrueRange * 100
-    DIMinus = SmoothedDirectionalMovementMinus / SmoothedTrueRange * 100
-    
-    DX = math.abs(DIPlus - DIMinus) / (DIPlus + DIMinus) * 100
-    
-    ta.sma(DX, lenDMI)
-    
-
-myAdx = hesaplaDX(lenDMI)
-
-
-myAdxRenk = color.new(color.yellow,0)
-if efi>0 
-    myAdxRenk := myAdxBeyazRenk
-if efi>0 and myAdx>myAdx[1]
-    myAdxRenk := myAdxYesilRenk
-if efi<0 
-    myAdxRenk := myAdxKirmiziRenk
-if efi<0 and myAdx>=myadxDusuyorBarajFloat
-    myAdxRenk := myAdxKoyuKirmiziRenk
-
-myColorAdx :=  myAdxRenk   
-//plot(myAdx and acCizgiEFI ? myAdx : na , color=myAdxRenk, title='ADX',linewidth=2, style=plot.style_circles)
-
-
-
-//MFI
-lengthMFI = input.int(title="Uzunluk", defval=14, minval=1, maxval=2000, group="MFI Ayarları")
-srcMFI = hlc3
-myMFI = ta.mfi(srcMFI, lengthMFI)
 
 
 
@@ -886,34 +910,35 @@ renkVer(my1Close,my1RsiUzun) =>
     my1Rsi > acS ? rsiUstBarajRenk : my1Rsi < acAA ? rsiAltBarajRenk : rsiBarajArasiRenk
 
 //Formül
-customFunc() => [renkVer(close,myRsiUzunluk), str.tostring(math.round(ta.rsi(close,myRsiUzunluk)),"#")]
+customFunc() => [renkVer(close,myRsiUzunluk), str.tostring(math.round(ta.rsi(close,myRsiUzunluk)),"#"), ta.crossover(high,xMaKontrol(xMaTip100, source_100, length6a)), close>xMaKontrol(xMaTip100, source_100, length6a)]
 
 kPeryod = (timeframe.period == "1S" or timeframe.period == "5S") ? "5S" : timeframe.period == "10S" ? "10S" : timeframe.period == "15S" ? "15S" : timeframe.period == "30S" ? "30S" : "1"
 kMetin =  (timeframe.period == "1S" or timeframe.period == "5S") ? "5s" : timeframe.period == "10S" ? "10s" : timeframe.period == "15S" ? "15s" : timeframe.period == "30S" ? "30s" : "1d"
 
 
-[t00,r00] = request.security(syminfo.tickerid, kPeryod, customFunc()) 
-[t01,r01] = request.security(syminfo.tickerid, "1", customFunc()) 
-[t02,r02] = request.security(syminfo.tickerid, "5", customFunc())
-[t03,r03] = request.security(syminfo.tickerid, "15", customFunc())
-[t04,r04] = request.security(syminfo.tickerid, "20", customFunc())
-[t05,r05] = request.security(syminfo.tickerid, "30", customFunc())
-[t06,r06] = request.security(syminfo.tickerid, "60", customFunc())
-[t07,r07] = request.security(syminfo.tickerid, "120", customFunc())
-[t08,r08] = request.security(syminfo.tickerid, "180", customFunc())
-[t09,r09] = request.security(syminfo.tickerid, "240", customFunc())
-[t10,r10] = request.security(syminfo.tickerid, "D", customFunc())
-[t11,r11] = request.security(syminfo.tickerid, "3D", customFunc())
-[t12,r12] = request.security(syminfo.tickerid, "W", customFunc())
-[t13,r13] = request.security(syminfo.tickerid, "M", customFunc())
+[t00,r00,o00,u00] = request.security(syminfo.tickerid, kPeryod, customFunc()) 
+[t01,r01,o01,u01] = request.security(syminfo.tickerid, "1", customFunc()) 
+[t02,r02,o02,u02] = request.security(syminfo.tickerid, "3", customFunc())
+[t03,r03,o03,u03] = request.security(syminfo.tickerid, "5", customFunc())
+[t04,r04,o04,u04] = request.security(syminfo.tickerid, "15", customFunc())
+[t05,r05,o05,u05] = request.security(syminfo.tickerid, "20", customFunc())
+[t06,r06,o06,u06] = request.security(syminfo.tickerid, "30", customFunc())
+[t07,r07,o07,u07] = request.security(syminfo.tickerid, "60", customFunc())
+[t08,r08,o08,u08] = request.security(syminfo.tickerid, "120", customFunc())
+[t09,r09,o09,u09] = request.security(syminfo.tickerid, "180", customFunc())
+[t10,r10,o10,u10] = request.security(syminfo.tickerid, "240", customFunc())
+[t11,r11,o11,u11] = request.security(syminfo.tickerid, "D", customFunc())
+[t12,r12,o12,u12] = request.security(syminfo.tickerid, "3D", customFunc())
+[t13,r13,o13,u13] = request.security(syminfo.tickerid, "W", customFunc())
+[t14,r14,o14,u14] = request.security(syminfo.tickerid, "M", customFunc())
 
 
 
-var table tblDetay = table.new(position.top_right, 14, 2, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
-table.clear(tblDetay, 0, 0, 13, 1)
+var table tblDetay = table.new(position.top_right, 15, 2, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
+table.clear(tblDetay, 0, 0, 14, 1)
 
-var table tblMobil = table.new(position.bottom_left, 2, 14, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
-table.clear(tblMobil, 0, 0, 1, 13)
+var table tblMobil = table.new(position.bottom_left, 2, 15, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
+table.clear(tblMobil, 0, 0, 1, 14)
 
 
 
@@ -945,66 +970,70 @@ if barstate.islast
         table.cell(tblPanoMobil, 0, 11, tAdx , text_color = color.black, text_size = tsize, bgcolor=myColorAdx)
 
     if acTablo
-        table.cell(tblDetay, 0, 0, kMetin , text_color = color.yellow, text_size = size.normal, bgcolor=t00  )
-        table.cell(tblDetay, 1, 0, "1d", text_color = color.yellow, text_size = size.normal, bgcolor=t01 )
-        table.cell(tblDetay, 2, 0, "5d", text_color = color.yellow, text_size = size.normal, bgcolor=t02  )
-        table.cell(tblDetay, 3, 0, "15d", text_color = color.yellow, text_size = size.normal, bgcolor=t03 )
-        table.cell(tblDetay, 4, 0, "20d", text_color = color.yellow, text_size = size.normal, bgcolor=t04 )
-        table.cell(tblDetay, 5, 0, "30d", text_color = color.yellow, text_size = size.normal, bgcolor=t04  )
-        table.cell(tblDetay, 6, 0, "1S", text_color = color.yellow, text_size = size.normal, bgcolor=t05  )
-        table.cell(tblDetay, 7, 0, "2S", text_color = color.yellow, text_size = size.normal, bgcolor=t06 )
-        table.cell(tblDetay, 8, 0, "3S", text_color = color.yellow, text_size = size.normal, bgcolor=t07  )
-        table.cell(tblDetay, 9, 0, "4S", text_color = color.yellow, text_size = size.normal, bgcolor=t08 )
-        table.cell(tblDetay, 10, 0, "1G", text_color = color.yellow, text_size = size.normal, bgcolor=t09  )
-        table.cell(tblDetay, 11, 0, "3G", text_color = color.yellow, text_size = size.normal, bgcolor=t10  )
-        table.cell(tblDetay, 12, 0, "1H", text_color = color.yellow, text_size = size.normal, bgcolor=t11  )
-        table.cell(tblDetay, 13, 0, "1A", text_color = color.yellow, text_size = size.normal, bgcolor=t12  )
+        table.cell(tblDetay, 0, 0, kMetin , text_color = color.yellow, text_size = size.normal, bgcolor=o00 ? #FF5252 : u00 ? #006400 : #880e4f   )
+        table.cell(tblDetay, 1, 0, "1d", text_color = color.yellow, text_size = size.normal, bgcolor=o01 ? #FF5252 : u01 ? #006400 : #880e4f  )
+        table.cell(tblDetay, 2, 0, "3d", text_color = color.yellow, text_size = size.normal, bgcolor=o02 ? #FF5252 : u02 ? #006400 : #880e4f   )
+        table.cell(tblDetay, 3, 0, "5d", text_color = color.yellow, text_size = size.normal, bgcolor=o03 ? #FF5252 : u03 ? #006400 : #880e4f   )
+        table.cell(tblDetay, 4, 0, "15d", text_color = color.yellow, text_size = size.normal, bgcolor=o04 ? #FF5252 : u04 ? #006400 : #880e4f  )
+        table.cell(tblDetay, 5, 0, "20d", text_color = color.yellow, text_size = size.normal, bgcolor=o05 ? #FF5252 : u05 ? #006400 : #880e4f  )
+        table.cell(tblDetay, 6, 0, "30d", text_color = color.yellow, text_size = size.normal, bgcolor=o06 ? #FF5252 : u06 ? #006400 : #880e4f   )
+        table.cell(tblDetay, 7, 0, "1S", text_color = color.yellow, text_size = size.normal, bgcolor=o07 ? #FF5252 : u07 ? #006400 : #880e4f  )
+        table.cell(tblDetay, 8, 0, "2S", text_color = color.yellow, text_size = size.normal, bgcolor=o08 ? #FF5252 : u08 ? #006400 : #880e4f )
+        table.cell(tblDetay, 9, 0, "3S", text_color = color.yellow, text_size = size.normal, bgcolor=o09 ? #FF5252 : u09 ? #006400 : #880e4f   )
+        table.cell(tblDetay, 10, 0, "4S", text_color = color.yellow, text_size = size.normal, bgcolor=o10 ? #FF5252 : u10 ? #006400 : #880e4f  )
+        table.cell(tblDetay, 11, 0, "1G", text_color = color.yellow, text_size = size.normal, bgcolor=o11 ? #FF5252 : u11 ? #006400 : #880e4f   )
+        table.cell(tblDetay, 12, 0, "3G", text_color = color.yellow, text_size = size.normal, bgcolor=o12 ? #FF5252 : u12 ? #006400 : #880e4f   )
+        table.cell(tblDetay, 13, 0, "1H", text_color = color.yellow, text_size = size.normal, bgcolor=o13 ? #FF5252 : u13 ? #006400 : #880e4f   )
+        table.cell(tblDetay, 14, 0, "1A", text_color = color.yellow, text_size = size.normal, bgcolor=o14 ? #FF5252 : u14 ? #006400 : #880e4f   )
 
         table.cell(tblDetay, 0, 1, r00 , text_color = color.yellow, text_size = size.normal, bgcolor=t00  )
         table.cell(tblDetay, 1, 1, r01, text_color = color.yellow, text_size = size.normal, bgcolor=t01 )
         table.cell(tblDetay, 2, 1, r02, text_color = color.yellow, text_size = size.normal, bgcolor=t02  )
         table.cell(tblDetay, 3, 1, r03, text_color = color.yellow, text_size = size.normal, bgcolor=t03  )
         table.cell(tblDetay, 4, 1, r04, text_color = color.yellow, text_size = size.normal, bgcolor=t04  )
-        table.cell(tblDetay, 5, 1, r05, text_color = color.yellow, text_size = size.normal, bgcolor=t04  )
-        table.cell(tblDetay, 6, 1, r06, text_color = color.yellow, text_size = size.normal, bgcolor=t05  )
-        table.cell(tblDetay, 7, 1, r07, text_color = color.yellow, text_size = size.normal, bgcolor=t06  )
-        table.cell(tblDetay, 8, 1, r08, text_color = color.yellow, text_size = size.normal, bgcolor=t07  )
-        table.cell(tblDetay, 9, 1, r09, text_color = color.yellow, text_size = size.normal, bgcolor=t08  )
-        table.cell(tblDetay, 10, 1, r10, text_color = color.yellow, text_size = size.normal, bgcolor=t09  )
-        table.cell(tblDetay, 11, 1, r11, text_color = color.yellow, text_size = size.normal, bgcolor=t10  )
-        table.cell(tblDetay, 12, 1, r12, text_color = color.yellow, text_size = size.normal, bgcolor=t11  )
-        table.cell(tblDetay, 13, 1, r13, text_color = color.yellow, text_size = size.normal, bgcolor=t12  )
+        table.cell(tblDetay, 5, 1, r05, text_color = color.yellow, text_size = size.normal, bgcolor=t05  )
+        table.cell(tblDetay, 6, 1, r06, text_color = color.yellow, text_size = size.normal, bgcolor=t06  )
+        table.cell(tblDetay, 7, 1, r07, text_color = color.yellow, text_size = size.normal, bgcolor=t07  )
+        table.cell(tblDetay, 8, 1, r08, text_color = color.yellow, text_size = size.normal, bgcolor=t08  )
+        table.cell(tblDetay, 9, 1, r09, text_color = color.yellow, text_size = size.normal, bgcolor=t09  )
+        table.cell(tblDetay, 10, 1, r10, text_color = color.yellow, text_size = size.normal, bgcolor=t10  )
+        table.cell(tblDetay, 11, 1, r11, text_color = color.yellow, text_size = size.normal, bgcolor=t11  )
+        table.cell(tblDetay, 12, 1, r12, text_color = color.yellow, text_size = size.normal, bgcolor=t12  )
+        table.cell(tblDetay, 13, 1, r13, text_color = color.yellow, text_size = size.normal, bgcolor=t13  )
+        table.cell(tblDetay, 14, 1, r14, text_color = color.yellow, text_size = size.normal, bgcolor=t14  )
         
     if acTabloMobil    
-        table.cell(tblMobil, 0, 0, kMetin , text_color = color.yellow, text_size = size.small, bgcolor=t00  )
-        table.cell(tblMobil, 0, 1, "1d", text_color = color.yellow, text_size = size.small, bgcolor=t01  )
-        table.cell(tblMobil, 0, 2, "5d", text_color = color.yellow, text_size = size.small, bgcolor=t02  )
-        table.cell(tblMobil, 0, 3, "15d", text_color = color.yellow, text_size = size.small, bgcolor=t03  )
-        table.cell(tblMobil, 0, 4, "20d", text_color = color.yellow, text_size = size.small, bgcolor=t04  )
-        table.cell(tblMobil, 0, 5, "30d", text_color = color.yellow, text_size = size.small, bgcolor=t04)
-        table.cell(tblMobil, 0, 6, "1S", text_color = color.yellow, text_size = size.small, bgcolor=t05  )
-        table.cell(tblMobil, 0, 7, "2S", text_color = color.yellow, text_size = size.small, bgcolor=t06  )
-        table.cell(tblMobil, 0, 8, "3S", text_color = color.yellow, text_size = size.small, bgcolor=t07  )
-        table.cell(tblMobil, 0, 9, "4S", text_color = color.yellow, text_size = size.small, bgcolor=t08  )
-        table.cell(tblMobil, 0, 10, "1G", text_color = color.yellow, text_size = size.small, bgcolor=t09  )
-        table.cell(tblMobil, 0, 11, "3G", text_color = color.yellow, text_size = size.small, bgcolor=t10 )
-        table.cell(tblMobil, 0, 12, "1H", text_color = color.yellow, text_size = size.small, bgcolor=t11  )
-        table.cell(tblMobil, 0, 13, "1A", text_color = color.yellow, text_size = size.small, bgcolor=t12  )
+        table.cell(tblMobil, 0, 0, kMetin , text_color = color.yellow, text_size = size.small, bgcolor=o00 ? #FF5252 : u00 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 1, "1d", text_color = color.yellow, text_size = size.small, bgcolor=o01 ? #FF5252 : u01 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 2, "3d", text_color = color.yellow, text_size = size.small, bgcolor=o02 ? #FF5252 : u02 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 3, "5d", text_color = color.yellow, text_size = size.small, bgcolor=o03 ? #FF5252 : u03 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 4, "15d", text_color = color.yellow, text_size = size.small, bgcolor=o04 ? #FF5252 : u04 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 5, "20d", text_color = color.yellow, text_size = size.small, bgcolor=o05 ? #FF5252 : u05 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 6, "30d", text_color = color.yellow, text_size = size.small, bgcolor=o06 ? #FF5252 : u06 ? #006400 : #880e4f )
+        table.cell(tblMobil, 0, 7, "1S", text_color = color.yellow, text_size = size.small, bgcolor=o07 ? #FF5252 : u07 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 8, "2S", text_color = color.yellow, text_size = size.small, bgcolor=o08 ? #FF5252 : u08 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 9, "3S", text_color = color.yellow, text_size = size.small, bgcolor=o08 ? #FF5252 : u09 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 10, "4S", text_color = color.yellow, text_size = size.small, bgcolor=o10 ? #FF5252 : u10 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 11, "1G", text_color = color.yellow, text_size = size.small, bgcolor=o11 ? #FF5252 : u11 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 12, "3G", text_color = color.yellow, text_size = size.small, bgcolor=o12 ? #FF5252 : u12 ? #006400 : #880e4f  )
+        table.cell(tblMobil, 0, 13, "1H", text_color = color.yellow, text_size = size.small, bgcolor=o13 ? #FF5252 : u13 ? #006400 : #880e4f   )
+        table.cell(tblMobil, 0, 14, "1A", text_color = color.yellow, text_size = size.small, bgcolor=o14 ? #FF5252 : u14 ? #006400 : #880e4f   )
 
         table.cell(tblMobil, 1, 0, r00 , text_color = color.yellow, text_size = size.small, bgcolor=t00  )
         table.cell(tblMobil, 1, 1, r01, text_color = color.yellow, text_size = size.small, bgcolor=t01  )
         table.cell(tblMobil, 1, 2, r02, text_color = color.yellow, text_size = size.small, bgcolor=t02  )
         table.cell(tblMobil, 1, 3, r03, text_color = color.yellow, text_size = size.small, bgcolor=t03  )
         table.cell(tblMobil, 1, 4, r04, text_color = color.yellow, text_size = size.small, bgcolor=t04  )
-        table.cell(tblMobil, 1, 5, r05, text_color = color.yellow, text_size = size.small, bgcolor=t04  )
-        table.cell(tblMobil, 1, 6, r06, text_color = color.yellow, text_size = size.small, bgcolor=t05 )
-        table.cell(tblMobil, 1, 7, r07, text_color = color.yellow, text_size = size.small, bgcolor=t06 )
-        table.cell(tblMobil, 1, 8, r08, text_color = color.yellow, text_size = size.small, bgcolor=t07  )
-        table.cell(tblMobil, 1, 9, r09, text_color = color.yellow, text_size = size.small, bgcolor=t08 )
-        table.cell(tblMobil, 1, 10, r10, text_color = color.yellow, text_size = size.small, bgcolor=t09  )
-        table.cell(tblMobil, 1, 11, r11, text_color = color.yellow, text_size = size.small, bgcolor=t10  )
-        table.cell(tblMobil, 1, 12, r12, text_color = color.yellow, text_size = size.small, bgcolor=t11 )
-        table.cell(tblMobil, 1, 13, r13, text_color = color.yellow, text_size = size.small, bgcolor=t12  )
+        table.cell(tblMobil, 1, 5, r05, text_color = color.yellow, text_size = size.small, bgcolor=t05  )
+        table.cell(tblMobil, 1, 6, r06, text_color = color.yellow, text_size = size.small, bgcolor=t06 )
+        table.cell(tblMobil, 1, 7, r07, text_color = color.yellow, text_size = size.small, bgcolor=t07 )
+        table.cell(tblMobil, 1, 8, r08, text_color = color.yellow, text_size = size.small, bgcolor=t08  )
+        table.cell(tblMobil, 1, 9, r09, text_color = color.yellow, text_size = size.small, bgcolor=t09 )
+        table.cell(tblMobil, 1, 10, r10, text_color = color.yellow, text_size = size.small, bgcolor=t10  )
+        table.cell(tblMobil, 1, 11, r11, text_color = color.yellow, text_size = size.small, bgcolor=t11  )
+        table.cell(tblMobil, 1, 12, r12, text_color = color.yellow, text_size = size.small, bgcolor=t12 )
+        table.cell(tblMobil, 1, 13, r13, text_color = color.yellow, text_size = size.small, bgcolor=t13  )
+        table.cell(tblMobil, 1, 14, r14, text_color = color.yellow, text_size = size.small, bgcolor=t14  )
 
 
 
