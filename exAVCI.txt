@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI - V1.1.10", overlay=true)
+indicator(title ="exAVCI - V1.1.11", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -612,8 +612,8 @@ plotshape(acREIsaretler_1S and myRsi_1S < myEma_1S, title ='R/E İşaret', text=
 
 acBoyama = input(defval = false, title = 'Boyama Gözüksün mü?', group="Boyama Bölümü")   
 
-string boyaBir = input.string(defval = "xMA100", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum"] , group="Boyama Bölümü")
-string boyaIki = input.string(defval = "xMA377", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum"] , group="Boyama Bölümü")
+string boyaBir = input.string(defval = "xMA100", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377", "xMum", "Rsi/Ema Çizgisi"] , group="Boyama Bölümü")
+string boyaIki = input.string(defval = "xMA377", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="Boyama Bölümü")
 
 myRenkBir = input.color(color.new(color.lime, 50) , "Birinci Sınır Renk", group="Boyama Bölümü") 
 myRenkIki = input.color(color.new(#FF0000, 50), "İkinci Sınır Renk", group="Boyama Bölümü") 
@@ -624,6 +624,7 @@ float ba1 = switch boyaBir
 	"xMA100" => xMA_100
 	"xMA200" => xMA_377
 	"xMum" => close
+	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
 
 float ma1 = switch boyaBir
 	"xMA13" => xMA_13Src
@@ -631,6 +632,7 @@ float ma1 = switch boyaBir
 	"xMA100" => xMA_100Src
 	"xMA200" => xMA_377Src
 	"xMum" => close
+	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
 	
 ilk = plot(acBoyama ? ma1 : na, color = color.new(color.white, 100))
 
@@ -640,6 +642,7 @@ float ba2 = switch boyaIki
 	"xMA100" => xMA_100
 	"xMA377" => xMA_377
 	"xMum" => close
+	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
 
 float ma2 = switch boyaIki
 	"xMA13" => xMA_13Src
@@ -647,6 +650,7 @@ float ma2 = switch boyaIki
 	"xMA100" => xMA_100Src
 	"xMA377" => xMA_377Src
 	"xMum" => close
+	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
 
 son = plot(acBoyama ? ma2 : na, color = color.new(color.white, 100))
 
@@ -659,8 +663,8 @@ fill(ilk, son , title = 'Birinci Bölge', color = myBoya, fillgaps = true, trans
 
 acBoyama2 = input(defval = false, title = 'Boyama Gözüksün mü?', group="2. Boyama Bölümü")   
 
-string boyaBir2 = input.string(defval = "xMA13", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum"] , group="2. Boyama Bölümü")
-string boyaIki2 = input.string(defval = "xMA21", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum"] , group="2. Boyama Bölümü")
+string boyaBir2 = input.string(defval = "xMA13", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="2. Boyama Bölümü")
+string boyaIki2 = input.string(defval = "xMA21", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="2. Boyama Bölümü")
 
 myRenkBir2 = input.color(color.new(color.lime, 0) , "Birinci Sınır Renk", group="2. Boyama Bölümü") 
 myRenkIki2 = input.color(color.new(#FF0000, 0), "İkinci Sınır Renk", group="2. Boyama Bölümü") 
@@ -671,6 +675,7 @@ float ba12 = switch boyaBir2
 	"xMA100" => xMA_100
 	"xMA377" => xMA_377
 	"xMum" => close
+	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
 
 float ma12 = switch boyaBir2
 	"xMA13" => xMA_13Src
@@ -678,6 +683,7 @@ float ma12 = switch boyaBir2
 	"xMA100" => xMA_100Src
 	"xMA377" => xMA_377Src
 	"xMum" => close
+	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
 	
 ilk2 = plot(acBoyama2  ? ma12 : na, color = color.new(color.white, 100))
 
@@ -687,6 +693,7 @@ float ba22 = switch boyaIki2
 	"xMA100" => xMA_100
 	"xMA377" => xMA_377
 	"xMum" => close
+	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
 
 float ma22 = switch boyaIki2
 	"xMA13" => xMA_13Src
@@ -694,6 +701,7 @@ float ma22 = switch boyaIki2
 	"xMA100" => xMA_100Src
 	"xMA377" => xMA_377Src
 	"xMum" => close
+	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
 
 son2 = plot(acBoyama2 ? ma22 : na, color = color.new(color.white, 100))
 
