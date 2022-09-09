@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI - V1.1.11", overlay=true)
+indicator(title ="exAVCI - V1.1.12", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -49,6 +49,7 @@ acTabloMobil = input(defval = false, title = 'RSI Tablosu, Mobil Gösterilsin mi
 
 
 acAltinCizgi = input(defval = true, title = 'Altın Cizgisi Gözüksün mü?', group="Altın Çizgi Ayarları") 
+acAltinKesmeIsareti = input(defval = false, title = 'Altın Cizgisi Aşağı Kesme İşareti Gözüksün mü?', group="Altın Çizgi Ayarları") 
 
 
 //TimeFrame
@@ -141,6 +142,13 @@ downward := filt < filt[1] ? nz(downward[1]) + 1 : filt > filt[1] ? 0 : nz(downw
 fColour = color.new(color.orange,0) 
 filtcolor = upward > 0 ? color.new(color.lime,0) : downward > 0 ? color.new(#ff0000,0) : color.new(color.orange,0)
 filtplot = plot(filt and acAltinCizgi ? filt : na, color=filtcolor, linewidth=3, title='Altın Cizgisi',style = plot.style_stepline, trackprice=false)
+
+
+
+// Altin Çizgisi Kesme İşareti Bölümü
+kesAaltinCizgi =  ta.crossunder(close , filt) 
+plotshape(kesAaltinCizgi and acAltinKesmeIsareti ? kesAaltinCizgi : na ,title ='Aşağı Kesti Altın Çizgi', text='', style=shape.triangledown , location=location.top, color=#FF5252, offset=0, size=size.normal)
+alertcondition(kesAaltinCizgi , title = "SAT Aşağı Kesti Altın Çizgi", message = 'SAT Aşağı Kesti Altın Çizgi {{ticker}}, FİYAT={{close}}')
 
 
 //nQQE 
@@ -345,25 +353,25 @@ xMaYLocation = location.belowbar
 acxMaKesmeler = input(defval = true, title = 'xMA Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaAKesmeler = input(defval = true, title = 'xMA Aşağı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaYKesmeler = input(defval = true, title = 'xMA Yukarı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa13AKesmeler = input(defval = false, title = 'xMA13 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa13YKesmeler = input(defval = false, title = 'xMA13 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+//acxMa13AKesmeler = input(defval = false, title = 'xMA13 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+//acxMa13YKesmeler = input(defval = false, title = 'xMA13 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa21AKesmeler = input(defval = false, title = 'xMA21 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa21YKesmeler = input(defval = false, title = 'xMA21 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa100AKesmeler = input(defval = false, title = 'xMA100 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa100YKesmeler = input(defval = true, title = 'xMA100 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa377AKesmeler = input(defval = false, title = 'xMA377 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa377YKesmeler = input(defval = false, title = 'xMA377 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+//acxMa377AKesmeler = input(defval = false, title = 'xMA377 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+//acxMa377YKesmeler = input(defval = false, title = 'xMA377 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 
-plotshape(kesAxMA_13 and acxMaKesmeler and acxMaAKesmeler and acxMa13AKesmeler ? kesAxMA_13 : na ,title ='xMa13 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_13_Color, offset=0, size=xMaASize)
+//plotshape(kesAxMA_13 and acxMaKesmeler and acxMaAKesmeler and acxMa13AKesmeler ? kesAxMA_13 : na ,title ='xMa13 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_13_Color, offset=0, size=xMaASize)
 plotshape(kesAxMA_21 and acxMaKesmeler and acxMaAKesmeler and acxMa21AKesmeler ? kesAxMA_21 : na ,title ='xMa21 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_21_Color, offset=0, size=xMaASize)
 plotshape(kesAxMA_100 and acxMaKesmeler and acxMaAKesmeler and acxMa100AKesmeler ? kesAxMA_100 : na ,title ='xMa100 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_100_Color, offset=0, size=xMaASize)
-plotshape(kesAxMA_377 and acxMaKesmeler and acxMaAKesmeler and acxMa377AKesmeler ? kesAxMA_377 : na ,title ='xMa377 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_377_Color, offset=0, size=xMaASize)
+//plotshape(kesAxMA_377 and acxMaKesmeler and acxMaAKesmeler and acxMa377AKesmeler ? kesAxMA_377 : na ,title ='xMa377 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_377_Color, offset=0, size=xMaASize)
 
-plotshape(kesYxMA_13 and acxMaKesmeler and acxMaYKesmeler and acxMa13YKesmeler ? kesYxMA_13 : na ,title ='xMa13 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_13_Color, offset=0, size=xMaYSize)
+//plotshape(kesYxMA_13 and acxMaKesmeler and acxMaYKesmeler and acxMa13YKesmeler ? kesYxMA_13 : na ,title ='xMa13 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_13_Color, offset=0, size=xMaYSize)
 plotshape(kesYxMA_21 and acxMaKesmeler and acxMaYKesmeler and acxMa21YKesmeler ? kesYxMA_21 : na ,title ='xMa21 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_21_Color, offset=0, size=xMaYSize)
-plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=location.bottom, color=#FF5252, offset=0, size=xMaYSize)
+plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=location.bottom, color=color.lime, offset=0, size=xMaYSize)
 //plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_100_Color, offset=0, size=xMaYSize)
-plotshape(kesYxMA_377 and acxMaKesmeler and acxMaYKesmeler and acxMa377YKesmeler ? kesYxMA_377 : na ,title ='xMa377 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_377_Color, offset=0, size=xMaYSize)
+//plotshape(kesYxMA_377 and acxMaKesmeler and acxMaYKesmeler and acxMa377YKesmeler ? kesYxMA_377 : na ,title ='xMa377 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_377_Color, offset=0, size=xMaYSize)
 
 
 
