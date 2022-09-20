@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI - V1.1.12", overlay=true)
+indicator(title ="exAVCI Sade - V1.1.13", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -14,7 +14,7 @@ src = input.source(close, "Kaynak", group="Kaynak Çeşitleri")
 
 acxMaCizgisi = input(defval = true, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
 
-acxMa13Cizgisi = input(defval = false, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA13 Çizgisi")   
+acxMa13Cizgisi = input(defval = true, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA13 Çizgisi")   
 
 acxMa21Cizgisi = input(defval = true, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA21 Çizgisi")   
 acMumRenk21 = input(true, title='xMA21 Çizgisi (Adx ve Efi ile) Renklensin mi?', group="xMA21 Çizgisi")
@@ -32,24 +32,20 @@ acMumRenk200 = input.bool(true, title='xMA377 Çizgisi (Altın ve nQQE ile) Renk
 
 // Fibo Ayarları
 acFiboLines = input(defval = true, title = 'Fibo Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
-acFlUst = input(defval = false, title = 'Fibo Üst Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
+acFlUst = input(defval = true, title = 'Fibo Üst Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlOrta = input(defval = true, title = 'Fibo Orta Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
-acFlAlt = input(defval = false, title = 'Fibo Alt Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
+acFlAlt = input(defval = true, title = 'Fibo Alt Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 fibLen = input(defval = 200, title = 'Fibo Hesaplama Mum Sayısı', group="Fibo Ayarları")  
-acFkes = input(defval = false, title = 'Fibo Kesmeleri (Sarı ve Turuncu) Gözüksün mü?', group="Fibo Ayarları")   
+acFkes = input(defval = false, title = 'Fibo Kesmeleri (Turuncu) Gözüksün mü?', group="Fibo Ayarları")   
 
 
 //Tablo
 acTabloPanoOzet = input(defval = true, title = 'Direnç, Destek ve Fiyat Tablosu Gösterilsin mi?', group="Tablo Ayarları")  
 acTabloPanoMobil = input(defval = false, title = 'Direnç, Destek ve Fiyat Tablosu Mobil Gösterilsin mi?', group="Tablo Ayarları")  
 
-acTablo = input(defval = true, title = 'RSI Tablosu, Gösterilsin mi?', group="Tablo Ayarları")  
-acTabloMobil = input(defval = false, title = 'RSI Tablosu, Mobil Gösterilsin mi?', group="Tablo Ayarları")  
 
-
-
-acAltinCizgi = input(defval = true, title = 'Altın Cizgisi Gözüksün mü?', group="Altın Çizgi Ayarları") 
-acAltinKesmeIsareti = input(defval = false, title = 'Altın Cizgisi Aşağı Kesme İşareti Gözüksün mü?', group="Altın Çizgi Ayarları") 
+acAltinCizgi = input(defval = false, title = 'Altın Cizgisi Gözüksün mü?', group="Altın Çizgi Ayarları") 
+//acAltinKesmeIsareti = input(defval = false, title = 'Altın Cizgisi Aşağı Kesme İşareti Gözüksün mü?', group="Altın Çizgi Ayarları") 
 
 
 //TimeFrame
@@ -147,8 +143,8 @@ filtplot = plot(filt and acAltinCizgi ? filt : na, color=filtcolor, linewidth=3,
 
 // Altin Çizgisi Kesme İşareti Bölümü
 kesAaltinCizgi =  ta.crossunder(close , filt) 
-plotshape(kesAaltinCizgi and acAltinKesmeIsareti ? kesAaltinCizgi : na ,title ='Aşağı Kesti Altın Çizgi', text='', style=shape.triangledown , location=location.top, color=#FF5252, offset=0, size=size.normal)
-alertcondition(kesAaltinCizgi , title = "SAT Aşağı Kesti Altın Çizgi", message = 'SAT Aşağı Kesti Altın Çizgi {{ticker}}, FİYAT={{close}}')
+//plotshape(kesAaltinCizgi and acAltinKesmeIsareti ? kesAaltinCizgi : na ,title ='Aşağı Kesti Altın Çizgi', text='', style=shape.triangledown , location=location.top, color=#FF5252, offset=0, size=size.tiny)
+//alertcondition(kesAaltinCizgi , title = "SAT Aşağı Kesti Altın Çizgi", message = 'SAT Aşağı Kesti Altın Çizgi {{ticker}}, FİYAT={{close}}')
 
 
 //nQQE 
@@ -273,13 +269,13 @@ myMFI = ta.mfi(srcMFI, lengthMFI)
 
 
 
-xMA_13_Color = color.new(color.lime, 0)
+xMA_13_Color = color.new(color.yellow, 0)
 xMA_21_Color = color.new(color.white, 0)
 xMA_100_Color = color.new(color.lime, 0)
 xMA_377_Color = color.new(color.white, 0)
 
 
-xMA_13_Color_koyu = color.new(color.lime, 50)
+xMA_13_Color_koyu = color.new(color.yellow, 1)
 xMA_21_Color_koyu = color.new(#ff0000, 0)
 xMA_100_Color_koyu = color.new(#ff0000, 0)
 xMA_377_Color_koyu = color.new(color.white, 50)
@@ -332,7 +328,7 @@ kesAxMA_377 = ta.crossunder(src , xMA_377Src)
 
 kesYxMA_13 = ta.crossover(src , xMA_13Src) 
 kesYxMA_21 = ta.crossover(src , xMA_21Src) 
-kesYxMA_100 = ta.crossover(high , xMA_100Src) 
+kesYxMA_100 = ta.crossover(src , xMA_100Src) 
 kesYxMA_377 = ta.crossover(src , xMA_377Src) 
 
 
@@ -340,12 +336,12 @@ alertcondition(kesYxMA_100 , title = "AL xMA100 Yukarı Kesti", message = 'AL xM
 
 
 xMaAStyle = shape.triangledown
-xMaASize = size.normal
+xMaASize = size.small
 xMaAColor = color.red
 xMaALocation = location.abovebar
 
 xMaYStyle = shape.triangleup
-xMaYSize = size.normal
+xMaYSize = size.small
 xMaYColor = color.lime
 xMaYLocation = location.belowbar
 
@@ -353,25 +349,25 @@ xMaYLocation = location.belowbar
 acxMaKesmeler = input(defval = true, title = 'xMA Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaAKesmeler = input(defval = true, title = 'xMA Aşağı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaYKesmeler = input(defval = true, title = 'xMA Yukarı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
-//acxMa13AKesmeler = input(defval = false, title = 'xMA13 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-//acxMa13YKesmeler = input(defval = false, title = 'xMA13 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMa13AKesmeler = input(defval = true, title = 'xMA13 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMa13YKesmeler = input(defval = false, title = 'xMA13 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa21AKesmeler = input(defval = false, title = 'xMA21 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa21YKesmeler = input(defval = false, title = 'xMA21 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMa21YKesmeler = input(defval = true, title = 'xMA21 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa100AKesmeler = input(defval = false, title = 'xMA100 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa100YKesmeler = input(defval = true, title = 'xMA100 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-//acxMa377AKesmeler = input(defval = false, title = 'xMA377 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-//acxMa377YKesmeler = input(defval = false, title = 'xMA377 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMa377AKesmeler = input(defval = false, title = 'xMA377 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMa377YKesmeler = input(defval = false, title = 'xMA377 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 
-//plotshape(kesAxMA_13 and acxMaKesmeler and acxMaAKesmeler and acxMa13AKesmeler ? kesAxMA_13 : na ,title ='xMa13 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_13_Color, offset=0, size=xMaASize)
+plotshape(kesAxMA_13 and acxMaKesmeler and acxMaAKesmeler and acxMa13AKesmeler ? kesAxMA_13 : na ,title ='xMa13 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_13_Color, offset=0, size=xMaASize)
 plotshape(kesAxMA_21 and acxMaKesmeler and acxMaAKesmeler and acxMa21AKesmeler ? kesAxMA_21 : na ,title ='xMa21 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_21_Color, offset=0, size=xMaASize)
 plotshape(kesAxMA_100 and acxMaKesmeler and acxMaAKesmeler and acxMa100AKesmeler ? kesAxMA_100 : na ,title ='xMa100 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_100_Color, offset=0, size=xMaASize)
 //plotshape(kesAxMA_377 and acxMaKesmeler and acxMaAKesmeler and acxMa377AKesmeler ? kesAxMA_377 : na ,title ='xMa377 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_377_Color, offset=0, size=xMaASize)
 
-//plotshape(kesYxMA_13 and acxMaKesmeler and acxMaYKesmeler and acxMa13YKesmeler ? kesYxMA_13 : na ,title ='xMa13 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_13_Color, offset=0, size=xMaYSize)
+plotshape(kesYxMA_13 and acxMaKesmeler and acxMaYKesmeler and acxMa13YKesmeler ? kesYxMA_13 : na ,title ='xMa13 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_13_Color, offset=0, size=xMaYSize)
 plotshape(kesYxMA_21 and acxMaKesmeler and acxMaYKesmeler and acxMa21YKesmeler ? kesYxMA_21 : na ,title ='xMa21 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_21_Color, offset=0, size=xMaYSize)
-plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=location.bottom, color=color.lime, offset=0, size=xMaYSize)
-//plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_100_Color, offset=0, size=xMaYSize)
-//plotshape(kesYxMA_377 and acxMaKesmeler and acxMaYKesmeler and acxMa377YKesmeler ? kesYxMA_377 : na ,title ='xMa377 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_377_Color, offset=0, size=xMaYSize)
+//plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=location.bottom, color=color.lime, offset=0, size=size.tiny)
+plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_100_Color, offset=0, size=xMaYSize)
+plotshape(kesYxMA_377 and acxMaKesmeler and acxMaYKesmeler and acxMa377YKesmeler ? kesYxMA_377 : na ,title ='xMa377 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_377_Color, offset=0, size=xMaYSize)
 
 
 
@@ -473,30 +469,30 @@ plot(line2272_2 and acFiboLines and acFlAlt ? line2272_2 : na, title='-1.272', c
 
 // FİBO Turuncu ve Sarı Kesmeler
 
-kesYsari = ta.cross(src , line1000) 
+//kesYsari = ta.cross(src , line1000) 
 
 
-kesYturuncuY = ta.crossover(src , line0786) 
+//kesYturuncuY = ta.crossover(src , line0786) 
 kesYturuncuA = ta.crossunder(src , line0786) 
 
 
 kesAturuncuY = ta.crossover(src , line0236) 
-kesAturuncuA = ta.crossunder(src , line0236) 
+//kesAturuncuA = ta.crossunder(src , line0236) 
 
 
-kesAsari = ta.cross(src , line0000) 
+//kesAsari = ta.cross(src , line0000) 
 
 
 
-plotshape(acFkes ? kesYsari : na ,title ='Fibo Üst Sarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.yellow, 0), offset=0, size=xMaASize)
+//plotshape(acFkes ? kesYsari : na ,title ='Fibo Üst Sarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.yellow, 0), offset=0, size=xMaASize)
 
-plotshape(acFkes ? kesYturuncuY : na ,title ='Fibo Üst Turuncu Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.orange, 0), offset=0, size=xMaASize)
+//plotshape(acFkes ? kesYturuncuY : na ,title ='Fibo Üst Turuncu Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.orange, 0), offset=0, size=xMaASize)
 plotshape(acFkes ? kesYturuncuA : na ,title ='Fibo Üst Turuncu Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.orange, 0), offset=0, size=xMaASize)
 
 plotshape(acFkes  ? kesAturuncuY : na ,title ='Fibo Alt Turuncu Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.orange, 0), offset=0, size=xMaYSize)
-plotshape(acFkes  ? kesAturuncuA : na ,title ='Fibo Alt Turuncu Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.orange, 0), offset=0, size=xMaYSize)
+//plotshape(acFkes  ? kesAturuncuA : na ,title ='Fibo Alt Turuncu Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.orange, 0), offset=0, size=xMaYSize)
 
-plotshape(acFkes  ? kesAsari : na ,title ='Fibo Alt Sarı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.yellow, 0), offset=0, size=xMaYSize)
+//plotshape(acFkes  ? kesAsari : na ,title ='Fibo Alt Sarı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.yellow, 0), offset=0, size=xMaYSize)
 
 
 //alertcondition( ta.cross(src , line1000) , title = "Fibo Üst Sarı Kes", message = 'Fibo Üst Sarı Kes {{ticker}}, FİYAT={{close}}')
@@ -580,7 +576,7 @@ myL_1S = request.security(syminfo.tickerid, xMaMumKontrol(xReMum1), low)
 
 acRsiEmaLW_1S = input.int(defval = 3, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema Çizgisi Değerleri") 
 acRsiEma_1S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema Çizgisi Değerleri") 
-acREIsaretler_1S = input(defval = true, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema Çizgisi Değerleri") 
+acREIsaretler_1S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema Çizgisi Değerleri") 
 
 
 my4Y_1S = input.color(color.new(#00897B, 0)  , "Aşırı Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema Çizgisi Değerleri") 
@@ -618,12 +614,12 @@ plotshape(acREIsaretler_1S and myRsi_1S < myEma_1S, title ='R/E İşaret', text=
 
 //BOYAMALAR 1
 
-acBoyama = input(defval = false, title = 'Boyama Gözüksün mü?', group="Boyama Bölümü")   
+acBoyama = input(defval = true, title = 'Boyama Gözüksün mü?', group="Boyama Bölümü")   
 
-string boyaBir = input.string(defval = "xMA100", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377", "xMum", "Rsi/Ema Çizgisi"] , group="Boyama Bölümü")
-string boyaIki = input.string(defval = "xMA377", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="Boyama Bölümü")
+string boyaBir = input.string(defval = "Rsi/Ema Çizgisi", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377", "xMum", "Rsi/Ema Çizgisi"] , group="Boyama Bölümü")
+string boyaIki = input.string(defval = "xMA13", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="Boyama Bölümü")
 
-myRenkBir = input.color(color.new(color.lime, 50) , "Birinci Sınır Renk", group="Boyama Bölümü") 
+myRenkBir = input.color(color.new(color.lime, 100) , "Birinci Sınır Renk", group="Boyama Bölümü") 
 myRenkIki = input.color(color.new(#FF0000, 50), "İkinci Sınır Renk", group="Boyama Bölümü") 
 
 float ba1 = switch boyaBir
@@ -921,51 +917,15 @@ if src <= line1414_2
 
 
 
-renkVer(my1Close,my1RsiUzun) => 
-    my1Rsi = ta.rsi(my1Close,my1RsiUzun)
-    my1Rsi > acS ? rsiUstBarajRenk : my1Rsi < acAA ? rsiAltBarajRenk : rsiBarajArasiRenk
-
-//Formül
-customFunc() => [renkVer(close,myRsiUzunluk), str.tostring(math.round(ta.rsi(close,myRsiUzunluk)),"#"), ta.crossover(high,xMaKontrol(xMaTip100, source_100, length6a)), close>xMaKontrol(xMaTip100, source_100, length6a)]
-
-kPeryod = (timeframe.period == "1S" or timeframe.period == "5S") ? "5S" : timeframe.period == "10S" ? "10S" : timeframe.period == "15S" ? "15S" : timeframe.period == "30S" ? "30S" : "1"
-kMetin =  (timeframe.period == "1S" or timeframe.period == "5S") ? "5s" : timeframe.period == "10S" ? "10s" : timeframe.period == "15S" ? "15s" : timeframe.period == "30S" ? "30s" : "1d"
-
-
-[t00,r00,o00,u00] = request.security(syminfo.tickerid, kPeryod, customFunc()) 
-[t01,r01,o01,u01] = request.security(syminfo.tickerid, "1", customFunc()) 
-[t02,r02,o02,u02] = request.security(syminfo.tickerid, "3", customFunc())
-[t03,r03,o03,u03] = request.security(syminfo.tickerid, "5", customFunc())
-[t04,r04,o04,u04] = request.security(syminfo.tickerid, "15", customFunc())
-[t05,r05,o05,u05] = request.security(syminfo.tickerid, "20", customFunc())
-[t06,r06,o06,u06] = request.security(syminfo.tickerid, "30", customFunc())
-[t07,r07,o07,u07] = request.security(syminfo.tickerid, "60", customFunc())
-[t08,r08,o08,u08] = request.security(syminfo.tickerid, "120", customFunc())
-[t09,r09,o09,u09] = request.security(syminfo.tickerid, "180", customFunc())
-[t10,r10,o10,u10] = request.security(syminfo.tickerid, "240", customFunc())
-[t11,r11,o11,u11] = request.security(syminfo.tickerid, "D", customFunc())
-[t12,r12,o12,u12] = request.security(syminfo.tickerid, "3D", customFunc())
-[t13,r13,o13,u13] = request.security(syminfo.tickerid, "W", customFunc())
-[t14,r14,o14,u14] = request.security(syminfo.tickerid, "M", customFunc())
-
-
-
-var table tblDetay = table.new(position.top_right, 15, 2, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
-table.clear(tblDetay, 0, 0, 14, 1)
-
-var table tblMobil = table.new(position.bottom_left, 2, 15, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
-table.clear(tblMobil, 0, 0, 1, 14)
-
-
 
 
 if barstate.islast
 
     if acTabloPanoOzet or acTabloPanoMobil 
 
-        tsize = size.small
+        tsize = size.tiny
         if acTabloPanoOzet 
-            tsize := size.normal
+            tsize := size.small
 
         table.cell(tblPanoMobil, 0, 0, t_ust_b, text_color = color.white, text_size = tsize, bgcolor=color.teal)
         table.cell(tblPanoMobil, 0, 1, t_ust_d, text_color = color.white, text_size = tsize, bgcolor=t_ust_bc)
@@ -985,71 +945,6 @@ if barstate.islast
         table.cell(tblPanoMobil, 0, 10, "ADX", text_color = color.white, text_size = tsize, bgcolor=color.maroon)
         table.cell(tblPanoMobil, 0, 11, tAdx , text_color = color.black, text_size = tsize, bgcolor=myColorAdx)
 
-    if acTablo
-        table.cell(tblDetay, 0, 0, kMetin , text_color = color.yellow, text_size = size.normal, bgcolor=o00 ? #FF5252 : u00 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 1, 0, "1d", text_color = color.yellow, text_size = size.normal, bgcolor=o01 ? #FF5252 : u01 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 2, 0, "3d", text_color = color.yellow, text_size = size.normal, bgcolor=o02 ? #FF5252 : u02 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 3, 0, "5d", text_color = color.yellow, text_size = size.normal, bgcolor=o03 ? #FF5252 : u03 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 4, 0, "15d", text_color = color.yellow, text_size = size.normal, bgcolor=o04 ? #FF5252 : u04 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 5, 0, "20d", text_color = color.yellow, text_size = size.normal, bgcolor=o05 ? #FF5252 : u05 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 6, 0, "30d", text_color = color.yellow, text_size = size.normal, bgcolor=o06 ? #FF5252 : u06 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 7, 0, "1S", text_color = color.yellow, text_size = size.normal, bgcolor=o07 ? #FF5252 : u07 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 8, 0, "2S", text_color = color.yellow, text_size = size.normal, bgcolor=o08 ? #FF5252 : u08 ? #006400 : #880e4f )
-        table.cell(tblDetay, 9, 0, "3S", text_color = color.yellow, text_size = size.normal, bgcolor=o09 ? #FF5252 : u09 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 10, 0, "4S", text_color = color.yellow, text_size = size.normal, bgcolor=o10 ? #FF5252 : u10 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 11, 0, "1G", text_color = color.yellow, text_size = size.normal, bgcolor=o11 ? #FF5252 : u11 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 12, 0, "3G", text_color = color.yellow, text_size = size.normal, bgcolor=o12 ? #FF5252 : u12 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 13, 0, "1H", text_color = color.yellow, text_size = size.normal, bgcolor=o13 ? #FF5252 : u13 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 14, 0, "1A", text_color = color.yellow, text_size = size.normal, bgcolor=o14 ? #FF5252 : u14 ? #006400 : #880e4f   )
-
-        table.cell(tblDetay, 0, 1, r00 , text_color = color.yellow, text_size = size.normal, bgcolor=t00  )
-        table.cell(tblDetay, 1, 1, r01, text_color = color.yellow, text_size = size.normal, bgcolor=t01 )
-        table.cell(tblDetay, 2, 1, r02, text_color = color.yellow, text_size = size.normal, bgcolor=t02  )
-        table.cell(tblDetay, 3, 1, r03, text_color = color.yellow, text_size = size.normal, bgcolor=t03  )
-        table.cell(tblDetay, 4, 1, r04, text_color = color.yellow, text_size = size.normal, bgcolor=t04  )
-        table.cell(tblDetay, 5, 1, r05, text_color = color.yellow, text_size = size.normal, bgcolor=t05  )
-        table.cell(tblDetay, 6, 1, r06, text_color = color.yellow, text_size = size.normal, bgcolor=t06  )
-        table.cell(tblDetay, 7, 1, r07, text_color = color.yellow, text_size = size.normal, bgcolor=t07  )
-        table.cell(tblDetay, 8, 1, r08, text_color = color.yellow, text_size = size.normal, bgcolor=t08  )
-        table.cell(tblDetay, 9, 1, r09, text_color = color.yellow, text_size = size.normal, bgcolor=t09  )
-        table.cell(tblDetay, 10, 1, r10, text_color = color.yellow, text_size = size.normal, bgcolor=t10  )
-        table.cell(tblDetay, 11, 1, r11, text_color = color.yellow, text_size = size.normal, bgcolor=t11  )
-        table.cell(tblDetay, 12, 1, r12, text_color = color.yellow, text_size = size.normal, bgcolor=t12  )
-        table.cell(tblDetay, 13, 1, r13, text_color = color.yellow, text_size = size.normal, bgcolor=t13  )
-        table.cell(tblDetay, 14, 1, r14, text_color = color.yellow, text_size = size.normal, bgcolor=t14  )
-        
-    if acTabloMobil    
-        table.cell(tblMobil, 0, 0, kMetin , text_color = color.yellow, text_size = size.small, bgcolor=o00 ? #FF5252 : u00 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 1, "1d", text_color = color.yellow, text_size = size.small, bgcolor=o01 ? #FF5252 : u01 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 2, "3d", text_color = color.yellow, text_size = size.small, bgcolor=o02 ? #FF5252 : u02 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 3, "5d", text_color = color.yellow, text_size = size.small, bgcolor=o03 ? #FF5252 : u03 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 4, "15d", text_color = color.yellow, text_size = size.small, bgcolor=o04 ? #FF5252 : u04 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 5, "20d", text_color = color.yellow, text_size = size.small, bgcolor=o05 ? #FF5252 : u05 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 6, "30d", text_color = color.yellow, text_size = size.small, bgcolor=o06 ? #FF5252 : u06 ? #006400 : #880e4f )
-        table.cell(tblMobil, 0, 7, "1S", text_color = color.yellow, text_size = size.small, bgcolor=o07 ? #FF5252 : u07 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 8, "2S", text_color = color.yellow, text_size = size.small, bgcolor=o08 ? #FF5252 : u08 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 9, "3S", text_color = color.yellow, text_size = size.small, bgcolor=o08 ? #FF5252 : u09 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 10, "4S", text_color = color.yellow, text_size = size.small, bgcolor=o10 ? #FF5252 : u10 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 11, "1G", text_color = color.yellow, text_size = size.small, bgcolor=o11 ? #FF5252 : u11 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 12, "3G", text_color = color.yellow, text_size = size.small, bgcolor=o12 ? #FF5252 : u12 ? #006400 : #880e4f  )
-        table.cell(tblMobil, 0, 13, "1H", text_color = color.yellow, text_size = size.small, bgcolor=o13 ? #FF5252 : u13 ? #006400 : #880e4f   )
-        table.cell(tblMobil, 0, 14, "1A", text_color = color.yellow, text_size = size.small, bgcolor=o14 ? #FF5252 : u14 ? #006400 : #880e4f   )
-
-        table.cell(tblMobil, 1, 0, r00 , text_color = color.yellow, text_size = size.small, bgcolor=t00  )
-        table.cell(tblMobil, 1, 1, r01, text_color = color.yellow, text_size = size.small, bgcolor=t01  )
-        table.cell(tblMobil, 1, 2, r02, text_color = color.yellow, text_size = size.small, bgcolor=t02  )
-        table.cell(tblMobil, 1, 3, r03, text_color = color.yellow, text_size = size.small, bgcolor=t03  )
-        table.cell(tblMobil, 1, 4, r04, text_color = color.yellow, text_size = size.small, bgcolor=t04  )
-        table.cell(tblMobil, 1, 5, r05, text_color = color.yellow, text_size = size.small, bgcolor=t05  )
-        table.cell(tblMobil, 1, 6, r06, text_color = color.yellow, text_size = size.small, bgcolor=t06 )
-        table.cell(tblMobil, 1, 7, r07, text_color = color.yellow, text_size = size.small, bgcolor=t07 )
-        table.cell(tblMobil, 1, 8, r08, text_color = color.yellow, text_size = size.small, bgcolor=t08  )
-        table.cell(tblMobil, 1, 9, r09, text_color = color.yellow, text_size = size.small, bgcolor=t09 )
-        table.cell(tblMobil, 1, 10, r10, text_color = color.yellow, text_size = size.small, bgcolor=t10  )
-        table.cell(tblMobil, 1, 11, r11, text_color = color.yellow, text_size = size.small, bgcolor=t11  )
-        table.cell(tblMobil, 1, 12, r12, text_color = color.yellow, text_size = size.small, bgcolor=t12 )
-        table.cell(tblMobil, 1, 13, r13, text_color = color.yellow, text_size = size.small, bgcolor=t13  )
-        table.cell(tblMobil, 1, 14, r14, text_color = color.yellow, text_size = size.small, bgcolor=t14  )
 
 
 
