@@ -282,7 +282,7 @@ xMA_377_Color_koyu = color.new(color.white, 50)
 
 
 
-length1a = input(13, 'xMA 14', group="xMA13 Değerleri")
+length1a = input(14, 'xMA 13', group="xMA13 Değerleri")
 source_13 = input.source(defval=close, title='xMA 13 Kaynağı', group="xMA13 Değerleri")
 xMaMum13Src = xMaMumKontrol(xMAMum13)
 xMA_13 = xMaKontrol(xMaTip13, source_13, length1a) 
