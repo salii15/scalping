@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI Sade - V1.1.14", overlay=true)
+indicator(title ="exAVCI Sade - V1.1.15", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -346,15 +346,15 @@ xMaYColor = color.lime
 xMaYLocation = location.belowbar
 
 
-acxMaKesmeler = input(defval = false, title = 'xMA Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMaKesmeler = input(defval = true, title = 'xMA Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaAKesmeler = input(defval = true, title = 'xMA Aşağı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaYKesmeler = input(defval = true, title = 'xMA Yukarı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa13AKesmeler = input(defval = true, title = 'xMA13 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa13YKesmeler = input(defval = false, title = 'xMA13 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa21AKesmeler = input(defval = false, title = 'xMA21 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa21YKesmeler = input(defval = true, title = 'xMA21 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMa21YKesmeler = input(defval = false, title = 'xMA21 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa100AKesmeler = input(defval = false, title = 'xMA100 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa100YKesmeler = input(defval = true, title = 'xMA100 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMa100YKesmeler = input(defval = false, title = 'xMA100 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa377AKesmeler = input(defval = false, title = 'xMA377 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa377YKesmeler = input(defval = false, title = 'xMA377 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 
@@ -531,7 +531,8 @@ barcolor(acMumRenk ? color_1 : na)
 //IFTRSI
 
 acIFTRSIMumRenk = input(true, title='Mumlar IFTRSI Değerine Göre Renklensin mi?', group="IFTRSI Ayarları")
-acIFTRSIalSat = input(true, title='IFTRSI Değerine Göre AL-SAT işaretleri Gösterilsin mi?', group="IFTRSI Ayarları")
+acIFTRSIal = input(true, title='IFTRSI Değerine Göre AL işaretleri Gösterilsin mi?', group="IFTRSI Ayarları")
+acIFTRSIsat = input(false, title='IFTRSI Değerine Göre SAT işaretleri Gösterilsin mi?', group="IFTRSI Ayarları")
 
 
 wmalengthIFTRSI = input.int(9, title='Smoothing Length', group="IFTRSI Ayarları")
@@ -553,14 +554,15 @@ INV2 = (math.exp(2 * v22) - 1) / (math.exp(2 * v22) + 1)
 //rsiYukariKesRsi0 = ta.crossover(INV2 , 0.60)
 //rsiAsagiKesRsi0 = ta.crossunder(INV2 , 0.80)
 
-color_2  = INV2 < satAsagi ? cold1 : INV2 > alYukari ? colu1 : color.white
+//color_2  = INV2 < satAsagi ? cold1 : INV2 > alYukari ? colu1 : color.white
+color_2  = INV2 > alYukari ? colu1 : INV2 < alYukari ? cold1 : color.white
 barcolor(acIFTRSIMumRenk ? color_2 : na)
 
 rsiYukariKesRsi0 = ta.crossover(INV2 , alYukari)
 rsiAsagiKesRsi0 = ta.crossunder(INV2 , satAsagi)
 
-plotshape(acIFTRSIalSat and rsiYukariKesRsi0 ? rsiYukariKesRsi0 : na, text='', style=shape.triangleup, location=location.belowbar, color=color.new(color.lime, 0), offset=0, size=size.small)
-plotshape(acIFTRSIalSat and rsiAsagiKesRsi0 ? rsiAsagiKesRsi0 : na, text='', style=shape.triangledown, location=location.abovebar, color=color.new(#FF0000, 0), offset=0, size=size.small)
+plotshape(acIFTRSIal and rsiYukariKesRsi0 ? rsiYukariKesRsi0 : na, text='', style=shape.triangleup, location=location.belowbar, color=color.new(color.lime, 0), offset=0, size=size.small)
+plotshape(acIFTRSIsat and rsiAsagiKesRsi0 ? rsiAsagiKesRsi0 : na, text='', style=shape.triangledown, location=location.abovebar, color=color.new(#FF0000, 0), offset=0, size=size.small)
 
 //alertcondition(rsiYukariKesRsi0, title="IFTRSI AL", message='IFTRSI AL {{ticker}}, FİYAT={{close}}')
 //alertcondition(rsiAsagiKesRsi0, title="IFTRSI SAT", message='IFTRSI SAT {{ticker}}, FİYAT={{close}}')
@@ -651,13 +653,13 @@ plotshape(acREIsaretler_1S and myRsi_1S < myEma_1S, title ='R/E İşaret', text=
 
 //BOYAMALAR 1
 
-acBoyama = input(defval = false, title = 'Boyama Gözüksün mü?', group="Boyama Bölümü")   
+acBoyama = input(defval = false, title = 'Boyama Gözüksün mü?', group="1. Boyama Bölümü")   
 
-string boyaBir = input.string(defval = "xMA13", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377", "xMum", "Rsi/Ema Çizgisi"] , group="Boyama Bölümü")
-string boyaIki = input.string(defval = "xMA21", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="Boyama Bölümü")
+string boyaBir = input.string(defval = "xMA13", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377", "xMum", "Rsi/Ema Çizgisi"] , group="1. Boyama Bölümü")
+string boyaIki = input.string(defval = "xMA21", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="1. Boyama Bölümü")
 
-myRenkBir = input.color(color.new(#00bcd4, 34) , "Birinci Sınır Renk", group="Boyama Bölümü") 
-myRenkIki = input.color(color.new(#FF0000, 100), "İkinci Sınır Renk", group="Boyama Bölümü") 
+myRenkBir = input.color(color.new(#00bcd4, 34) , "Birinci Sınır Renk", group="1. Boyama Bölümü") 
+myRenkIki = input.color(color.new(#FF0000, 100), "İkinci Sınır Renk", group="1. Boyama Bölümü") 
 
 float ba1 = switch boyaBir
 	"xMA13" => xMA_13
