@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI Sade - V1.1.15", overlay=true)
+indicator(title ="exAVCI Sade - V1.1.16", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -332,7 +332,8 @@ kesYxMA_100 = ta.crossover(src , xMA_100Src)
 kesYxMA_377 = ta.crossover(src , xMA_377Src) 
 
 
-alertcondition(kesYxMA_100 , title = "AL xMA100 Yukarı Kesti", message = 'AL xMA100 Yukarı Kesti {{ticker}}, FİYAT={{close}}')
+//alertcondition(kesYxMA_100 , title = "AL xMA100 Yukarı Kesti", message = 'AL xMA100 Yukarı Kesti {{ticker}}, FİYAT={{close}}')
+alertcondition(kesAxMA_13 , title = "SAT xMA13 Aşağı Kesti", message = 'SAT xMA13 Aşağı Kesti {{ticker}}, FİYAT={{close}}')
 
 
 xMaAStyle = shape.triangledown
@@ -564,8 +565,15 @@ rsiAsagiKesRsi0 = ta.crossunder(INV2 , satAsagi)
 plotshape(acIFTRSIal and rsiYukariKesRsi0 ? rsiYukariKesRsi0 : na, text='', style=shape.triangleup, location=location.belowbar, color=color.new(color.lime, 0), offset=0, size=size.small)
 plotshape(acIFTRSIsat and rsiAsagiKesRsi0 ? rsiAsagiKesRsi0 : na, text='', style=shape.triangledown, location=location.abovebar, color=color.new(#FF0000, 0), offset=0, size=size.small)
 
-//alertcondition(rsiYukariKesRsi0, title="IFTRSI AL", message='IFTRSI AL {{ticker}}, FİYAT={{close}}')
-//alertcondition(rsiAsagiKesRsi0, title="IFTRSI SAT", message='IFTRSI SAT {{ticker}}, FİYAT={{close}}')
+renkSartY = color_2 == colu1 and color_2[1] == cold1
+renkSartA = color_2[1] == colu1 and color_2 == cold1
+
+//alertcondition(renkSartY, title=" AL RSI RENK", message=' AL RSI RENK {{ticker}}, FİYAT={{close}}')
+//alertcondition(renkSartA, title=" SAT RSI RENK", message=' SAT RSI RENK {{ticker}}, FİYAT={{close}}')
+alertcondition(renkSartY or renkSartA, title=" RSI RENK DEGISIMI", message=' RSI RENK DEGISIMI {{ticker}}, FİYAT={{close}}')
+
+alertcondition(rsiYukariKesRsi0, title=" AL RSI", message='AL RSI {{ticker}}, FİYAT={{close}}')
+//alertcondition(rsiAsagiKesRsi0, title=" SAT IFTRSI", message='SAT IFTRSI {{ticker}}, FİYAT={{close}}')
 
 
 
