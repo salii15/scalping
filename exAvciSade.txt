@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI Sade - V1.1.16", overlay=true)
+indicator(title ="exAVCI Sade - V1.1.17", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -347,28 +347,28 @@ xMaYColor = color.lime
 xMaYLocation = location.belowbar
 
 
-acxMaKesmeler = input(defval = true, title = 'xMA Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
+acxMaKesmeler = input(defval = false, title = 'xMA Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaAKesmeler = input(defval = true, title = 'xMA Aşağı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMaYKesmeler = input(defval = true, title = 'xMA Yukarı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa13AKesmeler = input(defval = true, title = 'xMA13 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa13YKesmeler = input(defval = false, title = 'xMA13 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+//acxMa13YKesmeler = input(defval = false, title = 'xMA13 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa21AKesmeler = input(defval = false, title = 'xMA21 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa21YKesmeler = input(defval = false, title = 'xMA21 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa100AKesmeler = input(defval = false, title = 'xMA100 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+//acxMa100AKesmeler = input(defval = false, title = 'xMA100 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 acxMa100YKesmeler = input(defval = false, title = 'xMA100 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa377AKesmeler = input(defval = false, title = 'xMA377 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa377YKesmeler = input(defval = false, title = 'xMA377 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+//acxMa377AKesmeler = input(defval = false, title = 'xMA377 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
+//acxMa377YKesmeler = input(defval = false, title = 'xMA377 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
 
 plotshape(kesAxMA_13 and acxMaKesmeler and acxMaAKesmeler and acxMa13AKesmeler ? kesAxMA_13 : na ,title ='xMa13 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_13_Color, offset=0, size=xMaASize)
 plotshape(kesAxMA_21 and acxMaKesmeler and acxMaAKesmeler and acxMa21AKesmeler ? kesAxMA_21 : na ,title ='xMa21 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_21_Color, offset=0, size=xMaASize)
-plotshape(kesAxMA_100 and acxMaKesmeler and acxMaAKesmeler and acxMa100AKesmeler ? kesAxMA_100 : na ,title ='xMa100 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_100_Color, offset=0, size=xMaASize)
+//plotshape(kesAxMA_100 and acxMaKesmeler and acxMaAKesmeler and acxMa100AKesmeler ? kesAxMA_100 : na ,title ='xMa100 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_100_Color, offset=0, size=xMaASize)
 //plotshape(kesAxMA_377 and acxMaKesmeler and acxMaAKesmeler and acxMa377AKesmeler ? kesAxMA_377 : na ,title ='xMa377 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_377_Color, offset=0, size=xMaASize)
 
-plotshape(kesYxMA_13 and acxMaKesmeler and acxMaYKesmeler and acxMa13YKesmeler ? kesYxMA_13 : na ,title ='xMa13 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_13_Color, offset=0, size=xMaYSize)
+//plotshape(kesYxMA_13 and acxMaKesmeler and acxMaYKesmeler and acxMa13YKesmeler ? kesYxMA_13 : na ,title ='xMa13 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_13_Color, offset=0, size=xMaYSize)
 plotshape(kesYxMA_21 and acxMaKesmeler and acxMaYKesmeler and acxMa21YKesmeler ? kesYxMA_21 : na ,title ='xMa21 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_21_Color, offset=0, size=xMaYSize)
-//plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=location.bottom, color=color.lime, offset=0, size=size.tiny)
+plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=location.bottom, color=color.lime, offset=0, size=size.tiny)
 plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_100_Color, offset=0, size=xMaYSize)
-plotshape(kesYxMA_377 and acxMaKesmeler and acxMaYKesmeler and acxMa377YKesmeler ? kesYxMA_377 : na ,title ='xMa377 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_377_Color, offset=0, size=xMaYSize)
+//plotshape(kesYxMA_377 and acxMaKesmeler and acxMaYKesmeler and acxMa377YKesmeler ? kesYxMA_377 : na ,title ='xMa377 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_377_Color, offset=0, size=xMaYSize)
 
 
 
@@ -531,7 +531,7 @@ barcolor(acMumRenk ? color_1 : na)
 
 //IFTRSI
 
-acIFTRSIMumRenk = input(true, title='Mumlar IFTRSI Değerine Göre Renklensin mi?', group="IFTRSI Ayarları")
+acIFTRSIMumRenk = input(false, title='Mumlar IFTRSI Değerine Göre Renklensin mi?', group="IFTRSI Ayarları")
 acIFTRSIal = input(true, title='IFTRSI Değerine Göre AL işaretleri Gösterilsin mi?', group="IFTRSI Ayarları")
 acIFTRSIsat = input(false, title='IFTRSI Değerine Göre SAT işaretleri Gösterilsin mi?', group="IFTRSI Ayarları")
 
@@ -574,6 +574,32 @@ alertcondition(renkSartY or renkSartA, title=" RSI RENK DEGISIMI", message=' RSI
 
 alertcondition(rsiYukariKesRsi0, title=" AL RSI", message='AL RSI {{ticker}}, FİYAT={{close}}')
 //alertcondition(rsiAsagiKesRsi0, title=" SAT IFTRSI", message='SAT IFTRSI {{ticker}}, FİYAT={{close}}')
+
+
+
+//Altın İşaret
+
+acAltinIsaret = input.bool(false, title='Altın İşaret Gösterilsin mi?', group="Altın İşaret Ayarları")
+
+signal_length = input.int(title='Signal Smoothing', minval=1, maxval=200, defval=11, group="Altın İşaret Ayarları")
+sma_signal = input(title='Simple MA (Signal Line)', defval=true, group="Altın İşaret Ayarları")
+
+lin_reg = input(title='Lin Reg', defval=true, group="Altın İşaret Ayarları")
+linreg_length = input.int(title='Linear Regression Length', minval=1, maxval=200, defval=11, group="Altın İşaret Ayarları")
+
+bopen = lin_reg ? ta.linreg(open, linreg_length, 0) : open
+bhigh = lin_reg ? ta.linreg(high, linreg_length, 0) : high
+blow = lin_reg ? ta.linreg(low, linreg_length, 0) : low
+bclose = lin_reg ? ta.linreg(close, linreg_length, 0) : close
+
+r = bopen < bclose
+
+signal = sma_signal ? ta.sma(bclose, signal_length) : ta.ema(bclose, signal_length)
+
+
+sartAltinIsaret = r != r[1] and r and bclose < signal and INV2 < -0.5
+plotshape(acAltinIsaret and sartAltinIsaret ? sartAltinIsaret : na , title='Altın İşaret', text='', style=shape.triangleup, location=location.belowbar, color=color.new(color.white, 0), offset=0, size=size.tiny)
+alertcondition(sartAltinIsaret, title=" AL Altın İşaret", message='AL Altın İşaret {{ticker}}, FİYAT={{close}}')
 
 
 
