@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI Sade - V1.1.17", overlay=true)
+indicator(title ="exAVCI Sade - V1.1.18", overlay=true)
 
 
 //myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -14,7 +14,7 @@ src = input.source(close, "Kaynak", group="Kaynak Çeşitleri")
 
 acxMaCizgisi = input(defval = true, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
 
-acxMa13Cizgisi = input(defval = true, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA13 Çizgisi")   
+acxMa13Cizgisi = input(defval = false, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA13 Çizgisi")   
 
 acxMa21Cizgisi = input(defval = true, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA21 Çizgisi")   
 acMumRenk21 = input(true, title='xMA21 Çizgisi (Adx ve Efi ile) Renklensin mi?', group="xMA21 Çizgisi")
@@ -290,7 +290,7 @@ xMA_13Src = request.security(syminfo.tickerid,xMaMum13Src, xMA_13)
 xMA_13_Color_S = xMA_13Src >= xMA_13Src[1] ? xMA_13_Color :xMA_13_Color_koyu
 xMA_13_Plot = plot(xMA_13Src and acxMaCizgisi and acxMa13Cizgisi ? xMA_13Src : na , color=xMA_13_Color_S, linewidth=2, title='xMa13 Çizgisi')
 
-length2a = input(21, 'xMA 21', group="xMA21 Değerleri")
+length2a = input(20, 'xMA 21', group="xMA21 Değerleri")
 source_21 = input.source(defval=close, title='xMA 21 Kaynağı', group="xMA21 Değerleri")
 xMaMum21Src = xMaMumKontrol(xMAMum21)
 xMA_21 = xMaKontrol(xMaTip21, source_21, length2a) 
@@ -394,8 +394,8 @@ acxMa21ARenkler = input(defval = false, title = 'xMA21 Aşağı Renk Değişimi 
 acxMa21YRenkler = input(defval = false, title = 'xMA21 Yukarı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
 acxMa100ARenkler = input(defval = false, title = 'xMA100 Aşağı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
 acxMa100YRenkler = input(defval = false, title = 'xMA100 Yukarı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMa377ARenkler = input(defval = false, title = 'xMA377 Aşağı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMa377YRenkler = input(defval = false, title = 'xMA377 Yukarı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
+//acxMa377ARenkler = input(defval = false, title = 'xMA377 Aşağı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
+//acxMa377YRenkler = input(defval = false, title = 'xMA377 Yukarı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
 
 
 
@@ -414,8 +414,8 @@ plotshape(xMA_21_RenkDegisimiY and acxMa21Cizgisi and acxMaRenkler and acxMaYRen
 
 xMA_377_RenkDegisimiA = xMA_377_Color_S != xMA_377_Color_S[1] and xMA_377Src < xMA_377Src[1]
 xMA_377_RenkDegisimiY = xMA_377_Color_S != xMA_377_Color_S[1] and xMA_377Src >= xMA_377Src[1]
-plotshape(xMA_377_RenkDegisimiA and acxMa377Cizgisi and acxMaRenkler and acxMaARenkler and acxMa377ARenkler ? xMA_377_RenkDegisimiA : na , title = 'xMa377 Aşağı Renk Değişimi', text='', style=xMaAStyleRenk , location=xMaALocationRenk, color=xMA_377_Color, offset=0, size=xMaASizeRenk)
-plotshape(xMA_377_RenkDegisimiY and acxMa377Cizgisi and acxMaRenkler and acxMaYRenkler and acxMa377YRenkler ? xMA_377_RenkDegisimiY : na , title = 'xMa377 Yukarı Renk Değişimi', text='', style=xMaYStyleRenk , location=xMaYLocationRenk, color=xMA_377_Color, offset=0, size=xMaYSizeRenk)
+//plotshape(xMA_377_RenkDegisimiA and acxMa377Cizgisi and acxMaRenkler and acxMaARenkler and acxMa377ARenkler ? xMA_377_RenkDegisimiA : na , title = 'xMa377 Aşağı Renk Değişimi', text='', style=xMaAStyleRenk , location=xMaALocationRenk, color=xMA_377_Color, offset=0, size=xMaASizeRenk)
+//plotshape(xMA_377_RenkDegisimiY and acxMa377Cizgisi and acxMaRenkler and acxMaYRenkler and acxMa377YRenkler ? xMA_377_RenkDegisimiY : na , title = 'xMa377 Yukarı Renk Değişimi', text='', style=xMaYStyleRenk , location=xMaYLocationRenk, color=xMA_377_Color, offset=0, size=xMaYSizeRenk)
 
 
 
@@ -453,13 +453,13 @@ plot(line2000 and acFiboLines and acFlUst ? line2000 : na, title='2.000', color=
 plot(line1618 and acFiboLines and acFlUst ? line1618 : na, title='1.618', color=color.new(color.green, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line1414 and acFiboLines and acFlUst ? line1414 : na, title='1.414', color=color.new(color.green, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line1272 and acFiboLines and acFlUst ? line1272 : na, title='1.272', color=color.new(color.green, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
-plot(line1000 and acFiboLines and acFlOrta ? line1000 : na, title='1.000', color=color.new(color.yellow, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=2)
-plot(line0786 and acFiboLines and acFlOrta ? line0786 : na, title='0.786', color=color.new(color.orange, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=2)
+plot(line1000 and acFiboLines and acFlOrta ? line1000 : na, title='1.000', color=color.new(color.yellow, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
+plot(line0786 and acFiboLines and acFlOrta ? line0786 : na, title='0.786', color=color.new(color.orange, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line0618 and acFiboLines and acFlOrta ? line0618 : na, title='0.618', color=color.new(color.lime, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line0500 and acFiboLines and acFlOrta ? line0500 : na, title='0.500', color=color.new(color.white, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line0382 and acFiboLines and acFlOrta ? line0382 : na, title='0.382', color=color.new(#2E9AFE, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
-plot(line0236 and acFiboLines and acFlOrta ? line0236 : na, title='0.236', color=color.new(color.orange, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=2)
-plot(line0000 and acFiboLines and acFlOrta ? line0000 : na, title='0.000', color=color.new(color.yellow, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=2)
+plot(line0236 and acFiboLines and acFlOrta ? line0236 : na, title='0.236', color=color.new(color.orange, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
+plot(line0000 and acFiboLines and acFlOrta ? line0000 : na, title='0.000', color=color.new(color.yellow, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line1272_2 and acFiboLines and acFlAlt ? line1272_2 : na, title='-0.272', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line1414_2 and acFiboLines and acFlAlt ? line1414_2 : na, title='-0.414', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line1618_2 and acFiboLines and acFlAlt ? line1618_2 : na, title='-0.618', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
@@ -504,7 +504,7 @@ plotshape(acFkes  ? kesAturuncuY : na ,title ='Fibo Alt Turuncu Yukarı Kes', te
 
 //VBCB
 
-acMumRenk = input(false, title='Mumlar Hacime Göre Renklensin mi?', group="Mum Boyama Ayarları")
+acMumRenk = input(true, title='Mumlar Hacime Göre Renklensin mi?', group="Mum Boyama Ayarları")
 
 lengthVbcb = input.int(21, 'length', minval=1)
 avrg = ta.sma(volume, lengthVbcb)
@@ -572,14 +572,14 @@ renkSartA = color_2[1] == colu1 and color_2 == cold1
 //alertcondition(renkSartA, title=" SAT RSI RENK", message=' SAT RSI RENK {{ticker}}, FİYAT={{close}}')
 alertcondition(renkSartY or renkSartA, title=" RSI RENK DEGISIMI", message=' RSI RENK DEGISIMI {{ticker}}, FİYAT={{close}}')
 
-alertcondition(rsiYukariKesRsi0, title=" AL RSI", message='AL RSI {{ticker}}, FİYAT={{close}}')
+alertcondition(rsiYukariKesRsi0, title=" AL RSI", message=' AL RSI {{ticker}}, FİYAT={{close}}')
 //alertcondition(rsiAsagiKesRsi0, title=" SAT IFTRSI", message='SAT IFTRSI {{ticker}}, FİYAT={{close}}')
 
 
 
 //Altın İşaret
 
-acAltinIsaret = input.bool(false, title='Altın İşaret Gösterilsin mi?', group="Altın İşaret Ayarları")
+acAltinIsaret = input.bool(true, title='Altın İşaret Gösterilsin mi?', group="Altın İşaret Ayarları")
 
 signal_length = input.int(title='Signal Smoothing', minval=1, maxval=200, defval=11, group="Altın İşaret Ayarları")
 sma_signal = input(title='Simple MA (Signal Line)', defval=true, group="Altın İşaret Ayarları")
@@ -599,7 +599,9 @@ signal = sma_signal ? ta.sma(bclose, signal_length) : ta.ema(bclose, signal_leng
 
 sartAltinIsaret = r != r[1] and r and bclose < signal and INV2 < -0.5
 plotshape(acAltinIsaret and sartAltinIsaret ? sartAltinIsaret : na , title='Altın İşaret', text='', style=shape.triangleup, location=location.belowbar, color=color.new(color.white, 0), offset=0, size=size.tiny)
-alertcondition(sartAltinIsaret, title=" AL Altın İşaret", message='AL Altın İşaret {{ticker}}, FİYAT={{close}}')
+alertcondition(sartAltinIsaret, title=" AL Altın İşaret", message=' AL Altın İşaret {{ticker}}, FİYAT={{close}}')
+
+alertcondition(sartAltinIsaret or rsiYukariKesRsi0, title=" AL RSI/Altın", message=' AL RSI/Altın {{ticker}}, FİYAT={{close}}')
 
 
 
@@ -608,7 +610,7 @@ alertcondition(sartAltinIsaret, title=" AL Altın İşaret", message='AL Altın 
 string xReMum1 = input.timeframe(defval = "Grafik", title = "Rsi/Ema Çizgisi" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="Rsi/Ema Genel Değerleri")
 
 myRsiUzunluk = input.int(22, title='RSI Değeri', group="Rsi/Ema Genel Değerleri")
-myEmaUzunluk = input.int(13, title='Ema Değeri', group="Rsi/Ema Genel Değerleri")
+myEmaUzunluk = input.int(34, title='Ema Değeri', group="Rsi/Ema Genel Değerleri")
 
 
 //SATIM ÇİZGİSİ
@@ -649,7 +651,6 @@ myL_1S = request.security(syminfo.tickerid, xMaMumKontrol(xReMum1), low)
 
 acRsiEmaLW_1S = input.int(defval = 2, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema Çizgisi Değerleri") 
 acRsiEma_1S = input(defval = false, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema Çizgisi Değerleri") 
-acREIsaretler_1S = input(defval = true, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema Çizgisi Değerleri") 
 
 
 my4Y_1S = input.color(color.new(#00897B, 0)  , "Aşırı Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema Çizgisi Değerleri") 
@@ -681,8 +682,31 @@ myRsiEmaLine_1S = myRsi_1S >= myEma_1S ? myH_1S : myL_1S
 
 myREcizgim_1S = plot(acRsiEma_1S ? myRsi_1S >= myEma_1S ? myH_1S : myL_1S : na, color=myRsiColorTek_1S, linewidth=acRsiEmaLW_1S, title='R/E Cizgisi')
 
-plotshape(acREIsaretler_1S and myRsi_1S >= myEma_1S, title ='R/E İşaret', text='', style=shape.triangleup, location=location.top, color=myRsiColorY_1S, offset=0, size=size.tiny)
-plotshape(acREIsaretler_1S and myRsi_1S < myEma_1S, title ='R/E İşaret', text='', style=shape.triangledown, location=location.bottom, color=myRsiColorD_1S, offset=0, size=size.tiny)
+
+
+//RSI/EMA işaretler
+acREIsaretler_1S = input(defval = true, title = 'Rsi/Ema İşaretleri Gösterilsin mi?', group="Rsi/Ema İşaretleri Değerleri") 
+
+my4Y_1Si = input.color(color.new(#00897B, 0)  , "Aşırı Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema İşaretleri Değerleri") 
+my3Y_1Si = input.color(color.new(color.green, 0), "Alım Bölgesinden (yüksekte) Yükselirken", group="Rsi/Ema İşaretleri Değerleri") 
+my2Y_1Si = input.color(color.new(#00bcd4, 0), "Orta Bölgesinden (ortada) Yükselirken", group="Rsi/Ema İşaretleri Değerleri") 
+my1Y_1Si = input.color(color.new(color.blue, 100), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema İşaretleri Değerleri") 
+
+my1D_1Si = input.color(color.new(color.yellow, 100) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema İşaretleri Değerleri") 
+my2D_1Si = input.color(color.new(#ff9800, 100) , "Orta Bölgesinden (ortada) Düşerken", group="Rsi/Ema İşaretleri Değerleri") 
+my3D_1Si = input.color(color.new(color.red, 0) , "Satım Bölgesinden (dipte) Düşerken", group="Rsi/Ema İşaretleri Değerleri") 
+my4D_1Si = input.color(color.new(#880E4F, 0)  , "Aşırı Satım Bölgesinde (en dipte) Düşerken", group="Rsi/Ema İşaretleri Değerleri") 
+
+
+myRsiColorY_1Si = bolge4Y_1S ? my4Y_1Si : bolge3Y_1S ? my3Y_1Si : bolge2Y_1S ? my2Y_1Si : my1Y_1Si    
+myRsiColorD_1Si = bolge4D_1S ? my4D_1Si : bolge3D_1S ? my3D_1Si : bolge2D_1S ? my2D_1Si : my1D_1Si  
+
+myRsiColorTek_1Si = myRsi_1S >= myEma_1S ? myRsiColorY_1Si : myRsiColorD_1Si
+
+
+
+plotshape(acREIsaretler_1S and myRsi_1S >= myEma_1S, title ='R/E İşaret', text='', style=shape.triangleup, location=location.top, color=myRsiColorY_1Si, offset=0, size=size.tiny)
+plotshape(acREIsaretler_1S and myRsi_1S < myEma_1S, title ='R/E İşaret', text='', style=shape.triangledown, location=location.bottom, color=myRsiColorD_1Si, offset=0, size=size.tiny)
 
 
 //BOYAMALAR 1
