@@ -724,7 +724,7 @@ renkVer(my1Close,my1RsiUzun) =>
 //Formül
 //customFunc() => [renkVer(close,myRsiUzunluk), str.tostring(math.round(ta.rsi(close,myRsiUzunluk)),"#"), ta.crossover(high,xMaKontrol(xMaTip100, source_100, length6a)), close>xMaKontrol(xMaTip100, source_100, length6a)]
 //customFunc() => [renkVer(close,myRsiD), str.tostring(math.round(ta.rsi(close,myRsiD)),"#"), ta.crossover(high,ta.ema(close, 100)), close>ta.ema(close, 100), ta.rsi(close,myRsiD)]
-customFunc() => [renkVer(close,myRsiD), str.tostring(math.round(ta.rsi(close,myRsiD)),"#"), renkVerE100(high,close, 100), close>ta.ema(close, 100), str.tostring(math.round(nz(ta.mfi(hlc3, lengthMFI))),"#"),renkVerMfi(hlc3,lengthMFI)]
+customFunc() => [renkVer(close,myRsiD), str.tostring(math.round(nz(ta.rsi(close,myRsiD))),"#"), renkVerE100(high,close, 100), close>ta.ema(close, 100), str.tostring(math.round(nz(ta.mfi(hlc3, lengthMFI))),"#"),renkVerMfi(hlc3,lengthMFI)]
 
 kPeryod = (xMumKontrol(xCalismaMum) == "1S" or xMumKontrol(xCalismaMum)== "5S") ? "5S" : xMumKontrol(xCalismaMum) == "10S" ? "10S" : xMumKontrol(xCalismaMum)== "15S" ? "15S" : xMumKontrol(xCalismaMum) == "30S" ? "30S" : "1"
 kMetin =  (xMumKontrol(xCalismaMum) == "1S" or xMumKontrol(xCalismaMum) == "5S") ? "5s" : xMumKontrol(xCalismaMum) == "10S" ? "10s" : xMumKontrol(xCalismaMum) == "15S" ? "15s" : xMumKontrol(xCalismaMum) == "30S" ? "30s" : "1d"
