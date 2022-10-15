@@ -48,6 +48,18 @@ xHarfKontrol(xHarf)=>
         "size.huge" => size.huge
         => size.small
 
+xTabloKonumKontrol(xTabloKonum)=>
+    string xT = switch xTabloKonum
+        "position.top_left" => position.top_left 
+        "position.top_center" => position.top_center 
+        "position.top_right" => position.top_right 
+        "position.middle_left" => position.middle_left 
+        "position.middle_center" => position.middle_center 
+        "position.middle_right" => position.middle_right 
+        "position.bottom_left" => position.bottom_left 
+        "position.bottom_center" => position.bottom_center 
+        "position.bottom_right" => position.bottom_right
+        => position.bottom_right
 
 
 myHisse = input.symbol("", "Symbol", group="Genel Ayarlar")
@@ -68,6 +80,7 @@ myOpen = request.security(myHisse, xMumKontrol(xCalismaMum), open)
 
 //Tablo
 acTablo = input(defval = true, title = 'Tablo, Gösterilsin mi?', group="Tablo Ayarları")  
+xTabloKonumu =  input.string(defval = "position.top_right", title = "Tablo Konumu" ,options=["position.top_left", "position.top_center", "position.top_right", "position.middle_left", "position.middle_center", "position.middle_right", "position.bottom_left", "position.bottom_center", "position.bottom_right"] , group="Tablo Ayarları")
 xHarfBuyuklugu = input.string(defval = "size.normal", title = "Tablo Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Tablo Ayarları")
 
 //Tablo Üst Satır
@@ -93,6 +106,7 @@ rsiAltBolgeRenk = input.color(color.new(#880e4f,0),"MFI (alt bölge) Rengi", gro
 
 //Pano
 acTabloPanoOzet = input(defval = true, title = 'Pano Gösterilsin mi?', group="Pano Ayarları")  
+xPanoKonumu =  input.string(defval = "position.bottom_center", title = "Tablo Konumu" ,options=["position.top_left", "position.top_center", "position.top_right", "position.middle_left", "position.middle_center", "position.middle_right", "position.bottom_left", "position.bottom_center", "position.bottom_right"] , group="Pano Ayarları")
 xPanoHarfBuyuklugu = input.string(defval = "size.large", title = "Pano Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Pano Ayarları")
 
 
@@ -702,7 +716,7 @@ fiyatYon = src>src[1]
 myHisseA = myHisse=="" ? str.tostring(syminfo.ticker) : myHisse
 xCalismaMumA = xCalismaMum== "Grafik" ? "Grafik: " + xMumKontrolA(str.tostring(timeframe.period)) : xCalismaMum
 
-var table tblPanoMobil = table.new(position.bottom_center, 3, 1, bgcolor = color.black, frame_width = 1, frame_color = color.white, border_color = color.white, border_width=1)
+var table tblPanoMobil = table.new(xTabloKonumKontrol(xPanoKonumu), 3, 1, bgcolor = color.black, frame_width = 1, frame_color = color.white, border_color = color.white, border_width=1)
 table.clear(tblPanoMobil, 0, 0, 2, 0)
 
 
@@ -748,7 +762,7 @@ kMetin =  (xMumKontrol(xCalismaMum) == "1S" or xMumKontrol(xCalismaMum) == "5S")
 
 
 
-var table tblDetay = table.new(position.top_right, 16, 3, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
+var table tblDetay = table.new(xTabloKonumKontrol(xTabloKonumu), 16, 3, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
 table.clear(tblDetay, 0, 0, 15, 2)
 
 tBos = "Mum"
