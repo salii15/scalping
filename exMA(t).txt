@@ -88,8 +88,8 @@ rsiUstBarajEmaRenk = input.color(color.new(#00897b,0),"RSI > EMA100 Rengi", grou
 rsiAltBarajEmaRenk = input.color(color.new(#880e4f,0),"RSI <= EMA100 Rengi", group="Tablo Ayarları (üst satır)")
 
 //Tablo Orta Satır
-rsiTabloUstUst = input.int(defval = 60, title = 'Tablo Orta Satır Üst Baraj', group="Tablo Ayarları (orta satır)")  
-rsiTabloUstAlt = input.int(defval = 40, title = 'Tablo Orta Satır Alt Baraj', group="Tablo Ayarları (orta satır)")  
+rsiTabloUstUst = input.int(defval = 53, title = 'Tablo Orta Satır Üst Baraj', group="Tablo Ayarları (orta satır)")  
+rsiTabloUstAlt = input.int(defval = 47, title = 'Tablo Orta Satır Alt Baraj', group="Tablo Ayarları (orta satır)")  
 rsiUstBarajRenk = input.color(color.new(#00897b,0),"RSI (baraj üstü) Rengi", group="Tablo Ayarları (orta satır)")
 rsiBarajArasiRenk = input.color(color.new(#00bcd4,0),"RSI (baraj arası) Rengi", group="Tablo Ayarları (orta satır)")
 rsiAltBarajRenk = input.color(color.new(#880e4f,0),"RSI baraj altı) Rengi", group="Tablo Ayarları (orta satır)")
