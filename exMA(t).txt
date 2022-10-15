@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exMA(t) - V1.4.12", overlay=true)
+indicator(title ="exMA(t) - V1.4.13", overlay=true)
 
 xMumKontrol(xMumTip)=>
     string xMA = switch xMumTip
@@ -67,29 +67,26 @@ myOpen = request.security(myHisse, xMumKontrol(xCalismaMum), open)
 
 
 //Tablo
-acTablo = input(defval = true, title = 'RSI Tablosu, Gösterilsin mi?', group="Rsi Tablo Ayarları")  
-xHarfBuyuklugu = input.string(defval = "size.normal", title = "Rsi Tablo Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Rsi Tablo Ayarları")
+acTablo = input(defval = true, title = 'Tablo, Gösterilsin mi?', group="Tablo Ayarları")  
+xHarfBuyuklugu = input.string(defval = "size.normal", title = "Tablo Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Tablo Ayarları")
 
+//Tablo Üst Satır
+rsiUstBarajEmaRenk = input.color(color.new(#00897b,0),"RSI > EMA100 Rengi", group="Tablo Ayarları (üst satır)")
+rsiAltBarajEmaRenk = input.color(color.new(#880e4f,0),"RSI <= EMA100 Rengi", group="Tablo Ayarları (üst satır)")
 
-//RSI baraj Renk
+//Tablo Orta Satır
+rsiTabloUstUst = input.int(defval = 60, title = 'Tablo Orta Satır Üst Baraj', group="Tablo Ayarları (orta satır)")  
+rsiTabloUstAlt = input.int(defval = 40, title = 'Tablo Orta Satır Alt Baraj', group="Tablo Ayarları (orta satır)")  
+rsiUstBarajRenk = input.color(color.new(#00897b,0),"RSI (baraj üstü) Rengi", group="Tablo Ayarları (orta satır)")
+rsiBarajArasiRenk = input.color(color.new(#00bcd4,0),"RSI (baraj arası) Rengi", group="Tablo Ayarları (orta satır)")
+rsiAltBarajRenk = input.color(color.new(#880e4f,0),"RSI baraj altı) Rengi", group="Tablo Ayarları (orta satır)")
 
-rsiTabloUstUst = input.int(defval = 60, title = 'Rsi Tablo Üst Satır Üst Baraj', group="Rsi Tablo Ayarları (üst satır)")  
-rsiTabloUstAlt = input.int(defval = 40, title = 'Rsi Tablo Üst Satır Alt Baraj', group="Rsi Tablo Ayarları (üst satır)")  
-
-rsiUstBarajRenk = input.color(color.new(#00897b,0),"RSI (üst baraj) Rengi", group="Rsi Tablo Ayarları (üst satır)")
-rsiBarajArasiRenk = input.color(color.new(#00bcd4,0),"RSI (baraj arası) Rengi", group="Rsi Tablo Ayarları (üst satır)")
-rsiAltBarajRenk = input.color(color.new(#880e4f,0),"RSI (alt baraj) Rengi", group="Rsi Tablo Ayarları (üst satır)")
-
-
-
-rsiUst = input.int(defval = 53, title = 'Rsi Tablo Alt Satır Üst Baraj', group="Rsi Tablo Ayarları (alt satır)")  
-rsiAlt = input.int(defval = 47, title = 'Rsi Tablo Alt Satır Alt Baraj', group="Rsi Tablo Ayarları (alt satır)")  
-
-
-rsiUstBolgeRenk = input.color(color.new(#006400,0),"RSI (üst bölge) Rengi", group="Rsi Tablo Ayarları (alt satır)")
-rsiAraBolgeRenk = input.color(color.new(color.yellow,0),"RSI (bölge arası) Rengi", group="Rsi Tablo Ayarları (alt satır)")
-rsiAltBolgeRenk = input.color(color.new(#880e4f,0),"RSI (alt bölge) Rengi", group="Rsi Tablo Ayarları (alt satır)")
-
+//Tablo Alt Satır
+rsiUst = input.int(defval = 80, title = 'Tablo Alt Satır Üst Baraj', group="Tablo Ayarları (alt satır)")  
+rsiAlt = input.int(defval = 20, title = 'Tablo Alt Satır Alt Baraj', group="Tablo Ayarları (alt satır)")  
+rsiUstBolgeRenk = input.color(color.new(#00897b,0),"MFI (üst bölge) Rengi", group="Tablo Ayarları (alt satır)")
+rsiAraBolgeRenk = input.color(color.new(#00bcd4,0),"MFI (bölge arası) Rengi", group="Tablo Ayarları (alt satır)")
+rsiAltBolgeRenk = input.color(color.new(#880e4f,0),"MFI (alt bölge) Rengi", group="Tablo Ayarları (alt satır)")
 
 
 
@@ -458,7 +455,10 @@ color_1 = vold1 ? cold1 : vold2 ? cold2 : vold3 ? cold3 : volu1 ? colu1 : volu2 
 
 barcolor(acMumRenk ? color_1 : na)
 
-
+//MFI
+lengthMFI = input.int(title="Uzunluk", defval=14, minval=1, maxval=2000, group="MFI Ayarları")
+srcMFI = hlc3
+myMFI = ta.mfi(srcMFI, lengthMFI)
 
 
 // RSI/EMA
@@ -706,44 +706,52 @@ var table tblPanoMobil = table.new(position.bottom_center, 3, 1, bgcolor = color
 table.clear(tblPanoMobil, 0, 0, 2, 0)
 
 
+renkVerMfi(hlc3,mylengthMFI) =>
+	mymfi = ta.mfi(hlc3, lengthMFI)
+    mymfi > rsiUst ? rsiUstBolgeRenk : mymfi < rsiAlt ?  rsiAltBolgeRenk : rsiAraBolgeRenk
+
+
+renkVerE100(my1high,my1Close,myEma100deger) =>
+	myEma100 = my1high > ta.ema(my1Close, myEma100deger)
+    myEma100 ? rsiUstBarajEmaRenk : rsiAltBarajEmaRenk 
 
 
 renkVer(my1Close,my1RsiUzun) => 
     my1Rsi = ta.rsi(my1Close,my1RsiUzun)
-    my1Rsi > rsiTabloUstUst ? rsiUstBarajRenk : my1Rsi < rsiTabloUstAlt ? rsiAltBarajRenk : rsiBarajArasiRenk
+    my1Rsi > rsiTabloUstUst ? rsiUstBarajRenk : my1Rsi < rsiTabloUstAlt ?  rsiAltBarajRenk : rsiBarajArasiRenk
+
 
 //Formül
 //customFunc() => [renkVer(close,myRsiUzunluk), str.tostring(math.round(ta.rsi(close,myRsiUzunluk)),"#"), ta.crossover(high,xMaKontrol(xMaTip100, source_100, length6a)), close>xMaKontrol(xMaTip100, source_100, length6a)]
-customFunc() => [renkVer(close,myRsiD), str.tostring(math.round(ta.rsi(close,myRsiD)),"#"), ta.crossover(high,ta.ema(close, 100)), close>ta.ema(close, 100), ta.rsi(close,myRsiD)]
+//customFunc() => [renkVer(close,myRsiD), str.tostring(math.round(ta.rsi(close,myRsiD)),"#"), ta.crossover(high,ta.ema(close, 100)), close>ta.ema(close, 100), ta.rsi(close,myRsiD)]
+customFunc() => [renkVer(close,myRsiD), str.tostring(math.round(ta.rsi(close,myRsiD)),"#"), renkVerE100(high,close, 100), close>ta.ema(close, 100), str.tostring(math.round(ta.mfi(hlc3, lengthMFI)),"#"),renkVerMfi(hlc3,lengthMFI)]
 
 kPeryod = (xMumKontrol(xCalismaMum) == "1S" or xMumKontrol(xCalismaMum)== "5S") ? "5S" : xMumKontrol(xCalismaMum) == "10S" ? "10S" : xMumKontrol(xCalismaMum)== "15S" ? "15S" : xMumKontrol(xCalismaMum) == "30S" ? "30S" : "1"
 kMetin =  (xMumKontrol(xCalismaMum) == "1S" or xMumKontrol(xCalismaMum) == "5S") ? "5s" : xMumKontrol(xCalismaMum) == "10S" ? "10s" : xMumKontrol(xCalismaMum) == "15S" ? "15s" : xMumKontrol(xCalismaMum) == "30S" ? "30s" : "1d"
 
 
-[t00,r00,o00,u00,c00] = request.security(myHisse, kPeryod, customFunc()) 
-[t01,r01,o01,u01,c01] = request.security(myHisse, "1", customFunc()) 
-[t02,r02,o02,u02,c02] = request.security(myHisse, "3", customFunc())
-[t03,r03,o03,u03,c03] = request.security(myHisse, "5", customFunc())
-[t04,r04,o04,u04,c04] = request.security(myHisse, "15", customFunc())
-[t05,r05,o05,u05,c05] = request.security(myHisse, "20", customFunc())
-[t06,r06,o06,u06,c06] = request.security(myHisse, "30", customFunc())
-[t07,r07,o07,u07,c07] = request.security(myHisse, "60", customFunc())
-[t08,r08,o08,u08,c08] = request.security(myHisse, "120", customFunc())
-[t09,r09,o09,u09,c09] = request.security(myHisse, "180", customFunc())
-[t10,r10,o10,u10,c10] = request.security(myHisse, "240", customFunc())
-[t11,r11,o11,u11,c11] = request.security(myHisse, "D", customFunc())
-[t12,r12,o12,u12,c12] = request.security(myHisse, "3D", customFunc())
-[t13,r13,o13,u13,c13] = request.security(myHisse, "W", customFunc())
-[t14,r14,o14,u14,c14] = request.security(myHisse, "M", customFunc())
+[t00,r00,o00,u00,c00,m00] = request.security(myHisse, kPeryod, customFunc()) 
+[t01,r01,o01,u01,c01,m01] = request.security(myHisse, "1", customFunc()) 
+[t02,r02,o02,u02,c02,m02] = request.security(myHisse, "3", customFunc())
+[t03,r03,o03,u03,c03,m03] = request.security(myHisse, "5", customFunc())
+[t04,r04,o04,u04,c04,m04] = request.security(myHisse, "15", customFunc())
+[t05,r05,o05,u05,c05,m05] = request.security(myHisse, "20", customFunc())
+[t06,r06,o06,u06,c06,m06] = request.security(myHisse, "30", customFunc())
+[t07,r07,o07,u07,c07,m07] = request.security(myHisse, "60", customFunc())
+[t08,r08,o08,u08,c08,m08] = request.security(myHisse, "120", customFunc())
+[t09,r09,o09,u09,c09,m09] = request.security(myHisse, "180", customFunc())
+[t10,r10,o10,u10,c10,m10] = request.security(myHisse, "240", customFunc())
+[t11,r11,o11,u11,c11,m11] = request.security(myHisse, "D", customFunc())
+[t12,r12,o12,u12,c12,m12] = request.security(myHisse, "3D", customFunc())
+[t13,r13,o13,u13,c13,m13] = request.security(myHisse, "W", customFunc())
+[t14,r14,o14,u14,c14,m14] = request.security(myHisse, "M", customFunc())
 
 
 
-var table tblDetay = table.new(position.top_right, 15, 3, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
-table.clear(tblDetay, 0, 0, 14, 2)
+var table tblDetay = table.new(position.top_right, 16, 3, bgcolor = color.black, frame_width = 0, frame_color = color.white, border_color = color.white, border_width=0)
+table.clear(tblDetay, 0, 0, 15, 2)
 
-//rsiAlt = 47
-//rsiUst = 53
-tBos = ""
+tBos = "Mum"
 
 if barstate.islast
 
@@ -758,53 +766,56 @@ if barstate.islast
 
 
     if acTablo
-        table.cell(tblDetay, 0, 0, kMetin , text_color = color.yellow, text_size = tsize, bgcolor=o00 ? #FF5252 : u00 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 1, 0, "1d", text_color = color.yellow, text_size = tsize, bgcolor=o01 ? #FF5252 : u01 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 2, 0, "3d", text_color = color.yellow, text_size = tsize, bgcolor=o02 ? #FF5252 : u02 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 3, 0, "5d", text_color = color.yellow, text_size = tsize, bgcolor=o03 ? #FF5252 : u03 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 4, 0, "15d", text_color = color.yellow, text_size = tsize, bgcolor=o04 ? #FF5252 : u04 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 5, 0, "20d", text_color = color.yellow, text_size = tsize, bgcolor=o05 ? #FF5252 : u05 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 6, 0, "30d", text_color = color.yellow, text_size = tsize, bgcolor=o06 ? #FF5252 : u06 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 7, 0, "1S", text_color = color.yellow, text_size = tsize, bgcolor=o07 ? #FF5252 : u07 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 8, 0, "2S", text_color = color.yellow, text_size = tsize, bgcolor=o08 ? #FF5252 : u08 ? #006400 : #880e4f )
-        table.cell(tblDetay, 9, 0, "3S", text_color = color.yellow, text_size = tsize, bgcolor=o09 ? #FF5252 : u09 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 10, 0, "4S", text_color = color.yellow, text_size = tsize, bgcolor=o10 ? #FF5252 : u10 ? #006400 : #880e4f  )
-        table.cell(tblDetay, 11, 0, "1G", text_color = color.yellow, text_size = tsize, bgcolor=o11 ? #FF5252 : u11 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 12, 0, "3G", text_color = color.yellow, text_size = tsize, bgcolor=o12 ? #FF5252 : u12 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 13, 0, "1H", text_color = color.yellow, text_size = tsize, bgcolor=o13 ? #FF5252 : u13 ? #006400 : #880e4f   )
-        table.cell(tblDetay, 14, 0, "1A", text_color = color.yellow, text_size = tsize, bgcolor=o14 ? #FF5252 : u14 ? #006400 : #880e4f   )
+        table.cell(tblDetay, 0, 0, tBos , text_color = color.white, text_size = tsize, bgcolor=color.teal)
+        table.cell(tblDetay, 1, 0, kMetin , text_color = color.yellow, text_size = tsize, bgcolor=o00)
+        table.cell(tblDetay, 2, 0, "1d", text_color = color.yellow, text_size = tsize, bgcolor=o01)
+        table.cell(tblDetay, 3, 0, "3d", text_color = color.yellow, text_size = tsize, bgcolor=o02)
+        table.cell(tblDetay, 4, 0, "5d", text_color = color.yellow, text_size = tsize, bgcolor=o03)
+        table.cell(tblDetay, 5, 0, "15d", text_color = color.yellow, text_size = tsize, bgcolor=o04)
+        table.cell(tblDetay, 6, 0, "20d", text_color = color.yellow, text_size = tsize, bgcolor=o05)
+        table.cell(tblDetay, 7, 0, "30d", text_color = color.yellow, text_size = tsize, bgcolor=o06)
+        table.cell(tblDetay, 8, 0, "1S", text_color = color.yellow, text_size = tsize, bgcolor=o07)
+        table.cell(tblDetay, 9, 0, "2S", text_color = color.yellow, text_size = tsize, bgcolor=o08)
+        table.cell(tblDetay, 10, 0, "3S", text_color = color.yellow, text_size = tsize, bgcolor=o09)
+        table.cell(tblDetay, 11, 0, "4S", text_color = color.yellow, text_size = tsize, bgcolor=o10)
+        table.cell(tblDetay, 12, 0, "1G", text_color = color.yellow, text_size = tsize, bgcolor=o11)
+        table.cell(tblDetay, 13, 0, "3G", text_color = color.yellow, text_size = tsize, bgcolor=o12)
+        table.cell(tblDetay, 14, 0, "1H", text_color = color.yellow, text_size = tsize, bgcolor=o13)
+        table.cell(tblDetay, 15, 0, "1A", text_color = color.yellow, text_size = tsize, bgcolor=o14)
 
-        table.cell(tblDetay, 0, 1, r00 , text_color = color.yellow, text_size = tsize, bgcolor=t00  )
-        table.cell(tblDetay, 1, 1, r01, text_color = color.yellow, text_size = tsize, bgcolor=t01 )
-        table.cell(tblDetay, 2, 1, r02, text_color = color.yellow, text_size = tsize, bgcolor=t02  )
-        table.cell(tblDetay, 3, 1, r03, text_color = color.yellow, text_size = tsize, bgcolor=t03  )
-        table.cell(tblDetay, 4, 1, r04, text_color = color.yellow, text_size = tsize, bgcolor=t04  )
-        table.cell(tblDetay, 5, 1, r05, text_color = color.yellow, text_size = tsize, bgcolor=t05  )
-        table.cell(tblDetay, 6, 1, r06, text_color = color.yellow, text_size = tsize, bgcolor=t06  )
-        table.cell(tblDetay, 7, 1, r07, text_color = color.yellow, text_size = tsize, bgcolor=t07  )
-        table.cell(tblDetay, 8, 1, r08, text_color = color.yellow, text_size = tsize, bgcolor=t08  )
-        table.cell(tblDetay, 9, 1, r09, text_color = color.yellow, text_size = tsize, bgcolor=t09  )
-        table.cell(tblDetay, 10, 1, r10, text_color = color.yellow, text_size = tsize, bgcolor=t10  )
-        table.cell(tblDetay, 11, 1, r11, text_color = color.yellow, text_size = tsize, bgcolor=t11  )
-        table.cell(tblDetay, 12, 1, r12, text_color = color.yellow, text_size = tsize, bgcolor=t12  )
-        table.cell(tblDetay, 13, 1, r13, text_color = color.yellow, text_size = tsize, bgcolor=t13  )
-        table.cell(tblDetay, 14, 1, r14, text_color = color.yellow, text_size = tsize, bgcolor=t14  )
+        table.cell(tblDetay, 0, 1, "RSI" , text_color = color.white, text_size = tsize, bgcolor=color.teal)
+        table.cell(tblDetay, 1, 1, r00 , text_color = color.yellow, text_size = tsize, bgcolor=t00)
+        table.cell(tblDetay, 2, 1, r01, text_color = color.yellow, text_size = tsize, bgcolor=t01)
+        table.cell(tblDetay, 3, 1, r02, text_color = color.yellow, text_size = tsize, bgcolor=t02)
+        table.cell(tblDetay, 4, 1, r03, text_color = color.yellow, text_size = tsize, bgcolor=t03)
+        table.cell(tblDetay, 5, 1, r04, text_color = color.yellow, text_size = tsize, bgcolor=t04)
+        table.cell(tblDetay, 6, 1, r05, text_color = color.yellow, text_size = tsize, bgcolor=t05)
+        table.cell(tblDetay, 7, 1, r06, text_color = color.yellow, text_size = tsize, bgcolor=t06)
+        table.cell(tblDetay, 8, 1, r07, text_color = color.yellow, text_size = tsize, bgcolor=t07)
+        table.cell(tblDetay, 9, 1, r08, text_color = color.yellow, text_size = tsize, bgcolor=t08)
+        table.cell(tblDetay, 10, 1, r09, text_color = color.yellow, text_size = tsize, bgcolor=t09)
+        table.cell(tblDetay, 11, 1, r10, text_color = color.yellow, text_size = tsize, bgcolor=t10)
+        table.cell(tblDetay, 12, 1, r11, text_color = color.yellow, text_size = tsize, bgcolor=t11)
+        table.cell(tblDetay, 13, 1, r12, text_color = color.yellow, text_size = tsize, bgcolor=t12)
+        table.cell(tblDetay, 14, 1, r13, text_color = color.yellow, text_size = tsize, bgcolor=t13)
+        table.cell(tblDetay, 15, 1, r14, text_color = color.yellow, text_size = tsize, bgcolor=t14)
 
-        table.cell(tblDetay, 0, 2, tBos , text_color = color.yellow, text_size = tsize, bgcolor=c00<rsiAlt ?  rsiAltBolgeRenk : c00>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 1, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c01<rsiAlt ?  rsiAltBolgeRenk : c01>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-		table.cell(tblDetay, 2, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c02<rsiAlt ?  rsiAltBolgeRenk : c02>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 3, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c03<rsiAlt ?  rsiAltBolgeRenk : c03>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 4, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c04<rsiAlt ?  rsiAltBolgeRenk : c04>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 5, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c05<rsiAlt ?  rsiAltBolgeRenk : c05>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 6, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c06<rsiAlt ?  rsiAltBolgeRenk : c06>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 7, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c07<rsiAlt ?  rsiAltBolgeRenk : c07>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 8, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c08<rsiAlt ?  rsiAltBolgeRenk : c08>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 9, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c09<rsiAlt ?  rsiAltBolgeRenk : c09>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 10, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c10<rsiAlt ?  rsiAltBolgeRenk : c10>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 11, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c11<rsiAlt ?  rsiAltBolgeRenk : c11>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 12, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c12<rsiAlt ?  rsiAltBolgeRenk : c12>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 13, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c13<rsiAlt ?  rsiAltBolgeRenk : c13>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
-        table.cell(tblDetay, 14, 2, tBos, text_color = color.yellow, text_size = tsize, bgcolor=c14<rsiAlt ?  rsiAltBolgeRenk : c14>rsiUst ? rsiUstBolgeRenk : rsiAraBolgeRenk  )
+        table.cell(tblDetay, 0, 2, "MFI", text_color = color.white, text_size = tsize, bgcolor=color.teal)
+        table.cell(tblDetay, 1, 2, c00 , text_color = color.yellow, text_size = tsize, bgcolor=m00)
+        table.cell(tblDetay, 2, 2, c01, text_color = color.yellow, text_size = tsize, bgcolor=m01)
+		table.cell(tblDetay, 3, 2, c02, text_color = color.yellow, text_size = tsize, bgcolor=m02)
+        table.cell(tblDetay, 4, 2, c03, text_color = color.yellow, text_size = tsize, bgcolor=m03)
+        table.cell(tblDetay, 5, 2, c04, text_color = color.yellow, text_size = tsize, bgcolor=m04)
+        table.cell(tblDetay, 6, 2, c05, text_color = color.yellow, text_size = tsize, bgcolor=m05)
+        table.cell(tblDetay, 7, 2, c06, text_color = color.yellow, text_size = tsize, bgcolor=m06)
+        table.cell(tblDetay, 8, 2, c07, text_color = color.yellow, text_size = tsize, bgcolor=m07)
+        table.cell(tblDetay, 9, 2, c08, text_color = color.yellow, text_size = tsize, bgcolor=m08)
+        table.cell(tblDetay, 10, 2, c09, text_color = color.yellow, text_size = tsize, bgcolor=m09)
+        table.cell(tblDetay, 11, 2, c10, text_color = color.yellow, text_size = tsize, bgcolor=m10)
+        table.cell(tblDetay, 12, 2, c11, text_color = color.yellow, text_size = tsize, bgcolor=m11)
+        table.cell(tblDetay, 13, 2, c12, text_color = color.yellow, text_size = tsize, bgcolor=m12)
+        table.cell(tblDetay, 14, 2, c13, text_color = color.yellow, text_size = tsize, bgcolor=m13)
+        table.cell(tblDetay, 15, 2, c14, text_color = color.yellow, text_size = tsize, bgcolor=m14)
 		
 
 //BURADA BİTTİ
