@@ -480,7 +480,7 @@ myRsiEmaCizgim = plot(acRsiEma ? myRsi1S >= myEma121S ? myHigh : myLow : na, col
 
 
 //İşaretler
-kosul100_0 = ta.crossover(hlc3 , ta.ema(high, 20)) 
+kosul100_0 = ta.crossover(hlc3 , ta.ema(low, 20)) 
 kosul100_1 = ta.crossover(close , ta.ema(close, 100)) 
 kosul100_2 = kosul100_1 and (myRsi1S>45 and myRsi1S<54) and (myRsi1S>myEma121S)
 //kosul100 = (ta.crossover(close , ta.ema(close, 20)) and close > ta.ema(close, 100)) or kosul100_1
