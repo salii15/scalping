@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exMA(t) - V1.4.17", overlay=true)
+indicator(title ="exMA(t) - V1.4.18", overlay=true)
 
 xMumKontrol(xMumTip)=>
     string xMA = switch xMumTip
@@ -14,6 +14,7 @@ xMumKontrol(xMumTip)=>
         "1 Saat" => "60" 
         "2 Saat" => "120" 
         "4 Saat" => "240" 
+        "6 Saat" => "360" 
         "1 Gün" => "D"
         "1 Hafta" => "W"
         "3 Hafta" => "3W"
@@ -31,6 +32,7 @@ xMumKontrolA(xMumTipA)=>
         "60" => "1 Saat"  
         "120" => "2 Saat"  
         "240" => "4 Saat"  
+        "360" => "6 Saat"  
         "D" => "1 Gün"  
         "W" => "1 Hafta" 
         "3W" => "3 Hafta" 
@@ -65,7 +67,7 @@ xTabloKonumKontrol(xTabloKonum)=>
 myHisse = input.symbol("", "Symbol", group="Genel Ayarlar")
 //s = request.security(i_sym, 'D', close)
 kaynak = input(close, 'Source', group="Genel Ayarlar")
-string xCalismaMum = input.timeframe(defval = "Grafik", title = "Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="Genel Ayarlar")
+string xCalismaMum = input.timeframe(defval = "Grafik", title = "Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="Genel Ayarlar")
 
 
 //src = request.security(myHisse, timeframe.period, kaynak)
@@ -129,15 +131,15 @@ fibLen = input(defval = 200, title = 'Fibo Hesaplama Mum Sayısı', group="Fibo 
 
 
 //TimeFrame
-string xMAMum9 = input.timeframe(defval = "Grafik", title = "xMA9 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA9 Değerleri")
-string xMAMum13 = input.timeframe(defval = "Grafik", title = "xMA13 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA13 Değerleri")
-string xMAMum21 = input.timeframe(defval = "Grafik", title = "xMA21 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA21 Değerleri")
-string xMAMum34 = input.timeframe(defval = "Grafik", title = "xMA34 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA34 Değerleri")
-string xMAMum50 = input.timeframe(defval = "Grafik", title = "xMA50 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA50 Değerleri")
-string xMAMum89 = input.timeframe(defval = "Grafik", title = "xMA89 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA89 Değerleri")
-string xMAMum100 = input.timeframe(defval = "Grafik", title = "xMA100 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA100 Değerleri")
-string xMAMum144 = input.timeframe(defval = "Grafik", title = "xMA144 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA144 Değerleri")
-string xMAMum200 = input.timeframe(defval = "Grafik", title = "xMA200 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA200 Değerleri")
+string xMAMum9 = input.timeframe(defval = "Grafik", title = "xMA9 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA9 Değerleri")
+string xMAMum13 = input.timeframe(defval = "Grafik", title = "xMA13 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA13 Değerleri")
+string xMAMum21 = input.timeframe(defval = "Grafik", title = "xMA21 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA21 Değerleri")
+string xMAMum34 = input.timeframe(defval = "Grafik", title = "xMA34 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA34 Değerleri")
+string xMAMum50 = input.timeframe(defval = "Grafik", title = "xMA50 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA50 Değerleri")
+string xMAMum89 = input.timeframe(defval = "Grafik", title = "xMA89 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA89 Değerleri")
+string xMAMum100 = input.timeframe(defval = "Grafik", title = "xMA100 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA100 Değerleri")
+string xMAMum144 = input.timeframe(defval = "Grafik", title = "xMA144 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA144 Değerleri")
+string xMAMum200 = input.timeframe(defval = "Grafik", title = "xMA200 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA200 Değerleri")
 
 
 
@@ -186,6 +188,7 @@ xMaMumKontrol(xMaMumTip)=>
         "1 Saat" => "60" 
         "2 Saat" => "120" 
         "4 Saat" => "240" 
+        "6 Saat" => "360" 
         "1 Gün" => "D"
         "1 Hafta" => "W"
         "3 Hafta" => "3W"
@@ -521,8 +524,8 @@ alertcondition(kosul100_2 , title = "_rsiE100", message = '_rsie100 {{ticker}}, 
 
 acBoyama = input(defval = false, title = 'Boyama Gözüksün mü?', group="1. Boyama Bölümü")   
 
-string boyaBir = input.string(defval = "xMA21", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi"] , group="1. Boyama Bölümü")
-string boyaIki = input.string(defval = "xMA34", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi"] , group="1. Boyama Bölümü")
+string boyaBir = input.string(defval = "xMA21", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="1. Boyama Bölümü")
+string boyaIki = input.string(defval = "xMA34", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="1. Boyama Bölümü")
 
 myRenkBir = input.color(color.new(color.white, 50) , "Birinci Sınır Renk", group="1. Boyama Bölümü") 
 myRenkIki = input.color(color.new(color.red, 100), "İkinci Sınır Renk", group="1. Boyama Bölümü") 
@@ -539,6 +542,23 @@ float ba1 = switch boyaBir
 	"xMA200" => xMA_200
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma1 = switch boyaBir
 	"xMA9" => xMA_9Src
@@ -552,6 +572,23 @@ float ma1 = switch boyaBir
 	"xMA200" => xMA_200Src
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 	
 ilk = plot(acBoyama ? ma1 : na, color = color.new(color.white, 100))
 
@@ -567,6 +604,23 @@ float ba2 = switch boyaIki
 	"xMA200" => xMA_200
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma2 = switch boyaIki
 	"xMA9" => xMA_9Src
@@ -580,6 +634,23 @@ float ma2 = switch boyaIki
 	"xMA200" => xMA_200Src
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 son = plot(acBoyama ? ma2 : na, color = color.new(color.white, 100))
 
@@ -592,8 +663,8 @@ fill(ilk, son , title = 'Birinci Bölge', color = myBoya, fillgaps = true, trans
 
 acBoyama2 = input(defval = true, title = 'Boyama Gözüksün mü?', group="2. Boyama Bölümü")   
 
-string boyaBir2 = input.string(defval = "xMA89", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi"] , group="2. Boyama Bölümü")
-string boyaIki2 = input.string(defval = "xMA100", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi"] , group="2. Boyama Bölümü")
+string boyaBir2 = input.string(defval = "xMA89", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="2. Boyama Bölümü")
+string boyaIki2 = input.string(defval = "xMA100", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="2. Boyama Bölümü")
 
 myRenkBir2 = input.color(color.new(#00bcd4, 50) , "Birinci Sınır Renk", group="2. Boyama Bölümü") 
 myRenkIki2 = input.color(color.new(color.red, 100), "İkinci Sınır Renk", group="2. Boyama Bölümü") 
@@ -610,6 +681,23 @@ float ba12 = switch boyaBir2
 	"xMA200" => xMA_200
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma12 = switch boyaBir2
 	"xMA9" => xMA_9Src
@@ -623,6 +711,23 @@ float ma12 = switch boyaBir2
 	"xMA200" => xMA_200Src
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 	
 ilk2 = plot(acBoyama2 ? ma12 : na, color = color.new(color.white, 100))
 
@@ -638,6 +743,23 @@ float ba22 = switch boyaIki2
 	"xMA200" => xMA_200
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma22 = switch boyaIki2
 	"xMA9" => xMA_9Src
@@ -651,6 +773,23 @@ float ma22 = switch boyaIki2
 	"xMA200" => xMA_200Src
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 son2 = plot(acBoyama2 ? ma22 : na, color = color.new(color.white, 100))
 
@@ -663,8 +802,8 @@ fill(ilk2, son2 , title = 'İkinci Bölge', color = myBoya2, fillgaps = true, tr
 
 acBoyama3 = input(defval = false, title = 'Boyama Gözüksün mü?', group="3. Boyama Bölümü")   
 
-string boyaBir3 = input.string(defval = "xMA144", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi"] , group="3. Boyama Bölümü")
-string boyaIki3 = input.string(defval = "xMA200", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi"] , group="3. Boyama Bölümü")
+string boyaBir3 = input.string(defval = "xMA144", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="3. Boyama Bölümü")
+string boyaIki3 = input.string(defval = "xMA200", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="3. Boyama Bölümü")
 
 myRenkBir3 = input.color(color.new(color.orange, 50) , "Birinci Sınır Renk", group="3. Boyama Bölümü") 
 myRenkIki3 = input.color(color.new(color.red, 100), "İkinci Sınır Renk", group="3. Boyama Bölümü") 
@@ -681,6 +820,23 @@ float ba13 = switch boyaBir3
 	"xMA200" => xMA_200
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma13 = switch boyaBir3
 	"xMA9" => xMA_9Src
@@ -694,6 +850,23 @@ float ma13 = switch boyaBir3
 	"xMA200" => xMA_200Src
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 	
 ilk3 = plot(acBoyama3 ? ma13 : na, color = color.new(color.white, 100))
 
@@ -709,6 +882,23 @@ float ba23 = switch boyaIki3
 	"xMA200" => xMA_200
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma23 = switch boyaIki3
 	"xMA9" => xMA_9Src
@@ -722,6 +912,23 @@ float ma23 = switch boyaIki3
 	"xMA200" => xMA_200Src
 	"xMum" => src
 	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 son3 = plot(acBoyama3 ? ma23 : na, color = color.new(color.white, 100))
 
