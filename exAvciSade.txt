@@ -2,66 +2,129 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title ="exAVCI Sade - V1.1.18", overlay=true)
+indicator(title ="exMA(t) Sade - V1.4.19", overlay=true)
+
+xMumKontrol(xMumTip)=>
+    string xMA = switch xMumTip
+        "1 Dakika" => "1"
+        "3 Dakika" => "3"
+        "5 Dakika" => "5"
+        "15 Dakika" => "15"
+        "30 Dakika" => "30"
+        "1 Saat" => "60" 
+        "2 Saat" => "120" 
+        "4 Saat" => "240" 
+        "6 Saat" => "360" 
+        "1 Gün" => "D"
+        "1 Hafta" => "W"
+        "3 Hafta" => "3W"
+        "1 Ay" => "M"
+        "5 Hafta" => "5W"
+        => str.tostring(timeframe.period)
+
+xMumKontrolA(xMumTipA)=>
+    string xMAA = switch xMumTipA
+        "1" => "1 Dakika"
+	    "3" => "3 Dakika"
+		"5" => "5 Dakika" 
+        "15" => "15 Dakika" 
+        "30" => "30 Dakika" 
+        "60" => "1 Saat"  
+        "120" => "2 Saat"  
+        "240" => "4 Saat"  
+        "360" => "6 Saat"  
+        "D" => "1 Gün"  
+        "W" => "1 Hafta" 
+        "3W" => "3 Hafta" 
+        "M" => "1 Ay" 
+        "5W" => "5 Hafta" 
+        => str.tostring(timeframe.period)
+
+xHarfKontrol(xHarf)=>
+    string xH = switch xHarf
+        "size.auto" => size.auto
+        "size.tiny" => size.tiny
+        "size.small" => size.small
+        "size.normal" => size.normal
+        "size.large" => size.large
+        "size.huge" => size.huge
+        => size.small
+
+xTabloKonumKontrol(xTabloKonum)=>
+    string xT = switch xTabloKonum
+        "position.top_left" => position.top_left 
+        "position.top_center" => position.top_center 
+        "position.top_right" => position.top_right 
+        "position.middle_left" => position.middle_left 
+        "position.middle_center" => position.middle_center 
+        "position.middle_right" => position.middle_right 
+        "position.bottom_left" => position.bottom_left 
+        "position.bottom_center" => position.bottom_center 
+        "position.bottom_right" => position.bottom_right
+        => position.bottom_right
 
 
-//myClose = request.security(syminfo.tickerid, timeframe.period, close)
+myHisse = input.symbol("", "Symbol", group="Genel Ayarlar")
+//s = request.security(i_sym, 'D', close)
+kaynak = input(close, 'Source', group="Genel Ayarlar")
+string xCalismaMum = input.timeframe(defval = "Grafik", title = "Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="Genel Ayarlar")
+
+
+//src = request.security(myHisse, timeframe.period, kaynak)
+src = request.security(myHisse, xMumKontrol(xCalismaMum), kaynak)
+myLow = request.security(myHisse, xMumKontrol(xCalismaMum), low)
+myHigh = request.security(myHisse, xMumKontrol(xCalismaMum), high)
+myOpen = request.security(myHisse, xMumKontrol(xCalismaMum), open)
 //src = request.security(syminfo.tickerid, timeframe.period, close)
 
-src = input.source(close, "Kaynak", group="Kaynak Çeşitleri")
 
+//Günün Açılış Çizgisi
+dl = input.bool(false, title="Günün Açılış Çizgisini Göster", group="Günün Açılış Çizgisi")
+dopen = request.security(syminfo.tickerid, "D", open, lookahead=barmerge.lookahead_on)
+plot(dl and dopen ? dopen : na, title="Günün Açılış Çizgisi", color= color.new(#e040fb,0)  , style=plot.style_circles, linewidth = 1)
 
+//İşaretler
+alFirsat = input.bool(true, title="AL Fırsatı İşaretlerini Göster", group="İşaretler")
 
-acxMaCizgisi = input(defval = true, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
-
-acxMa13Cizgisi = input(defval = false, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA13 Çizgisi")   
-
-acxMa21Cizgisi = input(defval = true, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA21 Çizgisi")   
-acMumRenk21 = input(true, title='xMA21 Çizgisi (Adx ve Efi ile) Renklensin mi?', group="xMA21 Çizgisi")
-
-
-acxMa100Cizgisi = input(defval = true, title = 'xMA100 Çizgisi Gözüksün mü?', group="xMA100 Çizgisi")   
-acxMa100CizgisiRSI = input.bool(defval = true, title = 'xMA100 Çizgisi (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
-acxMa100CizgisiRSIbg = input.bool(false, title='Arka Plan (Rsi/Ema Bölgesi ile) Renklensin mi?', group="xMA100 Çizgisi")
-
-acxMa377Cizgisi = input(defval = true, title = 'xMA377 Çizgisi Gözüksün mü?', group="xMA377 Çizgisi")   
-acMumRenk200 = input.bool(true, title='xMA377 Çizgisi (Altın ve nQQE ile) Renklensin mi?', group="xMA377 Çizgisi")
-
+//Pano
+acTabloPanoOzet = input(defval = true, title = 'Pano Gösterilsin mi?', group="Pano Ayarları")  
+xPanoKonumu =  input.string(defval = "position.bottom_center", title = "Tablo Konumu" ,options=["position.top_left", "position.top_center", "position.top_right", "position.middle_left", "position.middle_center", "position.middle_right", "position.bottom_left", "position.bottom_center", "position.bottom_right"] , group="Pano Ayarları")
+xPanoHarfBuyuklugu = input.string(defval = "size.huge", title = "Pano Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Pano Ayarları")
 
 
 
 // Fibo Ayarları
-acFiboLines = input(defval = true, title = 'Fibo Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
+acFiboLines = input(defval = false, title = 'Fibo Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlUst = input(defval = true, title = 'Fibo Üst Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlOrta = input(defval = true, title = 'Fibo Orta Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlAlt = input(defval = true, title = 'Fibo Alt Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 fibLen = input(defval = 200, title = 'Fibo Hesaplama Mum Sayısı', group="Fibo Ayarları")  
-acFkes = input(defval = false, title = 'Fibo Kesmeleri (Turuncu) Gözüksün mü?', group="Fibo Ayarları")   
 
-
-//Tablo
-acTabloPanoOzet = input(defval = true, title = 'Direnç, Destek ve Fiyat Tablosu Gösterilsin mi?', group="Tablo Ayarları")  
-acTabloPanoMobil = input(defval = false, title = 'Direnç, Destek ve Fiyat Tablosu Mobil Gösterilsin mi?', group="Tablo Ayarları")  
-
-
-acAltinCizgi = input(defval = false, title = 'Altın Cizgisi Gözüksün mü?', group="Altın Çizgi Ayarları") 
-//acAltinKesmeIsareti = input(defval = false, title = 'Altın Cizgisi Aşağı Kesme İşareti Gözüksün mü?', group="Altın Çizgi Ayarları") 
 
 
 //TimeFrame
-string xMAMum13 = input.timeframe(defval = "Grafik", title = "xMA13 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA13 Değerleri")
-string xMAMum21 = input.timeframe(defval = "Grafik", title = "xMA21 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA21 Değerleri")
-string xMAMum100 = input.timeframe(defval = "Grafik", title = "xMA100 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA100 Değerleri")
-string xMAMum377 = input.timeframe(defval = "Grafik", title = "xMA377 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="xMA377 Değerleri")
+string xMAMum9 = input.timeframe(defval = "Grafik", title = "xMA9 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA9 Değerleri")
+string xMAMum13 = input.timeframe(defval = "Grafik", title = "xMA13 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA13 Değerleri")
+string xMAMum21 = input.timeframe(defval = "Grafik", title = "xMA21 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA21 Değerleri")
+string xMAMum34 = input.timeframe(defval = "Grafik", title = "xMA34 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA34 Değerleri")
+string xMAMum50 = input.timeframe(defval = "Grafik", title = "xMA50 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA50 Değerleri")
+string xMAMum89 = input.timeframe(defval = "Grafik", title = "xMA89 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA89 Değerleri")
+string xMAMum100 = input.timeframe(defval = "Grafik", title = "xMA100 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA100 Değerleri")
+string xMAMum144 = input.timeframe(defval = "Grafik", title = "xMA144 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA144 Değerleri")
+string xMAMum200 = input.timeframe(defval = "Grafik", title = "xMA200 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "6 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="xMA200 Değerleri")
 
 
 
 // xMA Çizgi ve Kesişmeleri
+string xMaTip9 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA9 tipi", group="xMA9 Değerleri")
 string xMaTip13 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA13 tipi", group="xMA13 Değerleri")
 string xMaTip21 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA21 tipi", group="xMA21 Değerleri")
+string xMaTip34 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA34 tipi", group="xMA34 Değerleri")
+string xMaTip50 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA50 tipi", group="xMA50 Değerleri")
+string xMaTip89 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA89 tipi", group="xMA89 Değerleri")
 string xMaTip100 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA100 tipi", group="xMA100 Değerleri")
-string xMaTip377 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA377 tipi", group="xMA377 Değerleri")
-
+string xMaTip144 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA144 tipi", group="xMA144 Değerleri")
+string xMaTip200 = input.string(defval="EMA", options = ["EMA", "(D)EMA", "(T)EMA", "SMA", "HMA", "RMA", "WMA", "VWMA"], title=  "xMA200 tipi", group="xMA200 Değerleri")
 
 
 demaHesapla(mySrc,len)=>
@@ -97,243 +160,142 @@ xMaMumKontrol(xMaMumTip)=>
         "1 Saat" => "60" 
         "2 Saat" => "120" 
         "4 Saat" => "240" 
+        "6 Saat" => "360" 
         "1 Gün" => "D"
         "1 Hafta" => "W"
+        "3 Hafta" => "3W"
         "1 Ay" => "M"
+        "5 Hafta" => "5W"
         => str.tostring(timeframe.period)
 
 
 
-//FONKSIYONLAR
 
+acxMaCizgisi = input(defval = true, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
+acxMa9Cizgisi = input(defval = false, title = 'xMA9 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa13Cizgisi = input(defval = false, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa21Cizgisi = input(defval = false, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa34Cizgisi = input(defval = false, title = 'xMA34 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa50Cizgisi = input(defval = true, title = 'xMA50 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa89Cizgisi = input(defval = false, title = 'xMA89 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa100Cizgisi = input(defval = false, title = 'xMA100 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa144Cizgisi = input(defval = false, title = 'xMA144 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa200Cizgisi = input(defval = false, title = 'xMA200 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 
-//Altın Çizgisi
-srcAltin = input.source(defval=hlcc4, title='Source', group="Altın Çizgi Ayarları")
-per = input.int(defval=230, minval=1, title='Örnekleme periyodu', group="Altın Çizgi Ayarları")
-mult = input.float(defval=2.0, minval=0.1, title='Aralık carpanı', group="Altın Çizgi Ayarları")
-
-
-smoothrng(x, t, m) =>
-    wper = t * 2 - 1
-    avrng = ta.ema(math.abs(x - x[1]), t)
-    smoothrng = ta.ema(avrng, wper) * m
-    smoothrng
-smrng = smoothrng(srcAltin, per, mult)
-
-rngfilt(x, r) =>
-    rngfilt = x
-    rngfilt := x > nz(rngfilt[1]) ? x - r < nz(rngfilt[1]) ? nz(rngfilt[1]) : x - r : x + r > nz(rngfilt[1]) ? nz(rngfilt[1]) : x + r
-    rngfilt
-filt = rngfilt(srcAltin, smrng)
-
-
-// Filter Direction
-upward = 0.0
-upward := filt > filt[1] ? nz(upward[1]) + 1 : filt < filt[1] ? 0 : nz(upward[1])
-downward = 0.0
-downward := filt < filt[1] ? nz(downward[1]) + 1 : filt > filt[1] ? 0 : nz(downward[1])
-
-
-// Colors
-fColour = color.new(color.orange,0) 
-filtcolor = upward > 0 ? color.new(color.lime,0) : downward > 0 ? color.new(#ff0000,0) : color.new(color.orange,0)
-filtplot = plot(filt and acAltinCizgi ? filt : na, color=filtcolor, linewidth=3, title='Altın Cizgisi',style = plot.style_stepline, trackprice=false)
-
-
-
-// Altin Çizgisi Kesme İşareti Bölümü
-kesAaltinCizgi =  ta.crossunder(close , filt) 
-//plotshape(kesAaltinCizgi and acAltinKesmeIsareti ? kesAaltinCizgi : na ,title ='Aşağı Kesti Altın Çizgi', text='', style=shape.triangledown , location=location.top, color=#FF5252, offset=0, size=size.tiny)
-//alertcondition(kesAaltinCizgi , title = "SAT Aşağı Kesti Altın Çizgi", message = 'SAT Aşağı Kesti Altın Çizgi {{ticker}}, FİYAT={{close}}')
-
-
-//nQQE 
-srcNqq = input(close, group="nQQE Ayarlar")
-lengthNqq = input.int(14, 'RSI Length', minval=1, group="nQQE Ayarlar")
-SSF = input.int(2, 'SF RSI SMoothing Factor', minval=1, group="nQQE Ayarlar")
-RSII = ta.ema(ta.rsi(srcNqq, lengthNqq), SSF)
-TR = math.abs(RSII - RSII[1])
-wwalpha = 1 / lengthNqq
-WWMA = 0.0
-WWMA := wwalpha * TR + (1 - wwalpha) * nz(WWMA[1])
-ATRRSI = 0.0
-ATRRSI := wwalpha * WWMA + (1 - wwalpha) * nz(ATRRSI[1])
-QQEF = ta.ema(ta.rsi(srcNqq, lengthNqq), SSF)
-QUP = QQEF + ATRRSI * 4.236
-QDN = QQEF - ATRRSI * 4.236
-QQES = 0.0
-QQES := QUP < nz(QQES[1]) ? QUP : QQEF > nz(QQES[1]) and QQEF[1] < nz(QQES[1]) ? QDN : QDN > nz(QQES[1]) ? QDN : QQEF < nz(QQES[1]) and QQEF[1] > nz(QQES[1]) ? QUP : nz(QQES[1])
-
-myNQQE = ((QQEF >= QQES) ? color.new(color.lime, 0) : color.new(#ff0000,0))
-//plot(10, color=myNQQE, linewidth=4)
-
-//myAltinNqqeColor =  ((QQEF >= QQES) and (upward > 0  or filtcolor == fColour )) ?  color.new(color.lime, 0) : ((QQEF < QQES) and downward > 0) ? color.new(color.red, 0) : color.new(color.orange, 0)
-myAltinNqqeColor =  ((QQEF >= QQES) and (upward > 0 or filtcolor == fColour )) ?  color.new(color.lime, 0) : ((QQEF < QQES) and (downward > 0  or filtcolor == fColour )) ? color.new(color.red, 0) : color.new(color.orange, 0)
-myAltinNqqeColorYesil =  ((QQEF >= QQES) and (upward > 0 or filtcolor == fColour )) ?  color.new(color.lime, 66) : ((QQEF < QQES) and (downward > 0  or filtcolor == fColour )) ? color.new(color.red, 100) : color.new(color.orange, 100)
-
-myAltinNqqeColorTurkuaz =  ((QQEF >= QQES) and (upward > 0 or filtcolor == fColour )) ?  color.new(#00bcd4,70) : na
-
-
-
-
-//EFI
-var cumVol = 0.
-cumVol += nz(volume)
-//if barstate.islast and cumVol == 0
-//    runtime.error("Hacim Verisine Erişilemiyor!")
-lengthEfi = input.int(5, minval=1, title = "EFI Uzunluğu", group="EFI Ayarları")
-efi = ta.ema(ta.change(close) * cumVol, lengthEfi)
-myColorY = efi>=0 and efi>efi[1] ? color.white : color.white
-myColorD = efi<0 and efi<=efi[1] ? color.red : color.red
-myColorAdx =  efi>=0 ? myColorY : myColorD
-
-
-//DMI 
-//lensig = input.int(14, title="ADX Smoothing", minval=1, maxval=50, group="DMI Ayarlar")
-//lenDmi = input.int(14, minval=1, title="DI Length", group="DMI Ayarlar")
-//up = ta.change(high)
-//down = -ta.change(low)
-//plusDM = na(up) ? na : (up > down and up > 0 ? up : 0)
-//minusDM = na(down) ? na : (down > up and down > 0 ? down : 0)
-//trur = ta.rma(ta.tr, lenDmi)
-//plus = fixnan(100 * ta.rma(plusDM, lenDmi) / trur)
-//minus = fixnan(100 * ta.rma(minusDM, lenDmi) / trur)
-//sum = plus + minus
-//adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), lensig)
-//myColorAdx := (plus >= minus and adx[1]<adx) ?  color.new(color.lime,0) : (efi>=0) ? myColorY : adx<15.0 ? myColorD :  color.new(#880e4f,0)
-
-
-
-//ADX
-lenDMI = input(14,title = "ADX Uzunluğu", group="ADX Ayarları")
-th = input(20,title = "ADX th Değeri", group="ADX Ayarları")
-
-myAdxYesilRenk = input.color(color.new(color.lime,0),"Adx Yükseliyor", group="ADX Ayarları")
-myAdxBeyazRenk = input.color(color.new(color.white,0),"Adx efi>0 Durumunda", group="ADX Ayarları")
-myAdxKirmiziRenk = input.color(color.new(color.red,0),"Adx Düşüyor", group="ADX Ayarları")
-
-myadxDusuyorBarajFloat = input.float(defval=15.0,title="Adx Düşüş İştah Barajı", group="ADX Ayarları")
-myAdxKoyuKirmiziRenk = input.color(color.new(#880e4f,0),"Adx Hızlı Düşüyor", group="ADX Ayarları")
-
-
-hesaplaDX(myLen) =>
-    TrueRange = math.max(math.max(high - low, math.abs(high - nz(close[1]))), math.abs(low - nz(close[1])))
-    DirectionalMovementPlus = high - nz(high[1]) > nz(low[1]) - low ? math.max(high - nz(high[1]), 0) : 0
-    DirectionalMovementMinus = nz(low[1]) - low > high - nz(high[1]) ? math.max(nz(low[1]) - low, 0) : 0
-    
-    SmoothedTrueRange = 0.0
-    SmoothedTrueRange := nz(SmoothedTrueRange[1]) - nz(SmoothedTrueRange[1]) / myLen + TrueRange
-    
-    SmoothedDirectionalMovementPlus = 0.0
-    SmoothedDirectionalMovementPlus := nz(SmoothedDirectionalMovementPlus[1]) - nz(SmoothedDirectionalMovementPlus[1]) / myLen + DirectionalMovementPlus
-    
-    SmoothedDirectionalMovementMinus = 0.0
-    SmoothedDirectionalMovementMinus := nz(SmoothedDirectionalMovementMinus[1]) - nz(SmoothedDirectionalMovementMinus[1]) / myLen + DirectionalMovementMinus
-
-    DIPlus = SmoothedDirectionalMovementPlus / SmoothedTrueRange * 100
-    DIMinus = SmoothedDirectionalMovementMinus / SmoothedTrueRange * 100
-    
-    DX = math.abs(DIPlus - DIMinus) / (DIPlus + DIMinus) * 100
-    
-    ta.sma(DX, lenDMI)
-    
-
-myAdx = hesaplaDX(lenDMI)
-
-
-myAdxRenk = color.new(color.yellow,0)
-if efi>0 
-    myAdxRenk := myAdxBeyazRenk
-if efi>0 and myAdx>myAdx[1]
-    myAdxRenk := myAdxYesilRenk
-if efi<0 
-    myAdxRenk := myAdxKirmiziRenk
-if efi<0 and myAdx>=myadxDusuyorBarajFloat
-    myAdxRenk := myAdxKoyuKirmiziRenk
-
-myColorAdx :=  myAdxRenk   
-//plot(myAdx and acCizgiEFI ? myAdx : na , color=myAdxRenk, title='ADX',linewidth=2, style=plot.style_circles)
-
-
-
-//MFI
-lengthMFI = input.int(title="Uzunluk", defval=14, minval=1, maxval=2000, group="MFI Ayarları")
-srcMFI = hlc3
-myMFI = ta.mfi(srcMFI, lengthMFI)
-
-
-
-
-
-
-
-
-
-xMA_13_Color = color.new(#FF0000, 0)
+xMA_9_Color = color.new(color.lime, 0)
+xMA_13_Color = color.new(color.purple, 0)
 xMA_21_Color = color.new(color.white, 0)
-xMA_100_Color = color.new(color.lime, 0)
-xMA_377_Color = color.new(color.white, 0)
+xMA_34_Color = color.new(color.white, 0)
+xMA_50_Color = color.new(color.yellow, 0)
+xMA_89_Color = color.new(#00bcd4, 0)
+xMA_100_Color = color.new(#00bcd4, 0)
+xMA_144_Color = color.new(color.orange, 0)
+xMA_200_Color = color.new(color.orange, 0)
 
 
-xMA_13_Color_koyu = color.new(#FF0000, 1)
-xMA_21_Color_koyu = color.new(#ff0000, 0)
-xMA_100_Color_koyu = color.new(#ff0000, 0)
-xMA_377_Color_koyu = color.new(color.white, 50)
+xMA_9_Color_koyu = color.new(color.lime, 0)
+xMA_13_Color_koyu = color.new(color.purple, 0)
+xMA_21_Color_koyu = color.new(color.white, 1)
+xMA_34_Color_koyu = color.new(color.white, 1)
+xMA_50_Color_koyu = color.new(color.yellow, 0)
+xMA_89_Color_koyu = color.new(#00bcd4, 1)
+xMA_100_Color_koyu = color.new(#00bcd4, 1)
+xMA_144_Color_koyu = color.new(color.orange, 1)
+xMA_200_Color_koyu = color.new(color.orange, 1)
 
 
+length0a = input(9, 'xMA 9', group="xMA9 Değerleri")
+source_9 = input.source(defval=close, title='xMA 9 Kaynağı', group="xMA9 Değerleri")
+xMaMum9Src = xMaMumKontrol(xMAMum9)
+xMA_9 = xMaKontrol(xMaTip9, source_9, length0a) 
+xMA_9Src = request.security(myHisse,xMaMum9Src, xMA_9)
+xMA_9_Color_S = xMA_9Src >= xMA_9Src[1] ? xMA_9_Color :xMA_9_Color_koyu
+xMA_9_Plot = plot(xMA_9Src and acxMaCizgisi and acxMa9Cizgisi ? xMA_9Src : na , color=xMA_9_Color_S, linewidth=2, title='xMa9 Çizgisi')
 
-length1a = input(14, 'xMA 13', group="xMA13 Değerleri")
+length1a = input(13, 'xMA 13', group="xMA13 Değerleri")
 source_13 = input.source(defval=close, title='xMA 13 Kaynağı', group="xMA13 Değerleri")
 xMaMum13Src = xMaMumKontrol(xMAMum13)
 xMA_13 = xMaKontrol(xMaTip13, source_13, length1a) 
-xMA_13Src = request.security(syminfo.tickerid,xMaMum13Src, xMA_13)
+xMA_13Src = request.security(myHisse,xMaMum13Src, xMA_13)
 xMA_13_Color_S = xMA_13Src >= xMA_13Src[1] ? xMA_13_Color :xMA_13_Color_koyu
 xMA_13_Plot = plot(xMA_13Src and acxMaCizgisi and acxMa13Cizgisi ? xMA_13Src : na , color=xMA_13_Color_S, linewidth=2, title='xMa13 Çizgisi')
 
 length2a = input(20, 'xMA 21', group="xMA21 Değerleri")
-source_21 = input.source(defval=close, title='xMA 21 Kaynağı', group="xMA21 Değerleri")
+source_21 = input.source(defval=high, title='xMA 21 Kaynağı', group="xMA21 Değerleri")
 xMaMum21Src = xMaMumKontrol(xMAMum21)
 xMA_21 = xMaKontrol(xMaTip21, source_21, length2a) 
-xMA_21Src = request.security(syminfo.tickerid,xMaMum21Src, xMA_21)
-xMA_21_Color_S = acMumRenk21 ? myColorAdx : xMA_21Src >= xMA_21Src[1] ? xMA_21_Color :xMA_21_Color_koyu
-xMA_21_Plot = plot(xMA_21Src and acxMaCizgisi and acxMa21Cizgisi ? xMA_21Src : na , color=xMA_21_Color_S , linewidth=2, title='xMa21 Çizgisi', style = plot.style_circles)
+xMA_21Src = request.security(myHisse,xMaMum21Src, xMA_21)
+xMA_21_Color_S = xMA_21Src >= xMA_21Src[1] ? xMA_21_Color :xMA_21_Color_koyu
+xMA_21_Plot = plot(xMA_21Src and acxMaCizgisi and acxMa21Cizgisi ? xMA_21Src : na , color=xMA_21_Color_S , linewidth=2, title='xMa21 Çizgisi')
+//xMA_21_Plot = plot(xMA_21Src and acxMaCizgisi and acxMa21Cizgisi ? xMA_21Src : na , color=xMA_21_Color , linewidth=3, title='xMa21 Çizgisi')
+
+length3a = input(20, 'xMA 34', group="xMA34 Değerleri")
+source_34 = input.source(defval=low, title='xMA 34 Kaynağı', group="xMA34 Değerleri")
+xMaMum34Src = xMaMumKontrol(xMAMum34)
+xMA_34 = xMaKontrol(xMaTip34, source_34, length3a)
+xMA_34Src = request.security(myHisse,xMaMum34Src, xMA_34)
+xMA_34_Color_S = xMA_34Src >= xMA_34Src[1] ? xMA_34_Color :xMA_34_Color_koyu
+xMA_34_Plot = plot(xMA_34Src and acxMaCizgisi and acxMa34Cizgisi ? xMA_34Src : na , color=xMA_34_Color_S, linewidth=2, title='xMa34 Çizgisi')
+
+length4a = input(50, 'xMA 50', group="xMA50 Değerleri")
+source_50 = input.source(defval=close, title='xMA 50 Kaynağı', group="xMA50 Değerleri")
+xMaMum50Src = xMaMumKontrol(xMAMum50)
+xMA_50 = xMaKontrol(xMaTip50, source_50, length4a) 
+xMA_50Src = request.security(myHisse,xMaMum50Src, xMA_50)
+xMA_50_Color_S = xMA_50Src >= xMA_50Src[1] ? xMA_50_Color :xMA_50_Color_koyu
+xMA_50_Plot = plot(xMA_50Src and acxMaCizgisi and acxMa50Cizgisi ? xMA_50Src : na , color=xMA_50_Color_S, linewidth=2, title='xMa50 Çizgisi')
+
+length5a = input(100, 'xMA 89', group="xMA89 Değerleri")
+source_89 = input.source(defval=high, title='xMA 89 Kaynağı', group="xMA89 Değerleri")
+xMaMum89Src = xMaMumKontrol(xMAMum89)
+xMA_89 = xMaKontrol(xMaTip89, source_89, length5a) 
+xMA_89Src = request.security(myHisse,xMaMum89Src, xMA_89)
+xMA_89_Color_S = xMA_89Src >= xMA_89Src[1] ? xMA_89_Color :xMA_89_Color_koyu
+xMA_89_Plot = plot(xMA_89Src and acxMaCizgisi and acxMa89Cizgisi ? xMA_89Src : na , color=xMA_89_Color_S, linewidth=2, title='xMa89 Çizgisi')
 
 length6a = input(100, 'xMA 100', group="xMA100 Değerleri")
-source_100 = input.source(defval=close, title='xMA 100 Kaynağı', group="xMA100 Değerleri")
+source_100 = input.source(defval=low, title='xMA 100 Kaynağı', group="xMA100 Değerleri")
 xMaMum100Src = xMaMumKontrol(xMAMum100)
 xMA_100 = xMaKontrol(xMaTip100, source_100, length6a) 
-xMA_100Src = request.security(syminfo.tickerid,xMaMum100Src, xMA_100)
-//xMA_100_Color_S = xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
+xMA_100Src = request.security(myHisse,xMaMum100Src, xMA_100)
+xMA_100_Color_S = xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
+xMA_100_Plot = plot(xMA_100Src and acxMaCizgisi and acxMa100Cizgisi ? xMA_100Src : na , color=xMA_100_Color_S, linewidth=2, title='xMa100 Çizgisi')
 
+length7a = input(377, 'xMA 144', group="xMA144 Değerleri")
+source_144 = input.source(defval=high, title='xMA 144 Kaynağı', group="xMA144 Değerleri")
+xMaMum144Src = xMaMumKontrol(xMAMum144)
+xMA_144 = xMaKontrol(xMaTip144, source_144, length7a) 
+xMA_144Src = request.security(myHisse,xMaMum144Src, xMA_144)
+xMA_144_Color_S = xMA_144Src >= xMA_144Src[1] ? xMA_144_Color :xMA_144_Color_koyu
+xMA_144_Plot = plot(xMA_144Src and acxMaCizgisi and acxMa144Cizgisi ? xMA_144Src : na , color=xMA_144_Color_S, linewidth=2, title='xMa144 Çizgisi')
 
-//barajRsi = ta.rsi(close,myRsiUzunluk)
-//barajRengi = barajRsi <= acS and barajRsi > acA ? rsiUstBarajRenk : barajRsi <= acA and barajRsi > acAA ? rsiBarajArasiRenk : barajRsi <= acAA and barajRsi > acCAA ? rsiAltBarajRenk : na
-//xMA_100_Color_S = acxMa100CizgisiRSI ? barajRengi : xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
-//xMA_100_Plot = plot(xMA_100Src and acxMaCizgisi and acxMa100Cizgisi ? xMA_100Src : na , color=xMA_100_Color_S, linewidth=4, title='xMa100 Çizgisi')
+length8a = input(377, 'xMA 200', group="xMA200 Değerleri")
+source_200 = input.source(defval=low, title='xMA 200 Kaynağı', group="xMA200 Değerleri")
+xMaMum200Src = xMaMumKontrol(xMAMum200)
+xMA_200 = xMaKontrol(xMaTip200, source_200, length8a) 
+xMA_200Src = request.security(myHisse,xMaMum200Src, xMA_200)
+xMA_200_Color_S = xMA_200Src >= xMA_200Src[1] ? xMA_200_Color :xMA_200_Color_koyu
+xMA_200_Plot = plot(xMA_200Src and acxMaCizgisi and acxMa200Cizgisi ? xMA_200Src : na , color=xMA_200_Color_S, linewidth=2, title='xMa200 Çizgisi')
 
-length8a = input(377, 'xMA 377', group="xMA377 Değerleri")
-source_377 = input.source(defval=close, title='xMA 377 Kaynağı', group="xMA377 Değerleri")
-xMaMum377Src = xMaMumKontrol(xMAMum377)
-xMA_377 = xMaKontrol(xMaTip377, source_377, length8a) 
-xMA_377Src = request.security(syminfo.tickerid,xMaMum377Src, xMA_377)
-xMA_377_Color_S = acMumRenk200 ? myAltinNqqeColor : xMA_377Src >= xMA_377Src[1] ? xMA_377_Color :xMA_377_Color_koyu
-xMA_377_Plot = plot(xMA_377Src and acxMaCizgisi and acxMa377Cizgisi ? xMA_377Src : na , color=xMA_377_Color_S, linewidth=4, title='xMa377 Çizgisi')
-
-
-
+kesAxMA_9 = ta.crossunder(src , xMA_9Src) 
 kesAxMA_13 = ta.crossunder(src , xMA_13Src) 
 kesAxMA_21 = ta.crossunder(src , xMA_21Src) 
+kesAxMA_34 = ta.crossunder(src , xMA_34Src) 
+kesAxMA_50 = ta.crossunder(src , xMA_50Src) 
+kesAxMA_89 = ta.crossunder(src , xMA_89Src) 
 kesAxMA_100 = ta.crossunder(src , xMA_100Src) 
-kesAxMA_377 = ta.crossunder(src , xMA_377Src) 
+kesAxMA_144 = ta.crossunder(src , xMA_144Src) 
+kesAxMA_200 = ta.crossunder(src , xMA_200Src) 
 
+kesYxMA_9 = ta.crossover(src , xMA_9Src) 
 kesYxMA_13 = ta.crossover(src , xMA_13Src) 
 kesYxMA_21 = ta.crossover(src , xMA_21Src) 
+kesYxMA_34 = ta.crossover(src , xMA_34Src) 
+kesYxMA_50 = ta.crossover(src , xMA_50Src) 
+kesYxMA_89 = ta.crossover(src , xMA_89Src) 
 kesYxMA_100 = ta.crossover(src , xMA_100Src) 
-kesYxMA_377 = ta.crossover(src , xMA_377Src) 
-
-
-//alertcondition(kesYxMA_100 , title = "AL xMA100 Yukarı Kesti", message = 'AL xMA100 Yukarı Kesti {{ticker}}, FİYAT={{close}}')
-alertcondition(kesAxMA_13 , title = "SAT xMA13 Aşağı Kesti", message = 'SAT xMA13 Aşağı Kesti {{ticker}}, FİYAT={{close}}')
+kesYxMA_144 = ta.crossover(src , xMA_144Src) 
+kesYxMA_200 = ta.crossover(src , xMA_200Src) 
 
 
 xMaAStyle = shape.triangledown
@@ -345,30 +307,6 @@ xMaYStyle = shape.triangleup
 xMaYSize = size.small
 xMaYColor = color.lime
 xMaYLocation = location.belowbar
-
-
-acxMaKesmeler = input(defval = false, title = 'xMA Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMaAKesmeler = input(defval = true, title = 'xMA Aşağı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMaYKesmeler = input(defval = true, title = 'xMA Yukarı Kesme İşaretleri Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa13AKesmeler = input(defval = true, title = 'xMA13 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-//acxMa13YKesmeler = input(defval = false, title = 'xMA13 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa21AKesmeler = input(defval = false, title = 'xMA21 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa21YKesmeler = input(defval = false, title = 'xMA21 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-//acxMa100AKesmeler = input(defval = false, title = 'xMA100 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-acxMa100YKesmeler = input(defval = false, title = 'xMA100 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-//acxMa377AKesmeler = input(defval = false, title = 'xMA377 Aşağı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-//acxMa377YKesmeler = input(defval = false, title = 'xMA377 Yukarı Kesme İşareti Gözüksün mü?', group="xMA Kesme İşaretleri")   
-
-plotshape(kesAxMA_13 and acxMaKesmeler and acxMaAKesmeler and acxMa13AKesmeler ? kesAxMA_13 : na ,title ='xMa13 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_13_Color, offset=0, size=xMaASize)
-plotshape(kesAxMA_21 and acxMaKesmeler and acxMaAKesmeler and acxMa21AKesmeler ? kesAxMA_21 : na ,title ='xMa21 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_21_Color, offset=0, size=xMaASize)
-//plotshape(kesAxMA_100 and acxMaKesmeler and acxMaAKesmeler and acxMa100AKesmeler ? kesAxMA_100 : na ,title ='xMa100 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_100_Color, offset=0, size=xMaASize)
-//plotshape(kesAxMA_377 and acxMaKesmeler and acxMaAKesmeler and acxMa377AKesmeler ? kesAxMA_377 : na ,title ='xMa377 Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=xMA_377_Color, offset=0, size=xMaASize)
-
-//plotshape(kesYxMA_13 and acxMaKesmeler and acxMaYKesmeler and acxMa13YKesmeler ? kesYxMA_13 : na ,title ='xMa13 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_13_Color, offset=0, size=xMaYSize)
-plotshape(kesYxMA_21 and acxMaKesmeler and acxMaYKesmeler and acxMa21YKesmeler ? kesYxMA_21 : na ,title ='xMa21 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_21_Color, offset=0, size=xMaYSize)
-plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=location.bottom, color=color.lime, offset=0, size=size.tiny)
-plotshape(kesYxMA_100 and acxMaKesmeler and acxMaYKesmeler and acxMa100YKesmeler ? kesYxMA_100 : na ,title ='xMa100 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_100_Color, offset=0, size=xMaYSize)
-//plotshape(kesYxMA_377 and acxMaKesmeler and acxMaYKesmeler and acxMa377YKesmeler ? kesYxMA_377 : na ,title ='xMa377 Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=xMA_377_Color, offset=0, size=xMaYSize)
 
 
 
@@ -384,46 +322,11 @@ xMaYColorRenk = color.lime
 xMaYLocationRenk = location.belowbar
 
 
-
-acxMaRenkler = input(defval = false, title = 'xMA Renk Değişimi İşaretleri Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMaARenkler = input(defval = true, title = 'xMA Aşağı Renk Değişimi İşaretleri Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMaYRenkler = input(defval = true, title = 'xMA Yukarı Renk Değişimi İşaretleri Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMa13ARenkler = input(defval = false, title = 'xMA13 Aşağı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMa13YRenkler = input(defval = false, title = 'xMA13 Yukarı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMa21ARenkler = input(defval = false, title = 'xMA21 Aşağı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMa21YRenkler = input(defval = false, title = 'xMA21 Yukarı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMa100ARenkler = input(defval = false, title = 'xMA100 Aşağı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-acxMa100YRenkler = input(defval = false, title = 'xMA100 Yukarı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-//acxMa377ARenkler = input(defval = false, title = 'xMA377 Aşağı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-//acxMa377YRenkler = input(defval = false, title = 'xMA377 Yukarı Renk Değişimi İşareti Gözüksün mü?', group="xMA Renk Değişimi İşaretleri")   
-
-
-
-xMA_13_RenkDegisimiA = xMA_13_Color_S != xMA_13_Color_S[1] and xMA_13Src < xMA_13Src[1]
-xMA_13_RenkDegisimiY = xMA_13_Color_S != xMA_13_Color_S[1] and xMA_13Src >= xMA_13Src[1]
-plotshape(xMA_13_RenkDegisimiA and acxMa13Cizgisi and acxMaRenkler and acxMaARenkler and acxMa13ARenkler ? xMA_13_RenkDegisimiA : na , title = 'xMa13 Aşağı Renk Değişimi', text='', style=xMaAStyleRenk , location=xMaALocationRenk, color=xMA_13_Color, offset=0, size=xMaASizeRenk)
-plotshape(xMA_13_RenkDegisimiY and acxMa13Cizgisi and acxMaRenkler and acxMaYRenkler and acxMa13YRenkler ? xMA_13_RenkDegisimiY : na , title = 'xMa13 Yukarı Renk Değişimi', text='', style=xMaYStyleRenk , location=xMaYLocationRenk, color=xMA_13_Color, offset=0, size=xMaYSizeRenk)
-
-
-xMA_21_RenkDegisimiA = xMA_21_Color_S != xMA_21_Color_S[1] and xMA_21Src < xMA_21Src[1]
-xMA_21_RenkDegisimiY = xMA_21_Color_S != xMA_21_Color_S[1] and xMA_21Src >= xMA_21Src[1]
-plotshape(xMA_21_RenkDegisimiA and acxMa21Cizgisi and acxMaRenkler and acxMaARenkler and acxMa21ARenkler ? xMA_21_RenkDegisimiA : na , title = 'xMa21 Aşağı Renk Değişimi', text='', style=xMaAStyleRenk , location=xMaALocationRenk, color=xMA_21_Color, offset=0, size=xMaASizeRenk)
-plotshape(xMA_21_RenkDegisimiY and acxMa21Cizgisi and acxMaRenkler and acxMaYRenkler and acxMa21YRenkler ? xMA_21_RenkDegisimiY : na , title = 'xMa21 Yukarı Renk Değişimi', text='', style=xMaYStyleRenk , location=xMaYLocationRenk, color=xMA_21_Color, offset=0, size=xMaYSizeRenk)
-
-
-
-xMA_377_RenkDegisimiA = xMA_377_Color_S != xMA_377_Color_S[1] and xMA_377Src < xMA_377Src[1]
-xMA_377_RenkDegisimiY = xMA_377_Color_S != xMA_377_Color_S[1] and xMA_377Src >= xMA_377Src[1]
-//plotshape(xMA_377_RenkDegisimiA and acxMa377Cizgisi and acxMaRenkler and acxMaARenkler and acxMa377ARenkler ? xMA_377_RenkDegisimiA : na , title = 'xMa377 Aşağı Renk Değişimi', text='', style=xMaAStyleRenk , location=xMaALocationRenk, color=xMA_377_Color, offset=0, size=xMaASizeRenk)
-//plotshape(xMA_377_RenkDegisimiY and acxMa377Cizgisi and acxMaRenkler and acxMaYRenkler and acxMa377YRenkler ? xMA_377_RenkDegisimiY : na , title = 'xMa377 Yukarı Renk Değişimi', text='', style=xMaYStyleRenk , location=xMaYLocationRenk, color=xMA_377_Color, offset=0, size=xMaYSizeRenk)
-
-
-
 //Fiblines
 fractal_top = 0.0
-fractal_top := high < high[2] and high[1] < high[2] and high[3] < high[2] and high[4] < high[2] ? high[2] : fractal_top[1]
+fractal_top := myHigh < myHigh[2] and myHigh[1] < myHigh[2] and myHigh[3] < myHigh[2] and myHigh[4] < myHigh[2] ? myHigh[2] : fractal_top[1]
 fractal_bottom = 0.0
-fractal_bottom := low > low[2] and low[1] > low[2] and low[3] > low[2] and low[4] > low[2] ? low[2] : fractal_bottom[1]
+fractal_bottom := myLow > myLow[2] and myLow[1] > myLow[2] and myLow[3] > myLow[2] and myLow[4] > myLow[2] ? myLow[2] : fractal_bottom[1]
 
 srcHigh = ta.highest(fractal_top, fibLen)
 srcLow = ta.lowest(fractal_bottom, fibLen)
@@ -466,292 +369,208 @@ plot(line1618_2 and acFiboLines and acFlAlt ? line1618_2 : na, title='-0.618', c
 plot(line2000_2 and acFiboLines and acFlAlt ? line2000_2 : na, title='-1.000', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 plot(line2272_2 and acFiboLines and acFlAlt ? line2272_2 : na, title='-1.272', color=color.new(color.red, 0), style=plot.style_cross, trackprice=true, offset=-9999, linewidth=1)
 
-
-
-// FİBO Turuncu ve Sarı Kesmeler
-
-//kesYsari = ta.cross(src , line1000) 
-
-
-//kesYturuncuY = ta.crossover(src , line0786) 
-kesYturuncuA = ta.crossunder(src , line0786) 
-
-
-kesAturuncuY = ta.crossover(src , line0236) 
-//kesAturuncuA = ta.crossunder(src , line0236) 
-
-
-//kesAsari = ta.cross(src , line0000) 
-
-
-
-//plotshape(acFkes ? kesYsari : na ,title ='Fibo Üst Sarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.yellow, 0), offset=0, size=xMaASize)
-
-//plotshape(acFkes ? kesYturuncuY : na ,title ='Fibo Üst Turuncu Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.orange, 0), offset=0, size=xMaASize)
-plotshape(acFkes ? kesYturuncuA : na ,title ='Fibo Üst Turuncu Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.orange, 0), offset=0, size=xMaASize)
-
-plotshape(acFkes  ? kesAturuncuY : na ,title ='Fibo Alt Turuncu Yukarı Kes', text='', style=xMaYStyle , location=xMaYLocation, color=color.new(color.orange, 0), offset=0, size=xMaYSize)
-//plotshape(acFkes  ? kesAturuncuA : na ,title ='Fibo Alt Turuncu Aşağı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.orange, 0), offset=0, size=xMaYSize)
-
-//plotshape(acFkes  ? kesAsari : na ,title ='Fibo Alt Sarı Kes', text='', style=xMaAStyle , location=xMaALocation, color=color.new(color.yellow, 0), offset=0, size=xMaYSize)
-
-
-//alertcondition( ta.cross(src , line1000) , title = "Fibo Üst Sarı Kes", message = 'Fibo Üst Sarı Kes {{ticker}}, FİYAT={{close}}')
-//alertcondition( ta.cross(src , line0786) , title = "Fibo Üst Turuncu Kes", message = 'Fibo Üst Turuncu Kes {{ticker}}, FİYAT={{close}}')
-//alertcondition( ta.cross(src , line0236) , title = "Fibo Alt Turuncu Kes", message = 'Fibo Alt Turuncu Kes {{ticker}}, FİYAT={{close}}')
-//alertcondition( ta.cross(src , line0000) , title = "Fibo Alt Sarı Kes'", message = 'Fibo Alt Sarı Kes {{ticker}}, FİYAT={{close}}')
-
-
 //VBCB
 
-acMumRenk = input(true, title='Mumlar Hacime Göre Renklensin mi?', group="Mum Boyama Ayarları")
+acMumRenk = input(false, title='Mumlar Hacime Göre Renklensin mi?', group="Mum Boyama Ayarları")
 
 lengthVbcb = input.int(21, 'length', minval=1)
 avrg = ta.sma(volume, lengthVbcb)
 
-vold1 = volume > avrg * 1.5 and close < open
-vold2 = volume >= avrg * 0.5 and volume <= avrg * 1.5 and close < open
-vold3 = volume < avrg * 0.5 and close < open
+vold1 = volume > avrg * 1.5 and src < myOpen
+vold2 = volume >= avrg * 0.5 and volume <= avrg * 1.5 and src < myOpen
+vold3 = volume < avrg * 0.5 and src < myOpen
 
-volu1 = volume > avrg * 1.5 and close > open
-volu2 = volume >= avrg * 0.5 and volume <= avrg * 1.5 and close > open
-volu3 = volume < avrg * 0.5 and close > open
+volu1 = volume > avrg * 1.5 and src > myOpen
+volu2 = volume >= avrg * 0.5 and volume <= avrg * 1.5 and src > myOpen
+volu3 = volume < avrg * 0.5 and src > myOpen
+
 
 cold1 = #800000
 cold2 = #FF0000
 cold3 = #ffeb3b
 
+
 colu1 = #006400
 colu2 = #00FF00
 colu3 = #7FFFD4
 
+
 color_1 = vold1 ? cold1 : vold2 ? cold2 : vold3 ? cold3 : volu1 ? colu1 : volu2 ? colu2 : volu3 ? colu3 : na
+
 barcolor(acMumRenk ? color_1 : na)
 
-
-//IFTRSI
-
-acIFTRSIMumRenk = input(false, title='Mumlar IFTRSI Değerine Göre Renklensin mi?', group="IFTRSI Ayarları")
-acIFTRSIal = input(true, title='IFTRSI Değerine Göre AL işaretleri Gösterilsin mi?', group="IFTRSI Ayarları")
-acIFTRSIsat = input(false, title='IFTRSI Değerine Göre SAT işaretleri Gösterilsin mi?', group="IFTRSI Ayarları")
+//MFI
+lengthMFI = input.int(title="Uzunluk", defval=14, minval=1, maxval=2000, group="MFI Ayarları")
+srcMFI = hlc3
+myMFI = ta.mfi(srcMFI, lengthMFI)
 
 
-wmalengthIFTRSI = input.int(9, title='Smoothing Length', group="IFTRSI Ayarları")
-rsilengthIFTRSI = input.int(5, 'RSI Length', group="IFTRSI Ayarları")
+// RSI/EMA
+myClose1S = request.security(myHisse, timeframe.period, src)
+myRsiD = input.int(66, title='RSI Değeri', group="Rsi/Ema Çizgisi Değerleri")
+myRsi1S = ta.rsi(myClose1S,myRsiD)
+myEmaD = input.int(66, title='Ema Değeri', group="Rsi/Ema Çizgisi Değerleri")
+myEma121S = ta.ema(myRsi1S, myEmaD)
+acRsiEmaLW = input.int(defval = 2, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema Çizgisi Değerleri") 
 
-alYukari = input.float(0.6, 'Al Seviyesi', group="IFTRSI Ayarları")
-satAsagi = input.float(0.8, 'Sat Seviyesi', group="IFTRSI Ayarları")
+acRsiEma = input(defval = false, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema Çizgisi") 
 
+myKoyuRenkY = input.color(color.new(#00897B, 0)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema Çizgisi") 
+myAcikRenkY = input.color(color.new(color.green, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema Çizgisi") 
 
-myCloseIFTRSI = request.security(syminfo.tickerid, timeframe.period, close)
+myAcikRenkD = input.color(color.new(color.red, 0) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema Çizgisi") 
+myKoyuRenkD = input.color(color.new(#880E4F, 0)  , "Satım Bölgesinde (dipte) Düşerken", group="Rsi/Ema Çizgisi") 
 
-v12 = 0.1 * (ta.rsi(myCloseIFTRSI, rsilengthIFTRSI) - 50)
-v22 = ta.wma(v12, wmalengthIFTRSI)
-INV2 = (math.exp(2 * v22) - 1) / (math.exp(2 * v22) + 1)
+myRsiColorY = myRsi1S <= 60 ? myAcikRenkY : myKoyuRenkY     
+myRsiColorD = myRsi1S <= 40 ? myKoyuRenkD : myAcikRenkD   
+myRsiColorTek = myRsi1S >= myEma121S ? myRsiColorY : myRsiColorD
+myRsiEmaLine = myRsi1S >= myEma121S ? myHigh : myLow
 
-//myLineU = hline(80, color=#FF0000, linestyle=hline.style_solid)
-//myLineA = hline(60, color=color.green, linestyle=hline.style_solid)
-
-//rsiYukariKesRsi0 = ta.crossover(INV2 , 0.60)
-//rsiAsagiKesRsi0 = ta.crossunder(INV2 , 0.80)
-
-//color_2  = INV2 < satAsagi ? cold1 : INV2 > alYukari ? colu1 : color.white
-color_2  = INV2 > alYukari ? colu1 : INV2 < alYukari ? cold1 : color.white
-barcolor(acIFTRSIMumRenk ? color_2 : na)
-
-rsiYukariKesRsi0 = ta.crossover(INV2 , alYukari)
-rsiAsagiKesRsi0 = ta.crossunder(INV2 , satAsagi)
-
-plotshape(acIFTRSIal and rsiYukariKesRsi0 ? rsiYukariKesRsi0 : na, text='', style=shape.triangleup, location=location.belowbar, color=color.new(color.lime, 0), offset=0, size=size.small)
-plotshape(acIFTRSIsat and rsiAsagiKesRsi0 ? rsiAsagiKesRsi0 : na, text='', style=shape.triangledown, location=location.abovebar, color=color.new(#FF0000, 0), offset=0, size=size.small)
-
-renkSartY = color_2 == colu1 and color_2[1] == cold1
-renkSartA = color_2[1] == colu1 and color_2 == cold1
-
-//alertcondition(renkSartY, title=" AL RSI RENK", message=' AL RSI RENK {{ticker}}, FİYAT={{close}}')
-//alertcondition(renkSartA, title=" SAT RSI RENK", message=' SAT RSI RENK {{ticker}}, FİYAT={{close}}')
-alertcondition(renkSartY or renkSartA, title=" RSI RENK DEGISIMI", message=' RSI RENK DEGISIMI {{ticker}}, FİYAT={{close}}')
-
-alertcondition(rsiYukariKesRsi0, title=" AL RSI", message=' AL RSI {{ticker}}, FİYAT={{close}}')
-//alertcondition(rsiAsagiKesRsi0, title=" SAT IFTRSI", message='SAT IFTRSI {{ticker}}, FİYAT={{close}}')
+myRsiEmaCizgim = plot(acRsiEma ? myRsi1S >= myEma121S ? myHigh : myLow : na, color=myRsiColorTek, linewidth=acRsiEmaLW, title='RsiEma Cizgisi')
 
 
 
-//Altın İşaret
+//İşaretler
+kosul100_0 = ta.crossover(hlc3 , ta.ema(low, 20)) 
+kosul100_1 = ta.crossover(close , ta.ema(close, 100)) 
+kosul100_2 = kosul100_1 and (myRsi1S>45 and myRsi1S<54) and (myRsi1S>myEma121S)
+//kosul100 = (ta.crossover(close , ta.ema(close, 20)) and close > ta.ema(close, 100)) or kosul100_1
+kosul100 = kosul100_1
+alertcondition(kosul100_2 , title = "_rsiE100", message = '_rsie100 {{ticker}}, FİYAT={{close}}, Mum={{interval}}')
 
-acAltinIsaret = input.bool(true, title='Altın İşaret Gösterilsin mi?', group="Altın İşaret Ayarları")
-
-signal_length = input.int(title='Signal Smoothing', minval=1, maxval=200, defval=11, group="Altın İşaret Ayarları")
-sma_signal = input(title='Simple MA (Signal Line)', defval=true, group="Altın İşaret Ayarları")
-
-lin_reg = input(title='Lin Reg', defval=true, group="Altın İşaret Ayarları")
-linreg_length = input.int(title='Linear Regression Length', minval=1, maxval=200, defval=11, group="Altın İşaret Ayarları")
-
-bopen = lin_reg ? ta.linreg(open, linreg_length, 0) : open
-bhigh = lin_reg ? ta.linreg(high, linreg_length, 0) : high
-blow = lin_reg ? ta.linreg(low, linreg_length, 0) : low
-bclose = lin_reg ? ta.linreg(close, linreg_length, 0) : close
-
-r = bopen < bclose
-
-signal = sma_signal ? ta.sma(bclose, signal_length) : ta.ema(bclose, signal_length)
-
-
-sartAltinIsaret = r != r[1] and r and bclose < signal and INV2 < -0.5
-plotshape(acAltinIsaret and sartAltinIsaret ? sartAltinIsaret : na , title='Altın İşaret', text='', style=shape.triangleup, location=location.belowbar, color=color.new(color.white, 0), offset=0, size=size.tiny)
-alertcondition(sartAltinIsaret, title=" AL Altın İşaret", message=' AL Altın İşaret {{ticker}}, FİYAT={{close}}')
-
-alertcondition(sartAltinIsaret or rsiYukariKesRsi0, title=" AL RSI/Altın", message=' AL RSI/Altın {{ticker}}, FİYAT={{close}}')
-
-
-
-
-// RSI/EMA Genel
-string xReMum1 = input.timeframe(defval = "Grafik", title = "Rsi/Ema Çizgisi" ,options=["Grafik", "1 Dakika", "3 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "1 Saat", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "3 Hafta", "1 Ay", "5 Hafta"] , group="Rsi/Ema Genel Değerleri")
-
-myRsiUzunluk = input.int(22, title='RSI Değeri', group="Rsi/Ema Genel Değerleri")
-myEmaUzunluk = input.int(34, title='Ema Değeri', group="Rsi/Ema Genel Değerleri")
-
-
-//SATIM ÇİZGİSİ
-acCAS = input.int(defval = 80, title = 'Çok Aşırı Satım Çizgisi % Değeri', group="Rsi/Ema Genel Değerleri")   
-acAS = input.int(defval = 70, title = 'Aşırı Satım Çizgisi % Değeri', group="Rsi/Ema Genel Değerleri")   
-acS = input.int(defval = 60, title = '(üst baraj) Satım Çizgisi % Değeri', group="Rsi/Ema Genel Değerleri")   
-
-//ALIM ÇİZGİSİ
-acA = input.int(defval = 55, title = 'Alım Çizgisi % Değeri', group="Rsi/Ema Genel Değerleri")   
-acAA = input.int(defval = 45, title = '(alt baraj) Aşırı Alım Çizgisi % Değeri', group="Rsi/Ema Genel Değerleri")   
-acCAA = input.int(defval = 30, title = 'Çok Aşırı Alım Çizgisi % Değeri', group="Rsi/Ema Genel Değerleri")   
-
-//RSI baraj Renk
-rsiUstBarajRenk = input.color(color.new(#00897b,0),"RSI (üst baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
-rsiBarajArasiRenk = input.color(color.new(#00bcd4,0),"RSI (baraj arası) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
-rsiAltBarajRenk = input.color(color.new(#880e4f,0),"RSI (alt baraj) Rengi", group="Rsi/Ema Bölge Renk Değerleri")
-
-barajRsi = ta.rsi(close,myRsiUzunluk)
-barajRengi = barajRsi <= acS and barajRsi > acA ? rsiUstBarajRenk : barajRsi <= acA and barajRsi > acAA ? rsiBarajArasiRenk : barajRsi <= acAA and barajRsi > acCAA ? rsiAltBarajRenk : color.new(#00bcd4,0)
-bgcolor(acxMa100CizgisiRSIbg  ? barajRengi : na,title = 'xMA100 Arka Plan Rengi')
-
-xMA_100_Color_S = acxMa100CizgisiRSI ? barajRengi : xMA_100Src >= xMA_100Src[1] ? xMA_100_Color :xMA_100_Color_koyu
-xMA_100_Plot = plot(xMA_100Src and acxMaCizgisi and acxMa100Cizgisi ? xMA_100Src : na , color=xMA_100_Color_S, linewidth=4, title='xMa100 Çizgisi')
-
-xMA_100_RenkDegisimiA = xMA_100_Color_S != xMA_100_Color_S[1] and xMA_100Src < xMA_100Src[1]
-xMA_100_RenkDegisimiY = xMA_100_Color_S != xMA_100_Color_S[1] and xMA_100Src >= xMA_100Src[1]
-plotshape(xMA_100_RenkDegisimiA and acxMa100Cizgisi and acxMaRenkler and acxMaARenkler and acxMa100ARenkler ? xMA_100_RenkDegisimiA : na , title = 'xMa100 Aşağı Renk Değişimi', text='', style=xMaAStyleRenk , location=xMaALocationRenk, color=xMA_100_Color, offset=0, size=xMaASizeRenk)
-plotshape(xMA_100_RenkDegisimiY and acxMa100Cizgisi and acxMaRenkler and acxMaYRenkler and acxMa100YRenkler ? xMA_100_RenkDegisimiY : na , title = 'xMa100 Yukarı Renk Değişimi', text='', style=xMaYStyleRenk , location=xMaYLocationRenk, color=xMA_100_Color, offset=0, size=xMaYSizeRenk)
-
-
-// R/E 1
-myRsi_1 = ta.rsi(close,myRsiUzunluk)
-myEma_1 = ta.ema(myRsi_1, myEmaUzunluk)
-myRsi_1S = request.security(syminfo.tickerid, xMaMumKontrol(xReMum1), myRsi_1)
-myEma_1S = request.security(syminfo.tickerid, xMaMumKontrol(xReMum1), myEma_1)
-myH_1S = request.security(syminfo.tickerid, xMaMumKontrol(xReMum1), high)
-myL_1S = request.security(syminfo.tickerid, xMaMumKontrol(xReMum1), low)
-
-acRsiEmaLW_1S = input.int(defval = 2, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema Çizgisi Değerleri") 
-acRsiEma_1S = input(defval = false, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema Çizgisi Değerleri") 
-
-
-my4Y_1S = input.color(color.new(#00897B, 0)  , "Aşırı Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema Çizgisi Değerleri") 
-my3Y_1S = input.color(color.new(color.green, 0), "Alım Bölgesinden (yüksekte) Yükselirken", group="Rsi/Ema Çizgisi Değerleri") 
-my2Y_1S = input.color(color.new(#00bcd4, 0), "Orta Bölgesinden (ortada) Yükselirken", group="Rsi/Ema Çizgisi Değerleri") 
-my1Y_1S = input.color(color.new(color.blue, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema Çizgisi Değerleri") 
-
-my1D_1S = input.color(color.new(color.yellow, 0) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema Çizgisi Değerleri") 
-my2D_1S = input.color(color.new(#ff9800, 0) , "Orta Bölgesinden (ortada) Düşerken", group="Rsi/Ema Çizgisi Değerleri") 
-my3D_1S = input.color(color.new(color.red, 0) , "Satım Bölgesinden (dipte) Düşerken", group="Rsi/Ema Çizgisi Değerleri") 
-my4D_1S = input.color(color.new(#880E4F, 0)  , "Aşırı Satım Bölgesinde (en dipte) Düşerken", group="Rsi/Ema Çizgisi Değerleri") 
-
-bolge4Y_1S =  myRsi_1S > acAS // >70
-bolge3Y_1S =  myRsi_1S > acS and myRsi_1S <= acAS //70/60
-bolge2Y_1S =  myRsi_1S > acA and myRsi_1S <= acS // 60/45
-bolge1Y_1S =  myRsi_1S <= acA  // <=45
-
-bolge1D_1S =  myRsi_1S > acS // >60
-bolge2D_1S =  myRsi_1S > acA and myRsi_1S <= acS // 60/45
-bolge3D_1S =  myRsi_1S > acAA and myRsi_1S <= acA //45/30
-bolge4D_1S =  myRsi_1S < acAA // <30
-
-myRsiColorY_1S = bolge4Y_1S ? my4Y_1S : bolge3Y_1S ? my3Y_1S : bolge2Y_1S ? my2Y_1S : my1Y_1S    
-myRsiColorD_1S = bolge4D_1S ? my4D_1S : bolge3D_1S ? my3D_1S : bolge2D_1S ? my2D_1S : my1D_1S  
-
-myRsiColorTek_1S = myRsi_1S >= myEma_1S ? myRsiColorY_1S : myRsiColorD_1S
-myRsiEmaLine_1S = myRsi_1S >= myEma_1S ? myH_1S : myL_1S
-
-
-myREcizgim_1S = plot(acRsiEma_1S ? myRsi_1S >= myEma_1S ? myH_1S : myL_1S : na, color=myRsiColorTek_1S, linewidth=acRsiEmaLW_1S, title='R/E Cizgisi')
-
-
-
-//RSI/EMA işaretler
-acREIsaretler_1S = input(defval = true, title = 'Rsi/Ema İşaretleri Gösterilsin mi?', group="Rsi/Ema İşaretleri Değerleri") 
-
-my4Y_1Si = input.color(color.new(#00897B, 0)  , "Aşırı Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema İşaretleri Değerleri") 
-my3Y_1Si = input.color(color.new(color.green, 0), "Alım Bölgesinden (yüksekte) Yükselirken", group="Rsi/Ema İşaretleri Değerleri") 
-my2Y_1Si = input.color(color.new(#00bcd4, 0), "Orta Bölgesinden (ortada) Yükselirken", group="Rsi/Ema İşaretleri Değerleri") 
-my1Y_1Si = input.color(color.new(color.blue, 100), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema İşaretleri Değerleri") 
-
-my1D_1Si = input.color(color.new(color.yellow, 100) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema İşaretleri Değerleri") 
-my2D_1Si = input.color(color.new(#ff9800, 100) , "Orta Bölgesinden (ortada) Düşerken", group="Rsi/Ema İşaretleri Değerleri") 
-my3D_1Si = input.color(color.new(color.red, 0) , "Satım Bölgesinden (dipte) Düşerken", group="Rsi/Ema İşaretleri Değerleri") 
-my4D_1Si = input.color(color.new(#880E4F, 0)  , "Aşırı Satım Bölgesinde (en dipte) Düşerken", group="Rsi/Ema İşaretleri Değerleri") 
-
-
-myRsiColorY_1Si = bolge4Y_1S ? my4Y_1Si : bolge3Y_1S ? my3Y_1Si : bolge2Y_1S ? my2Y_1Si : my1Y_1Si    
-myRsiColorD_1Si = bolge4D_1S ? my4D_1Si : bolge3D_1S ? my3D_1Si : bolge2D_1S ? my2D_1Si : my1D_1Si  
-
-myRsiColorTek_1Si = myRsi_1S >= myEma_1S ? myRsiColorY_1Si : myRsiColorD_1Si
-
-
-
-plotshape(acREIsaretler_1S and myRsi_1S >= myEma_1S, title ='R/E İşaret', text='', style=shape.triangleup, location=location.top, color=myRsiColorY_1Si, offset=0, size=size.tiny)
-plotshape(acREIsaretler_1S and myRsi_1S < myEma_1S, title ='R/E İşaret', text='', style=shape.triangledown, location=location.bottom, color=myRsiColorD_1Si, offset=0, size=size.tiny)
 
 
 //BOYAMALAR 1
 
 acBoyama = input(defval = false, title = 'Boyama Gözüksün mü?', group="1. Boyama Bölümü")   
 
-string boyaBir = input.string(defval = "xMA13", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377", "xMum", "Rsi/Ema Çizgisi"] , group="1. Boyama Bölümü")
-string boyaIki = input.string(defval = "xMA21", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="1. Boyama Bölümü")
+string boyaBir = input.string(defval = "xMA21", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="1. Boyama Bölümü")
+string boyaIki = input.string(defval = "xMA34", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="1. Boyama Bölümü")
 
-myRenkBir = input.color(color.new(#00bcd4, 34) , "Birinci Sınır Renk", group="1. Boyama Bölümü") 
-myRenkIki = input.color(color.new(#FF0000, 100), "İkinci Sınır Renk", group="1. Boyama Bölümü") 
+myRenkBir = input.color(color.new(color.white, 50) , "Birinci Sınır Renk", group="1. Boyama Bölümü") 
+myRenkIki = input.color(color.new(color.red, 100), "İkinci Sınır Renk", group="1. Boyama Bölümü") 
 
 float ba1 = switch boyaBir
+	"xMA9" => xMA_9
 	"xMA13" => xMA_13
 	"xMA21" => xMA_21
+	"xMA34" => xMA_34
+	"xMA50" => xMA_50
+	"xMA89" => xMA_89
 	"xMA100" => xMA_100
-	"xMA200" => xMA_377
-	"xMum" => close
-	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
+	"xMA144" => xMA_144
+	"xMA200" => xMA_200
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma1 = switch boyaBir
+	"xMA9" => xMA_9Src
 	"xMA13" => xMA_13Src
 	"xMA21" => xMA_21Src
+	"xMA34" => xMA_34Src
+	"xMA50" => xMA_50Src
+	"xMA89" => xMA_89Src
 	"xMA100" => xMA_100Src
-	"xMA200" => xMA_377Src
-	"xMum" => close
-	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
+	"xMA144" => xMA_144Src
+	"xMA200" => xMA_200Src
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 	
 ilk = plot(acBoyama ? ma1 : na, color = color.new(color.white, 100))
 
 float ba2 = switch boyaIki
+	"xMA9" => xMA_9
 	"xMA13" => xMA_13
 	"xMA21" => xMA_21
+	"xMA34" => xMA_34
+	"xMA50" => xMA_50
+	"xMA89" => xMA_89
 	"xMA100" => xMA_100
-	"xMA377" => xMA_377
-	"xMum" => close
-	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
+	"xMA144" => xMA_144
+	"xMA200" => xMA_200
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma2 = switch boyaIki
+	"xMA9" => xMA_9Src
 	"xMA13" => xMA_13Src
 	"xMA21" => xMA_21Src
+	"xMA34" => xMA_34Src
+	"xMA50" => xMA_50Src
+	"xMA89" => xMA_89Src
 	"xMA100" => xMA_100Src
-	"xMA377" => xMA_377Src
-	"xMum" => close
-	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
+	"xMA144" => xMA_144Src
+	"xMA200" => xMA_200Src
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 son = plot(acBoyama ? ma2 : na, color = color.new(color.white, 100))
 
@@ -764,45 +583,133 @@ fill(ilk, son , title = 'Birinci Bölge', color = myBoya, fillgaps = true, trans
 
 acBoyama2 = input(defval = false, title = 'Boyama Gözüksün mü?', group="2. Boyama Bölümü")   
 
-string boyaBir2 = input.string(defval = "xMA13", title = "Boya Birinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="2. Boyama Bölümü")
-string boyaIki2 = input.string(defval = "xMA21", title = "Boya İkinci Sınır" ,options=["xMA13", "xMA21", "xMA100", "xMA377","xMum", "Rsi/Ema Çizgisi"] , group="2. Boyama Bölümü")
+string boyaBir2 = input.string(defval = "xMA89", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="2. Boyama Bölümü")
+string boyaIki2 = input.string(defval = "xMA100", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="2. Boyama Bölümü")
 
-myRenkBir2 = input.color(color.new(color.lime, 0) , "Birinci Sınır Renk", group="2. Boyama Bölümü") 
-myRenkIki2 = input.color(color.new(#FF0000, 0), "İkinci Sınır Renk", group="2. Boyama Bölümü") 
+myRenkBir2 = input.color(color.new(#00bcd4, 50) , "Birinci Sınır Renk", group="2. Boyama Bölümü") 
+myRenkIki2 = input.color(color.new(color.red, 100), "İkinci Sınır Renk", group="2. Boyama Bölümü") 
 
 float ba12 = switch boyaBir2
+	"xMA9" => xMA_9
 	"xMA13" => xMA_13
 	"xMA21" => xMA_21
+	"xMA34" => xMA_34
+	"xMA50" => xMA_50
+	"xMA89" => xMA_89
 	"xMA100" => xMA_100
-	"xMA377" => xMA_377
-	"xMum" => close
-	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
+	"xMA144" => xMA_144
+	"xMA200" => xMA_200
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma12 = switch boyaBir2
+	"xMA9" => xMA_9Src
 	"xMA13" => xMA_13Src
 	"xMA21" => xMA_21Src
+	"xMA34" => xMA_34Src
+	"xMA50" => xMA_50Src
+	"xMA89" => xMA_89Src
 	"xMA100" => xMA_100Src
-	"xMA377" => xMA_377Src
-	"xMum" => close
-	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
+	"xMA144" => xMA_144Src
+	"xMA200" => xMA_200Src
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 	
-ilk2 = plot(acBoyama2  ? ma12 : na, color = color.new(color.white, 100))
+ilk2 = plot(acBoyama2 ? ma12 : na, color = color.new(color.white, 100))
 
 float ba22 = switch boyaIki2
+	"xMA9" => xMA_9
 	"xMA13" => xMA_13
 	"xMA21" => xMA_21
+	"xMA34" => xMA_34
+	"xMA50" => xMA_50
+	"xMA89" => xMA_89
 	"xMA100" => xMA_100
-	"xMA377" => xMA_377
-	"xMum" => close
-	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
+	"xMA144" => xMA_144
+	"xMA200" => xMA_200
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 float ma22 = switch boyaIki2
+	"xMA9" => xMA_9Src
 	"xMA13" => xMA_13Src
 	"xMA21" => xMA_21Src
+	"xMA34" => xMA_34Src
+	"xMA50" => xMA_50Src
+	"xMA89" => xMA_89Src
 	"xMA100" => xMA_100Src
-	"xMA377" => xMA_377Src
-	"xMum" => close
-	"Rsi/Ema Çizgisi" => myRsiEmaLine_1S
+	"xMA144" => xMA_144Src
+	"xMA200" => xMA_200Src
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
 
 son2 = plot(acBoyama2 ? ma22 : na, color = color.new(color.white, 100))
 
@@ -811,237 +718,714 @@ myBoya2 = ba12 >= ba22 ? myRenkBir2 : myRenkIki2
 fill(ilk2, son2 , title = 'İkinci Bölge', color = myBoya2, fillgaps = true, transp=75)
 
 
+//BOYAMALAR 3
+
+acBoyama3 = input(defval = false, title = 'Boyama Gözüksün mü?', group="3. Boyama Bölümü")   
+
+string boyaBir3 = input.string(defval = "xMA144", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="3. Boyama Bölümü")
+string boyaIki3 = input.string(defval = "xMA200", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="3. Boyama Bölümü")
+
+myRenkBir3 = input.color(color.new(color.orange, 50) , "Birinci Sınır Renk", group="3. Boyama Bölümü") 
+myRenkIki3 = input.color(color.new(color.red, 100), "İkinci Sınır Renk", group="3. Boyama Bölümü") 
+
+float ba13 = switch boyaBir3
+	"xMA9" => xMA_9
+	"xMA13" => xMA_13
+	"xMA21" => xMA_21
+	"xMA34" => xMA_34
+	"xMA50" => xMA_50
+	"xMA89" => xMA_89
+	"xMA100" => xMA_100
+	"xMA144" => xMA_144
+	"xMA200" => xMA_200
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
+
+float ma13 = switch boyaBir3
+	"xMA9" => xMA_9Src
+	"xMA13" => xMA_13Src
+	"xMA21" => xMA_21Src
+	"xMA34" => xMA_34Src
+	"xMA50" => xMA_50Src
+	"xMA89" => xMA_89Src
+	"xMA100" => xMA_100Src
+	"xMA144" => xMA_144Src
+	"xMA200" => xMA_200Src
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine	
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
+
+	
+ilk3 = plot(acBoyama3 ? ma13 : na, color = color.new(color.white, 100))
+
+float ba23 = switch boyaIki3
+	"xMA9" => xMA_9
+	"xMA13" => xMA_13
+	"xMA21" => xMA_21
+	"xMA34" => xMA_34
+	"xMA50" => xMA_50
+	"xMA89" => xMA_89
+	"xMA100" => xMA_100
+	"xMA144" => xMA_144
+	"xMA200" => xMA_200
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
+
+float ma23 = switch boyaIki3
+	"xMA9" => xMA_9Src
+	"xMA13" => xMA_13Src
+	"xMA21" => xMA_21Src
+	"xMA34" => xMA_34Src
+	"xMA50" => xMA_50Src
+	"xMA89" => xMA_89Src
+	"xMA100" => xMA_100Src
+	"xMA144" => xMA_144Src
+	"xMA200" => xMA_200Src
+	"xMum" => src
+	"Rsi/Ema Çizgisi" => myRsiEmaLine
+	"2.272" => line2272 
+	"2.000" => line2000 
+	"1.618" => line1618 
+	"1.414" => line1414 
+	"1.272" => line1272 
+	"1.000" => line1000 
+	"0.786" => line0786 
+	"0.618" => line0618 
+	"0.500" => line0500 
+	"0.382" => line0382 
+	"0.236" => line0236 
+	"0.000" => line0000 
+	"-0.272" => line1272_2 
+	"-0.414" => line1414_2 
+	"-0.618" => line1618_2 
+	"-1.000" => line2000_2 
+	"-1.272" => line2272_2 
+
+son3 = plot(acBoyama3 ? ma23 : na, color = color.new(color.white, 100))
+
+myBoya3 = ba13 >= ba23 ? myRenkBir3 : myRenkIki3 
+fill(ilk3, son3 , title = 'Üçüncü Bölge', color = myBoya3, fillgaps = true, transp=75)
+
+
+//İşaretler
+//plotshape(kosul100,title ='ema 100 Üstü', text='', style=shape.triangleup , location=location.belowbar, color=color.white, offset=0, size=size.tiny)
+plotshape(alFirsat and kosul100_2 ? kosul100_2 : na ,title ='Rsi kontrolu ve e100 Üstü', text='', style=shape.triangleup , location=location.belowbar, color=color.lime, offset=0, size=size.small)
+plotshape(alFirsat and kosul100_0 ? kosul100_0 : na ,title ='ema 20 Üstü', text='', style=shape.circle , location=location.abovebar, color=color.white, offset=0, size=size.tiny)
 
 
 
-//TABLO BÖLÜMÜ
+//MUM FORMASYONLARI
+//acDoji = input.bool(defval = false, title = 'Doji Gözüksün mü?', group="Mum Formasyon Ayarları") 
+//dojiOlcusu = input.float(0.05, minval=0.01, title="Doji Ölçüsü", step=0.01, group="Mum Formasyon Ayarları")
 
-tRsi = str.tostring(ta.rsi(close,myRsiUzunluk),"#")
-tRsiYon = ta.rsi(close,myRsiUzunluk) > ta.rsi(close[1],myRsiUzunluk)
-
-
-tMfi = str.tostring(ta.mfi(hlc3, lengthMFI),"#")
-tMfiYon = ta.mfi(hlc3, lengthMFI) > ta.mfi(hlc3[1], lengthMFI)
-
-tAdx = str.tostring(hesaplaDX(lenDMI),"#")
-
-
-var table tblPanoMobil = table.new(position.middle_right, 1, 12, bgcolor = color.black, frame_width = 1, frame_color = color.white, border_color = color.white, border_width=1)
-table.clear(tblPanoMobil, 0, 0, 0, 11)
+acBullishEngulfing = input.bool(defval = true, title = 'Bullnish Engulfning (Yutan Ayı) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acBearishEngulfing = input.bool(defval = true, title = 'Bearish Engulfning (Yutan Boğa) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+//acShootingStar = input.bool(defval = false, title = 'Shooting Star (Kayan Yıldız) Gözüksün mü?', group="Mum Formasyon Ayarları")
+//acEveningStar =  input.bool(defval = false, title = 'Evening Star (Akşam Yıldızı) Gözüksün mü?', group="Mum Formasyon Ayarları")
+//acMorningStar =  input.bool(defval = false, title = 'Morning Star (Sabah Yıldızı) Gözüksün mü?', group="Mum Formasyon Ayarları")
+acDusenHarami = input.bool(defval = true, title = 'Bearish Harami (Düşen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acYukselenHarami = input.bool(defval = true, title = 'Bullish Harami (Yükselen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
 
 
-//tFiboColor = color.new(#131722,0) 
-tFiboColor = color.new(#434651,0) 
-tFiyatColorY = color.new(#056656,0) 
-tFiyatColorD = color.new(color.red,0)
+//acCekic =  input.bool(defval = false, title = 'Hammer (Çekiç) Sembolü (Ç) Gözüksün mü?', group="Mum Formasyon Ayarları")
+//acTersCekic =  input.bool(defval = false, title = 'Inverted Hammer (Ters Çekiç) Sembolü (tÇ) Gözüksün mü?', group="Mum Formasyon Ayarları")
 
-t_ust_b = ""
-t_ust_d = ""
-t_ust_bc = tFiboColor
+//Dojidata=(math.abs(open - close) <= (high - low) * dojiOlcusu)
+//plotchar(Dojidata and acDoji ? Dojidata : na, title="Doji", char="!", text="Doji\n", color=color.white,size=size.tiny)
 
-t_orta_b = ""
-t_orta_d = ""
-t_orta_bc = tFiboColor
+bullishEngulfing = (open[1] > close[1] and close > open and close >= open[1] and close[1] >= open and close - open > open[1] - close[1] )
+plotshape(bullishEngulfing and acBullishEngulfing ? bullishEngulfing : na, style = shape.labelup, location = location.belowbar, title="Yutan Ayı", text = "YA", color = #056656,textcolor = color.white, size = size.large)
 
-t_alt_b = ""
-t_alt_d = ""
-t_alt_bc = tFiboColor
+bearishEngulfing = (close[1] > open[1] and open > close and open >= close[1] and open[1] >= close and open - close > close[1] - open[1] )
+plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , style = shape.labeldown , location = location.abovebar, title="Yutan Boğa", text = "YB", color = #800000 ,textcolor = color.white, size = size.large)
 
 
-tFiyat = str.tostring(close, '##.00')  
-tDestek = "Destek"
-tDirenc = "Direnç"
+yukselenHarami=(open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1] )
+plotshape(yukselenHarami and acYukselenHarami ? yukselenHarami : na,  title= "Yükselen Harami", location=location.belowbar, color = #056656,textcolor = color.white, style=shape.labelup, text="YH", size = size.large)
 
+dusenHarami=(close[1] > open[1] and open > close and open <= close[1] and open[1] <= close and open - close < close[1] - open[1] )
+plotshape(dusenHarami and acDusenHarami ? dusenHarami : na, title= "Düşen Harami",  color = #800000 ,textcolor = color.white, style=shape.labeldown, text="DH", size = size.large)
 
+//shootingStar = (open[1] < close[1] and open > close[1] and high - math.max(open, close) >= math.abs(open - close) * 3 and math.min(close, open) - low <= math.abs(open - close))
+//plotshape(shootingStar and acShootingStar ? shootingStar : na, title= "Kayan Yıldız", color=color.orange, style=shape.arrowdown, text="Kayan\nYıldız\n")
 
+//eveningStar=(close[2] > open[2] and math.min(open[1], close[1]) > close[2] and open < math.min(open[1], close[1]) and close < open )
+//plotshape(eveningStar and acEveningStar ? eveningStar : na , title= "Akşam Yıldızı", color=color.red, style=shape.arrowdown, text="Akşam\nYıldızı\n")
 
-if src > line1414
-    t_ust_b := "Fiyat"
-    t_ust_d := str.tostring(close, '##.00')
-    t_ust_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
+//morningStar=(close[2] < open[2] and math.max(open[1], close[1]) < close[2] and open > math.max(open[1], close[1]) and close > open )
+//plotshape(morningStar and acMorningStar ? morningStar : na,  title= "Sabah Yıldızı", location=location.belowbar, color=color.lime, style=shape.arrowup, text="Sabah\nYıldızı\n")
 
-    t_orta_b := tDestek + "\n1.414"
-    t_orta_d := str.tostring(line1414, '##.00')
-    t_orta_bc := tFiboColor
+//cekic=(((high - low)>3*(open -close)) and  ((close - low)/(.001 + high - low) > 0.6) and ((open - low)/(.001 + high - low) > 0.6))
+//plotshape(cekic and acCekic ? cekic : na , title= "Çekiç", location=location.belowbar, color=color.white, style=shape.diamond, text="Ç")
 
-    t_alt_b := tDestek + "\n1.272"
-    t_alt_d := str.tostring(line1272, '##.00')
-    t_alt_bc := tFiboColor
-
-if src <= line1414 and src > line1272
-    t_ust_b := tDirenc + "\n1.414"
-    t_ust_d := str.tostring(line1414, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-
-    t_alt_b := tDestek + "\n1.272"
-    t_alt_d := str.tostring(line1272, '##.00')
-    t_alt_bc := tFiboColor
-    
-if src <= line1272 and src > line1000
-    t_ust_b := tDirenc + "\n1.272"
-    t_ust_d := str.tostring(line1272, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-
-    t_alt_b := tDestek + "\n1.000"
-    t_alt_d := str.tostring(line1000, '##.00')
-    t_alt_bc := tFiboColor
-
-if src <= line1000 and src > line0786
-    t_ust_b := tDirenc + "\n1.000"
-    t_ust_d := str.tostring(line1000, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-
-    t_alt_b := tDestek + "\n0.786"
-    t_alt_d := str.tostring(line0786, '##.00')
-    t_alt_bc := tFiboColor
-
-if src <= line0786 and src > line0618
-    t_ust_b := tDirenc + "\n0.789"
-    t_ust_d := str.tostring(line0786, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-
-    t_alt_b := tDestek + "\n0.618"
-    t_alt_d := str.tostring(line0618, '##.00')
-    t_alt_bc := tFiboColor
-
-if src <= line0618 and src > line0500
-    t_ust_b := tDirenc + "\n0.618"
-    t_ust_d := str.tostring(line0618, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-
-    t_alt_b := tDestek + "\n0.500"
-    t_alt_d := str.tostring(line0500, '##.00')
-    t_alt_bc := tFiboColor
-
-if src <= line0500 and src > line0382
-    t_ust_b := tDirenc + "\n0.500"
-    t_ust_d := str.tostring(line0500, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-
-    t_alt_b := tDestek + "\n0.382"
-    t_alt_d := str.tostring(line0382, '##.00')
-    t_alt_bc := tFiboColor
-
-if src <= line0382 and src > line0236
-    t_ust_b := tDirenc + "\n0.382"
-    t_ust_d := str.tostring(line0382, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-
-    t_alt_b := tDestek + "\n0.236"
-    t_alt_d := str.tostring(line0236, '##.00')
-    t_alt_bc := tFiboColor
-
-if src <= line0236 and src > line0000
-    t_ust_b := tDirenc + "\n0.236"
-    t_ust_d := str.tostring(line0236, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-    t_alt_b := tDestek + "\n0.000"
-    t_alt_d := str.tostring(line0000, '##.00')
-    t_alt_bc := tFiboColor
-
-if src <= line0000 and src > line1272_2
-    t_ust_b := tDirenc + "\n0.000"
-    t_ust_d := str.tostring(line0000, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-
-    t_alt_b := tDestek + "\n-1.272"
-    t_alt_d := str.tostring(line1272_2, '##.00')
-    t_alt_bc := tFiboColor
-
-if src <= line1272_2 and src > line1414_2
-    t_ust_b := tDirenc + "\n-1.272"
-    t_ust_d := str.tostring(line1272_2, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := "Fiyat"
-    t_orta_d := str.tostring(close, '##.00')
-    t_orta_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
-
-    t_alt_b := tDestek + "\n-1.414"
-    t_alt_d := str.tostring(line1414_2, '##.00')
-    t_alt_bc := tFiboColor
-if src <= line1414_2 
-    t_ust_b := tDirenc + "\n-1.272"
-    t_ust_d := str.tostring(line1272_2, '##.00')
-    t_ust_bc := tFiboColor
-
-    t_orta_b := tDirenc + "\n-1.414"
-    t_orta_d := str.tostring(line1414_2, '##.00')
-    t_orta_bc := tFiboColor
-
-    t_alt_b := "Fiyat"
-    t_alt_d := str.tostring(close, '##.00')
-    t_alt_bc := src>=src[1] ? tFiyatColorY : tFiyatColorD
+//tersCekic=(((high - low)>3*(open -close)) and  ((high - close)/(.001 + high - low) > 0.6) and ((high - open)/(.001 + high - low) > 0.6))
+//plotshape(tersCekic and acTersCekic ? tersCekic : na , title= "Ters Çekiç", location=location.belowbar, color=color.white, style=shape.diamond, text="tÇ")
 
 
 
+//ALL
+
+C_DownTrend = true
+C_UpTrend = true
+var trendRule1 = "SMA50"
+var trendRule2 = "SMA50, SMA200"
+var trendRule = input.string("No detection", "Detect Trend Based On", options=[trendRule1, trendRule2, "No detection"])
+
+if trendRule == trendRule1
+	priceAvg = ta.sma(close, 50)
+	C_DownTrend := close < priceAvg
+	C_UpTrend := close > priceAvg
+
+if trendRule == trendRule2
+	sma200 = ta.sma(close, 200)
+	sma50 = ta.sma(close, 50)
+	C_DownTrend := close < sma50 and sma50 < sma200
+	C_UpTrend := close > sma50 and sma50 > sma200
+C_Len = 14 // ta.ema depth for bodyAvg
+C_ShadowPercent = 5.0 // size of shadows
+C_ShadowEqualsPercent = 100.0
+C_DojiBodyPercent = 5.0
+C_Factor = 2.0 // shows the number of times the shadow dominates the candlestick body
+
+C_BodyHi = math.max(close, open)
+C_BodyLo = math.min(close, open)
+C_Body = C_BodyHi - C_BodyLo
+C_BodyAvg = ta.ema(C_Body, C_Len)
+C_SmallBody = C_Body < C_BodyAvg
+C_LongBody = C_Body > C_BodyAvg
+C_UpShadow = high - C_BodyHi
+C_DnShadow = C_BodyLo - low
+C_HasUpShadow = C_UpShadow > C_ShadowPercent / 100 * C_Body
+C_HasDnShadow = C_DnShadow > C_ShadowPercent / 100 * C_Body
+C_WhiteBody = open < close
+C_BlackBody = open > close
+C_Range = high-low
+C_IsInsideBar = C_BodyHi[1] > C_BodyHi and C_BodyLo[1] < C_BodyLo
+C_BodyMiddle = C_Body / 2 + C_BodyLo
+C_ShadowEquals = C_UpShadow == C_DnShadow or (math.abs(C_UpShadow - C_DnShadow) / C_DnShadow * 100) < C_ShadowEqualsPercent and (math.abs(C_DnShadow - C_UpShadow) / C_UpShadow * 100) < C_ShadowEqualsPercent
+C_IsDojiBody = C_Range > 0 and C_Body <= C_Range * C_DojiBodyPercent / 100
+C_Doji = C_IsDojiBody and C_ShadowEquals
+
+patternLabelPosLow = low - (ta.atr(30) * 0.6)
+patternLabelPosHigh = high + (ta.atr(30) * 0.6)
+
+label_color_bullish = input(color.blue, "Label Color Bullish")
+label_color_bearish = input(color.red, "Label Color Bearish")
+label_color_neutral = input(color.gray, "Label Color Neutral")
+CandleType = input.string(title = "Pattern Type", defval="Both", options=["Bullish", "Bearish", "Both"])
+
+DarkCloudCoverInput = input(title = "Dark Cloud Cover" ,defval=true) 
+EngulfingInput = input(title = "Engulfing" ,defval=true) 
+TweezerBottomInput = input(title = "Tweezer Bottom" ,defval=true) 
+TweezerTopInput = input(title = "Tweezer Top" ,defval=true) 
+
+
+AbandonedBabyInput = input(title = "Abandoned Baby" ,defval=false) 
+DojiInput = input(title = "Doji" ,defval=false) 
+DojiStarInput = input(title = "Doji Star" ,defval=false) 
+DownsideTasukiGapInput = input(title = "Downside Tasuki Gap" ,defval=false) 
+DragonflyDojiInput = input(title = "Dragonfly Doji" ,defval=false) 
+EveningDojiStarInput = input(title = "Evening Doji Star" ,defval=false) 
+EveningStarInput = input(title = "Evening Star" ,defval=false) 
+FallingThreeMethodsInput = input(title = "Falling Three Methods" ,defval=false) 
+FallingWindowInput = input(title = "Falling Window" ,defval=false) 
+GravestoneDojiInput = input(title = "Gravestone Doji" ,defval=false) 
+HammerInput = input(title = "Hammer" ,defval=false) 
+HangingManInput = input(title = "Hanging Man" ,defval=false) 
+HaramiCrossInput = input(title = "Harami Cross" ,defval=false) 
+HaramiInput = input(title = "Harami" ,defval=false) 
+InvertedHammerInput = input(title = "Inverted Hammer" ,defval=false) 
+KickingInput = input(title = "Kicking" ,defval=false) 
+LongLowerShadowInput = input(title = "Long Lower Shadow" ,defval=false) 
+LongUpperShadowInput = input(title = "Long Upper Shadow" ,defval=false) 
+MarubozuBlackInput = input(title = "Marubozu Black" ,defval=false) 
+MarubozuWhiteInput = input(title = "Marubozu White" ,defval=false) 
+MorningDojiStarInput = input(title = "Morning Doji Star" ,defval=false) 
+MorningStarInput = input(title = "Morning Star" ,defval=false) 
+OnNeckInput = input(title = "On Neck" ,defval=false) 
+PiercingInput = input(title = "Piercing" ,defval=false) 
+RisingThreeMethodsInput = input(title = "Rising Three Methods" ,defval=false) 
+RisingWindowInput = input(title = "Rising Window" ,defval=false) 
+ShootingStarInput = input(title = "Shooting Star" ,defval=false) 
+SpinningTopBlackInput = input(title = "Spinning Top Black" ,defval=false) 
+SpinningTopWhiteInput = input(title = "Spinning Top White" ,defval=false) 
+ThreeBlackCrowsInput = input(title = "Three Black Crows" ,defval=false) 
+ThreeWhiteSoldiersInput = input(title = "Three White Soldiers" ,defval=false) 
+TriStarInput = input(title = "Tri-Star" ,defval=false) 
+UpsideTasukiGapInput = input(title = "Upside Tasuki Gap" ,defval=false) 
+
+C_OnNeckBearishNumberOfCandles = 2
+C_OnNeckBearish = false
+if C_DownTrend and C_BlackBody[1] and C_LongBody[1] and C_WhiteBody and open < close[1] and C_SmallBody and C_Range!=0 and math.abs(close-low[1])<=C_BodyAvg*0.05
+	C_OnNeckBearish := true
+//alertcondition(C_OnNeckBearish, title = "On Neck – Bearish", message = "New On Neck – Bearish pattern detected")
+if C_OnNeckBearish  and  OnNeckInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishOnNeck = "On Neck\nOn Neck is a two-line continuation pattern found in a downtrend. The first candle is long and red, the second candle is short and has a green body. The closing price of the second candle is close or equal to the first candle's low price. The pattern hints at a continuation of a downtrend, and penetrating the low of the green candlestick is sometimes considered a confirmation. "
+    label.new(bar_index, patternLabelPosHigh, text="ON", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishOnNeck)
+C_RisingWindowBullishNumberOfCandles = 2
+C_RisingWindowBullish = false
+if C_UpTrend[1] and (C_Range!=0 and C_Range[1]!=0) and low > high[1]
+	C_RisingWindowBullish := true
+//alertcondition(C_RisingWindowBullish, title = "Rising Window – Bullish", message = "New Rising Window – Bullish pattern detected")
+if C_RisingWindowBullish  and  RisingWindowInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishRisingWindow = "Rising Window\nRising Window is a two-candle bullish continuation pattern that forms during an uptrend. Both candles in the pattern can be of any type with the exception of the Four-Price Doji. The most important characteristic of the pattern is a price gap between the first candle's high and the second candle's low. That gap (window) between two bars signifies support against the selling pressure."
+    label.new(bar_index, patternLabelPosLow, text="RW", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishRisingWindow)
+C_FallingWindowBearishNumberOfCandles = 2
+C_FallingWindowBearish = false
+if C_DownTrend[1] and (C_Range!=0 and C_Range[1]!=0) and high < low[1]
+	C_FallingWindowBearish := true
+//alertcondition(C_FallingWindowBearish, title = "Falling Window – Bearish", message = "New Falling Window – Bearish pattern detected")
+if C_FallingWindowBearish  and  FallingWindowInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishFallingWindow = "Falling Window\nFalling Window is a two-candle bearish continuation pattern that forms during a downtrend. Both candles in the pattern can be of any type, with the exception of the Four-Price Doji. The most important characteristic of the pattern is a price gap between the first candle's low and the second candle's high. The existence of this gap (window) means that the bearish trend is expected to continue."
+    label.new(bar_index, patternLabelPosHigh, text="FW", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishFallingWindow)
+C_FallingThreeMethodsBearishNumberOfCandles = 5
+C_FallingThreeMethodsBearish = false
+if C_DownTrend[4] and (C_LongBody[4] and C_BlackBody[4]) and (C_SmallBody[3] and C_WhiteBody[3] and open[3]>low[4] and close[3]<high[4]) and (C_SmallBody[2] and C_WhiteBody[2] and open[2]>low[4] and close[2]<high[4]) and (C_SmallBody[1] and C_WhiteBody[1] and open[1]>low[4] and close[1]<high[4]) and (C_LongBody and C_BlackBody and close<close[4])
+	C_FallingThreeMethodsBearish := true
+//alertcondition(C_FallingThreeMethodsBearish, title = "Falling Three Methods – Bearish", message = "New Falling Three Methods – Bearish pattern detected")
+if C_FallingThreeMethodsBearish  and  FallingThreeMethodsInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishFallingThreeMethods = "Falling Three Methods\nFalling Three Methods is a five-candle bearish pattern that signifies a continuation of an existing downtrend. The first candle is long and red, followed by three short green candles with bodies inside the range of the first candle. The last candle is also red and long and it closes below the close of the first candle. This decisive fifth strongly bearish candle hints that bulls could not reverse the prior downtrend and that bears have regained control of the market."
+    label.new(bar_index, patternLabelPosHigh, text="FTM", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishFallingThreeMethods)
+C_RisingThreeMethodsBullishNumberOfCandles = 5
+C_RisingThreeMethodsBullish = false
+if C_UpTrend[4] and (C_LongBody[4] and C_WhiteBody[4]) and (C_SmallBody[3] and C_BlackBody[3] and open[3]<high[4] and close[3]>low[4]) and (C_SmallBody[2] and C_BlackBody[2] and open[2]<high[4] and close[2]>low[4]) and (C_SmallBody[1] and C_BlackBody[1] and open[1]<high[4] and close[1]>low[4]) and (C_LongBody and C_WhiteBody and close>close[4])
+	C_RisingThreeMethodsBullish := true
+//alertcondition(C_RisingThreeMethodsBullish, title = "Rising Three Methods – Bullish", message = "New Rising Three Methods – Bullish pattern detected")
+if C_RisingThreeMethodsBullish  and  RisingThreeMethodsInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishRisingThreeMethods = "Rising Three Methods\nRising Three Methods is a five-candle bullish pattern that signifies a continuation of an existing uptrend. The first candle is long and green, followed by three short red candles with bodies inside the range of the first candle. The last candle is also green and long and it closes above the close of the first candle. This decisive fifth strongly bullish candle hints that bears could not reverse the prior uptrend and that bulls have regained control of the market."
+    label.new(bar_index, patternLabelPosLow, text="RTM", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishRisingThreeMethods)
+C_TweezerTopBearishNumberOfCandles = 2
+C_TweezerTopBearish = false
+if C_UpTrend[1] and (not C_IsDojiBody or (C_HasUpShadow and C_HasDnShadow)) and math.abs(high-high[1]) <= C_BodyAvg*0.05 and C_WhiteBody[1] and C_BlackBody and C_LongBody[1]
+	C_TweezerTopBearish := true
+//alertcondition(C_TweezerTopBearish, title = "Tweezer Top – Bearish", message = "New Tweezer Top – Bearish pattern detected")
+if C_TweezerTopBearish  and  TweezerTopInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishTweezerTop = "Tweezer Top\nTweezer Top is a two-candle pattern that signifies a potential bearish reversal. The pattern is found during an uptrend. The first candle is long and green, the second candle is red, and its high is nearly identical to the high of the previous candle. The virtually identical highs, together with the inverted directions, hint that bears might be taking over the market."
+    label.new(bar_index, patternLabelPosHigh, text="TT", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishTweezerTop)
+C_TweezerBottomBullishNumberOfCandles = 2
+C_TweezerBottomBullish = false
+if C_DownTrend[1] and (not C_IsDojiBody or (C_HasUpShadow and C_HasDnShadow)) and math.abs(low-low[1]) <= C_BodyAvg*0.05 and C_BlackBody[1] and C_WhiteBody and C_LongBody[1]
+	C_TweezerBottomBullish := true
+//alertcondition(C_TweezerBottomBullish, title = "Tweezer Bottom – Bullish", message = "New Tweezer Bottom – Bullish pattern detected")
+if C_TweezerBottomBullish  and  TweezerBottomInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishTweezerBottom = "Tweezer Bottom\nTweezer Bottom is a two-candle pattern that signifies a potential bullish reversal. The pattern is found during a downtrend. The first candle is long and red, the second candle is green, its lows nearly identical to the low of the previous candle. The virtually identical lows together with the inverted directions hint that bulls might be taking over the market."
+    label.new(bar_index, patternLabelPosLow, text="TB", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishTweezerBottom)
+C_DarkCloudCoverBearishNumberOfCandles = 2
+C_DarkCloudCoverBearish = false
+if (C_UpTrend[1] and C_WhiteBody[1] and C_LongBody[1]) and (C_BlackBody and open >= high[1] and  close < C_BodyMiddle[1] and close > open[1])
+	C_DarkCloudCoverBearish := true
+//alertcondition(C_DarkCloudCoverBearish, title = "Dark Cloud Cover – Bearish", message = "New Dark Cloud Cover – Bearish pattern detected")
+if C_DarkCloudCoverBearish  and  DarkCloudCoverInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishDarkCloudCover = "Dark Cloud Cover\nDark Cloud Cover is a two-candle bearish reversal candlestick pattern found in an uptrend. The first candle is green and has a larger than average body. The second candle is red and opens above the high of the prior candle, creating a gap, and then closes below the midpoint of the first candle. The pattern shows a possible shift in the momentum from the upside to the downside, indicating that a reversal might happen soon."
+    label.new(bar_index, patternLabelPosHigh, text="DCC", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishDarkCloudCover)
+C_DownsideTasukiGapBearishNumberOfCandles = 3
+C_DownsideTasukiGapBearish = false
+if C_LongBody[2] and C_SmallBody[1] and C_DownTrend and C_BlackBody[2] and C_BodyHi[1] < C_BodyLo[2] and C_BlackBody[1] and C_WhiteBody and C_BodyHi <= C_BodyLo[2] and C_BodyHi >= C_BodyHi[1]
+	C_DownsideTasukiGapBearish := true
+//alertcondition(C_DownsideTasukiGapBearish, title = "Downside Tasuki Gap – Bearish", message = "New Downside Tasuki Gap – Bearish pattern detected")
+if C_DownsideTasukiGapBearish  and  DownsideTasukiGapInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishDownsideTasukiGap = "Downside Tasuki Gap\nDownside Tasuki Gap is a three-candle pattern found in a downtrend that usually hints at the continuation of the downtrend. The first candle is long and red, followed by a smaller red candle with its opening price that gaps below the body of the previous candle. The third candle is green and it closes inside the gap created by the first two candles, unable to close it fully. The bull’s inability to close that gap hints that the downtrend might continue."
+    label.new(bar_index, patternLabelPosHigh, text="DTG", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishDownsideTasukiGap)
+C_UpsideTasukiGapBullishNumberOfCandles = 3
+C_UpsideTasukiGapBullish = false
+if C_LongBody[2] and C_SmallBody[1] and C_UpTrend and C_WhiteBody[2] and C_BodyLo[1] > C_BodyHi[2] and C_WhiteBody[1] and C_BlackBody and C_BodyLo >= C_BodyHi[2] and C_BodyLo <= C_BodyLo[1]
+	C_UpsideTasukiGapBullish := true
+//alertcondition(C_UpsideTasukiGapBullish, title = "Upside Tasuki Gap – Bullish", message = "New Upside Tasuki Gap – Bullish pattern detected")
+if C_UpsideTasukiGapBullish  and  UpsideTasukiGapInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishUpsideTasukiGap = "Upside Tasuki Gap\nUpside Tasuki Gap is a three-candle pattern found in an uptrend that usually hints at the continuation of the uptrend. The first candle is long and green, followed by a smaller green candle with its opening price that gaps above the body of the previous candle. The third candle is red and it closes inside the gap created by the first two candles, unable to close it fully. The bear’s inability to close the gap hints that the uptrend might continue."
+    label.new(bar_index, patternLabelPosLow, text="UTG", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishUpsideTasukiGap)
+C_EveningDojiStarBearishNumberOfCandles = 3
+C_EveningDojiStarBearish = false
+if C_LongBody[2] and C_IsDojiBody[1] and C_LongBody and C_UpTrend and C_WhiteBody[2] and C_BodyLo[1] > C_BodyHi[2] and C_BlackBody and C_BodyLo <= C_BodyMiddle[2] and C_BodyLo > C_BodyLo[2] and C_BodyLo[1] > C_BodyHi
+	C_EveningDojiStarBearish := true
+//alertcondition(C_EveningDojiStarBearish, title = "Evening Doji Star – Bearish", message = "New Evening Doji Star – Bearish pattern detected")
+if C_EveningDojiStarBearish  and  EveningDojiStarInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishEveningDojiStar = "Evening Doji Star\nThis candlestick pattern is a variation of the Evening Star pattern. It is bearish and continues an uptrend with a long-bodied, green candle day. It is then followed by a gap and a Doji candle and concludes with a downward close. The close would be below the first day’s midpoint. It is more bearish than the regular evening star pattern because of the existence of the Doji."
+    label.new(bar_index, patternLabelPosHigh, text="EDS", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishEveningDojiStar)
+C_DojiStarBearishNumberOfCandles = 2
+C_DojiStarBearish = false
+if C_UpTrend and C_WhiteBody[1] and C_LongBody[1] and C_IsDojiBody and C_BodyLo > C_BodyHi[1]
+	C_DojiStarBearish := true
+//alertcondition(C_DojiStarBearish, title = "Doji Star – Bearish", message = "New Doji Star – Bearish pattern detected")
+if C_DojiStarBearish  and  DojiStarInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishDojiStar = "Doji Star\nThis is a bearish reversal candlestick pattern that is found in an uptrend and consists of two candles. First comes a long green candle, followed by a Doji candle (except 4-Price Doji) that opens above the body of the first one, creating a gap. It is considered a reversal signal with confirmation during the next trading day."
+    label.new(bar_index, patternLabelPosHigh, text="DS", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishDojiStar)
+C_DojiStarBullishNumberOfCandles = 2
+C_DojiStarBullish = false
+if C_DownTrend and C_BlackBody[1] and C_LongBody[1] and C_IsDojiBody and C_BodyHi < C_BodyLo[1]
+	C_DojiStarBullish := true
+//alertcondition(C_DojiStarBullish, title = "Doji Star – Bullish", message = "New Doji Star – Bullish pattern detected")
+if C_DojiStarBullish  and  DojiStarInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishDojiStar = "Doji Star\nThis is a bullish reversal candlestick pattern that is found in a downtrend and consists of two candles. First comes a long red candle, followed by a Doji candle (except 4-Price Doji) that opens below the body of the first one, creating a gap. It is considered a reversal signal with confirmation during the next trading day."
+    label.new(bar_index, patternLabelPosLow, text="DS", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishDojiStar)
+C_MorningDojiStarBullishNumberOfCandles = 3
+C_MorningDojiStarBullish = false
+if C_LongBody[2] and C_IsDojiBody[1] and C_LongBody and C_DownTrend and C_BlackBody[2] and C_BodyHi[1] < C_BodyLo[2] and C_WhiteBody and C_BodyHi >= C_BodyMiddle[2] and C_BodyHi < C_BodyHi[2] and C_BodyHi[1] < C_BodyLo
+	C_MorningDojiStarBullish := true
+//alertcondition(C_MorningDojiStarBullish, title = "Morning Doji Star – Bullish", message = "New Morning Doji Star – Bullish pattern detected")
+if C_MorningDojiStarBullish  and  MorningDojiStarInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishMorningDojiStar = "Morning Doji Star\nThis candlestick pattern is a variation of the Morning Star pattern. A three-day bullish reversal pattern, which consists of three candlesticks will look something like this: The first being a long-bodied red candle that extends the current downtrend. Next comes a Doji that gaps down on the open. After that comes a long-bodied green candle, which gaps up on the open and closes above the midpoint of the body of the first day. It is more bullish than the regular morning star pattern because of the existence of the Doji."
+    label.new(bar_index, patternLabelPosLow, text="MDS", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishMorningDojiStar)
+C_PiercingBullishNumberOfCandles = 2
+C_PiercingBullish = false
+if (C_DownTrend[1] and C_BlackBody[1] and C_LongBody[1]) and (C_WhiteBody and open <= low[1] and close > C_BodyMiddle[1] and close < open[1])
+	C_PiercingBullish := true
+//alertcondition(C_PiercingBullish, title = "Piercing – Bullish", message = "New Piercing – Bullish pattern detected")
+if C_PiercingBullish  and  PiercingInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishPiercing = "Piercing\nPiercing is a two-candle bullish reversal candlestick pattern found in a downtrend. The first candle is red and has a larger than average body. The second candle is green and opens below the low of the prior candle, creating a gap, and then closes above the midpoint of the first candle. The pattern shows a possible shift in the momentum from the downside to the upside, indicating that a reversal might happen soon."
+    label.new(bar_index, patternLabelPosLow, text="P", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishPiercing)
+C_HammerBullishNumberOfCandles = 1
+C_HammerBullish = false
+if C_SmallBody and C_Body > 0 and C_BodyLo > hl2 and C_DnShadow >= C_Factor * C_Body and not C_HasUpShadow
+    if C_DownTrend
+        C_HammerBullish := true
+//alertcondition(C_HammerBullish, title = "Hammer – Bullish", message = "New Hammer – Bullish pattern detected")
+if C_HammerBullish  and  HammerInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishHammer = "Hammer\nHammer candlesticks form when a security moves lower after the open, but continues to rally into close above the intraday low. The candlestick that you are left with will look like a square attached to a long stick-like figure. This candlestick is called a Hammer if it happens to form during a decline."
+    label.new(bar_index, patternLabelPosLow, text="H", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishHammer)
+C_HangingManBearishNumberOfCandles = 1
+C_HangingManBearish = false
+if C_SmallBody and C_Body > 0 and C_BodyLo > hl2 and C_DnShadow >= C_Factor * C_Body and not C_HasUpShadow
+	if C_UpTrend
+	    C_HangingManBearish := true
+//alertcondition(C_HangingManBearish, title = "Hanging Man – Bearish", message = "New Hanging Man – Bearish pattern detected")
+if C_HangingManBearish  and  HangingManInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishHangingMan = "Hanging Man\nWhen a specified security notably moves lower after the open, but continues to rally to close above the intraday low, a Hanging Man candlestick will form. The candlestick will resemble a square, attached to a long stick-like figure. It is referred to as a Hanging Man if the candlestick forms during an advance."
+    label.new(bar_index, patternLabelPosHigh, text="HM", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishHangingMan)
+C_ShootingStarBearishNumberOfCandles = 1
+C_ShootingStarBearish = false
+if C_SmallBody and C_Body > 0 and C_BodyHi < hl2 and C_UpShadow >= C_Factor * C_Body and not C_HasDnShadow
+	if C_UpTrend
+	    C_ShootingStarBearish := true
+//alertcondition(C_ShootingStarBearish, title = "Shooting Star – Bearish", message = "New Shooting Star – Bearish pattern detected")
+if C_ShootingStarBearish  and  ShootingStarInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishShootingStar = "Shooting Star\nThis single day pattern can appear during an uptrend and opens high, while it closes near its open. It trades much higher as well. It is bearish in nature, but looks like an Inverted Hammer."
+    label.new(bar_index, patternLabelPosHigh, text="SS", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishShootingStar)
+C_InvertedHammerBullishNumberOfCandles = 1
+C_InvertedHammerBullish = false
+if C_SmallBody and C_Body > 0 and C_BodyHi < hl2 and C_UpShadow >= C_Factor * C_Body and not C_HasDnShadow
+    if C_DownTrend
+        C_InvertedHammerBullish := true
+//alertcondition(C_InvertedHammerBullish, title = "Inverted Hammer – Bullish", message = "New Inverted Hammer – Bullish pattern detected")
+if C_InvertedHammerBullish  and  InvertedHammerInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishInvertedHammer = "Inverted Hammer\nIf in a downtrend, then the open is lower. When it eventually trades higher, but closes near its open, it will look like an inverted version of the Hammer Candlestick. This is a one-day bullish reversal pattern."
+    label.new(bar_index, patternLabelPosLow, text="IH", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishInvertedHammer)
+C_MorningStarBullishNumberOfCandles = 3
+C_MorningStarBullish = false
+if C_LongBody[2] and C_SmallBody[1] and C_LongBody
+    if C_DownTrend and C_BlackBody[2] and C_BodyHi[1] < C_BodyLo[2] and C_WhiteBody and C_BodyHi >= C_BodyMiddle[2] and C_BodyHi < C_BodyHi[2] and C_BodyHi[1] < C_BodyLo
+        C_MorningStarBullish := true
+//alertcondition(C_MorningStarBullish, title = "Morning Star – Bullish", message = "New Morning Star – Bullish pattern detected")
+if C_MorningStarBullish  and  MorningStarInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishMorningStar = "Morning Star\nA three-day bullish reversal pattern, which consists of three candlesticks will look something like this: The first being a long-bodied red candle that extends the current downtrend. Next comes a short, middle candle that gaps down on the open. After comes a long-bodied green candle, which gaps up on the open and closes above the midpoint of the body of the first day."
+    label.new(bar_index, patternLabelPosLow, text="MS", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishMorningStar)
+C_EveningStarBearishNumberOfCandles = 3
+C_EveningStarBearish = false
+if C_LongBody[2] and C_SmallBody[1] and C_LongBody
+    if C_UpTrend and C_WhiteBody[2] and C_BodyLo[1] > C_BodyHi[2] and C_BlackBody and C_BodyLo <= C_BodyMiddle[2] and C_BodyLo > C_BodyLo[2] and C_BodyLo[1] > C_BodyHi
+        C_EveningStarBearish := true
+//alertcondition(C_EveningStarBearish, title = "Evening Star – Bearish", message = "New Evening Star – Bearish pattern detected")
+if C_EveningStarBearish  and  EveningStarInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishEveningStar = "Evening Star\nThis candlestick pattern is bearish and continues an uptrend with a long-bodied, green candle day. It is then followed by a gapped and small-bodied candle day, and concludes with a downward close. The close would be below the first day’s midpoint."
+    label.new(bar_index, patternLabelPosHigh, text="ES", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishEveningStar)
+C_MarubozuWhiteBullishNumberOfCandles = 1
+C_MarubozuShadowPercentWhite = 5.0
+C_MarubozuWhiteBullish = C_WhiteBody and C_LongBody and C_UpShadow <= C_MarubozuShadowPercentWhite/100*C_Body and C_DnShadow <= C_MarubozuShadowPercentWhite/100*C_Body and C_WhiteBody
+//alertcondition(C_MarubozuWhiteBullish, title = "Marubozu White – Bullish", message = "New Marubozu White – Bullish pattern detected")
+if C_MarubozuWhiteBullish  and  MarubozuWhiteInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishMarubozuWhite = "Marubozu White\nA Marubozu White Candle is a candlestick that does not have a shadow that extends from its candle body at either the open or the close. Marubozu is Japanese for “close-cropped” or “close-cut.” Other sources may call it a Bald or Shaven Head Candle."
+    label.new(bar_index, patternLabelPosLow, text="MW", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishMarubozuWhite)
+C_MarubozuBlackBearishNumberOfCandles = 1
+C_MarubozuShadowPercentBearish = 5.0
+C_MarubozuBlackBearish = C_BlackBody and C_LongBody and C_UpShadow <= C_MarubozuShadowPercentBearish/100*C_Body and C_DnShadow <= C_MarubozuShadowPercentBearish/100*C_Body and C_BlackBody
+//alertcondition(C_MarubozuBlackBearish, title = "Marubozu Black – Bearish", message = "New Marubozu Black – Bearish pattern detected")
+if C_MarubozuBlackBearish  and  MarubozuBlackInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishMarubozuBlack = "Marubozu Black\nThis is a candlestick that has no shadow, which extends from the red-bodied candle at the open, the close, or even at both. In Japanese, the name means “close-cropped” or “close-cut.” The candlestick can also be referred to as Bald or Shaven Head."
+    label.new(bar_index, patternLabelPosHigh, text="MB", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishMarubozuBlack)
+C_DojiNumberOfCandles = 1
+C_DragonflyDoji = C_IsDojiBody and C_UpShadow <= C_Body
+C_GravestoneDojiOne = C_IsDojiBody and C_DnShadow <= C_Body
+//alertcondition(C_Doji and not C_DragonflyDoji and not C_GravestoneDojiOne, title = "Doji", message = "New Doji pattern detected")
+if C_Doji and not C_DragonflyDoji and not C_GravestoneDojiOne and DojiInput
+    var ttDoji = "Doji\nWhen the open and close of a security are essentially equal to each other, a doji candle forms. The length of both upper and lower shadows may vary, causing the candlestick you are left with to either resemble a cross, an inverted cross, or a plus sign. Doji candles show the playout of buyer-seller indecision in a tug-of-war of sorts. As price moves either above or below the opening level during the session, the close is either at or near the opening level."
+    label.new(bar_index, patternLabelPosLow, text="D", style=label.style_label_up, color = label_color_neutral, textcolor=color.white, tooltip = ttDoji)
+C_GravestoneDojiBearishNumberOfCandles = 1
+C_GravestoneDojiBearish = C_IsDojiBody and C_DnShadow <= C_Body
+//alertcondition(C_GravestoneDojiBearish, title = "Gravestone Doji – Bearish", message = "New Gravestone Doji – Bearish pattern detected")
+if C_GravestoneDojiBearish  and  GravestoneDojiInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishGravestoneDoji = "Gravestone Doji\nWhen a doji is at or is close to the day’s low point, a doji line will develop."
+    label.new(bar_index, patternLabelPosHigh, text="GD", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishGravestoneDoji)
+C_DragonflyDojiBullishNumberOfCandles = 1
+C_DragonflyDojiBullish = C_IsDojiBody and C_UpShadow <= C_Body
+//alertcondition(C_DragonflyDojiBullish, title = "Dragonfly Doji – Bullish", message = "New Dragonfly Doji – Bullish pattern detected")
+if C_DragonflyDojiBullish  and  DragonflyDojiInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishDragonflyDoji = "Dragonfly Doji\nSimilar to other Doji days, this particular Doji also regularly appears at pivotal market moments. This is a specific Doji where both the open and close price are at the high of a given day."
+    label.new(bar_index, patternLabelPosLow, text="DD", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishDragonflyDoji)
+C_HaramiCrossBullishNumberOfCandles = 2
+C_HaramiCrossBullish = C_LongBody[1] and C_BlackBody[1] and C_DownTrend[1] and C_IsDojiBody and high <= C_BodyHi[1] and low >= C_BodyLo[1]
+//alertcondition(C_HaramiCrossBullish, title = "Harami Cross – Bullish", message = "New Harami Cross – Bullish pattern detected")
+if C_HaramiCrossBullish  and  HaramiCrossInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishHaramiCross = "Harami Cross\nThis candlestick pattern is a variation of the Harami Bullish pattern. It is found during a downtrend. The two-day candlestick pattern consists of a Doji candle that is entirely encompassed within the body of what was once a red-bodied candle."
+    label.new(bar_index, patternLabelPosLow, text="HC", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishHaramiCross)
+C_HaramiCrossBearishNumberOfCandles = 2
+C_HaramiCrossBearish = C_LongBody[1] and C_WhiteBody[1] and C_UpTrend[1] and C_IsDojiBody and high <= C_BodyHi[1] and low >= C_BodyLo[1]
+//alertcondition(C_HaramiCrossBearish, title = "Harami Cross – Bearish", message = "New Harami Cross – Bearish pattern detected")
+if C_HaramiCrossBearish  and  HaramiCrossInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishHaramiCross = "Harami Cross\nThis candlestick pattern is a variation of the Harami Bearish pattern. It is found during an uptrend. This is a two-day candlestick pattern with a Doji candle that is entirely encompassed within the body that was once a green-bodied candle. The Doji shows that some indecision has entered the minds of sellers, and the pattern hints that the trend might reverse."
+    label.new(bar_index, patternLabelPosHigh, text="HC", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishHaramiCross)
+C_HaramiBullishNumberOfCandles = 2
+C_HaramiBullish = C_LongBody[1] and C_BlackBody[1] and C_DownTrend[1] and C_WhiteBody and C_SmallBody and high <= C_BodyHi[1] and low >= C_BodyLo[1]
+//alertcondition(C_HaramiBullish, title = "Harami – Bullish", message = "New Harami – Bullish pattern detected")
+if C_HaramiBullish  and  HaramiInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishHarami = "Harami\nThis two-day candlestick pattern consists of a small-bodied green candle that is entirely encompassed within the body of what was once a red-bodied candle."
+    label.new(bar_index, patternLabelPosLow, text="BH", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishHarami)
+C_HaramiBearishNumberOfCandles = 2
+C_HaramiBearish = C_LongBody[1] and C_WhiteBody[1] and C_UpTrend[1] and C_BlackBody and C_SmallBody and high <= C_BodyHi[1] and low >= C_BodyLo[1]
+//alertcondition(C_HaramiBearish, title = "Harami – Bearish", message = "New Harami – Bearish pattern detected")
+if C_HaramiBearish  and  HaramiInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishHarami = "Harami\nThis is a two-day candlestick pattern with a small, red-bodied candle that is entirely encompassed within the body that was once a green-bodied candle."
+    label.new(bar_index, patternLabelPosHigh, text="BH", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishHarami)
+C_LongLowerShadowBullishNumberOfCandles = 1
+C_LongLowerShadowPercent = 75.0
+C_LongLowerShadowBullish = C_DnShadow > C_Range/100*C_LongLowerShadowPercent
+//alertcondition(C_LongLowerShadowBullish, title = "Long Lower Shadow – Bullish", message = "New Long Lower Shadow – Bullish pattern detected")
+if C_LongLowerShadowBullish  and  LongLowerShadowInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishLongLowerShadow = "Long Lower Shadow\nTo indicate seller domination of the first part of a session, candlesticks will present with long lower shadows and short upper shadows, consequently lowering prices."
+    label.new(bar_index, patternLabelPosLow, text="LLS", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishLongLowerShadow)
+C_LongUpperShadowBearishNumberOfCandles = 1
+C_LongShadowPercent = 75.0
+C_LongUpperShadowBearish = C_UpShadow > C_Range/100*C_LongShadowPercent
+//alertcondition(C_LongUpperShadowBearish, title = "Long Upper Shadow – Bearish", message = "New Long Upper Shadow – Bearish pattern detected")
+if C_LongUpperShadowBearish  and  LongUpperShadowInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishLongUpperShadow = "Long Upper Shadow\nTo indicate buyer domination of the first part of a session, candlesticks will present with long upper shadows, as well as short lower shadows, consequently raising bidding prices."
+    label.new(bar_index, patternLabelPosHigh, text="LUS", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishLongUpperShadow)
+C_SpinningTopWhiteNumberOfCandles = 1
+C_SpinningTopWhitePercent = 34.0
+C_IsSpinningTopWhite = C_DnShadow >= C_Range / 100 * C_SpinningTopWhitePercent and C_UpShadow >= C_Range / 100 * C_SpinningTopWhitePercent and not C_IsDojiBody
+C_SpinningTopWhite = C_IsSpinningTopWhite and C_WhiteBody
+//alertcondition(C_SpinningTopWhite, title = "Spinning Top White", message = "New Spinning Top White pattern detected")
+if C_SpinningTopWhite and SpinningTopWhiteInput
+    var ttSpinningTopWhite = "Spinning Top White\nWhite spinning tops are candlestick lines that are small, green-bodied, and possess shadows (upper and lower) that end up exceeding the length of candle bodies. They often signal indecision between buyer and seller."
+    label.new(bar_index, patternLabelPosLow, text="STW", style=label.style_label_up, color = label_color_neutral, textcolor=color.white, tooltip = ttSpinningTopWhite)
+C_SpinningTopBlackNumberOfCandles = 1
+C_SpinningTopBlackPercent = 34.0
+C_IsSpinningTop = C_DnShadow >= C_Range / 100 * C_SpinningTopBlackPercent and C_UpShadow >= C_Range / 100 * C_SpinningTopBlackPercent and not C_IsDojiBody
+C_SpinningTopBlack = C_IsSpinningTop and C_BlackBody
+//alertcondition(C_SpinningTopBlack, title = "Spinning Top Black", message = "New Spinning Top Black pattern detected")
+if C_SpinningTopBlack and SpinningTopBlackInput
+    var ttSpinningTopBlack = "Spinning Top Black\nBlack spinning tops are candlestick lines that are small, red-bodied, and possess shadows (upper and lower) that end up exceeding the length of candle bodies. They often signal indecision."
+    label.new(bar_index, patternLabelPosLow, text="STB", style=label.style_label_up, color = label_color_neutral, textcolor=color.white, tooltip = ttSpinningTopBlack)
+C_ThreeWhiteSoldiersBullishNumberOfCandles = 3
+C_3WSld_ShadowPercent = 5.0
+C_3WSld_HaveNotUpShadow = C_Range * C_3WSld_ShadowPercent / 100 > C_UpShadow
+C_ThreeWhiteSoldiersBullish = false
+if C_LongBody and C_LongBody[1] and C_LongBody[2]
+    if C_WhiteBody and C_WhiteBody[1] and C_WhiteBody[2]
+        C_ThreeWhiteSoldiersBullish := close > close[1] and close[1] > close[2] and open < close[1] and open > open[1] and open[1] < close[2] and open[1] > open[2] and C_3WSld_HaveNotUpShadow and C_3WSld_HaveNotUpShadow[1] and C_3WSld_HaveNotUpShadow[2]
+//alertcondition(C_ThreeWhiteSoldiersBullish, title = "Three White Soldiers – Bullish", message = "New Three White Soldiers – Bullish pattern detected")
+if C_ThreeWhiteSoldiersBullish  and  ThreeWhiteSoldiersInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishThreeWhiteSoldiers = "Three White Soldiers\nThis bullish reversal pattern is made up of three long-bodied, green candles in immediate succession. Each one opens within the body before it and the close is near to the daily high."
+    label.new(bar_index, patternLabelPosLow, text="3WS", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishThreeWhiteSoldiers)
+C_ThreeBlackCrowsBearishNumberOfCandles = 3
+C_3BCrw_ShadowPercent = 5.0
+C_3BCrw_HaveNotDnShadow = C_Range * C_3BCrw_ShadowPercent / 100 > C_DnShadow
+C_ThreeBlackCrowsBearish = false
+if C_LongBody and C_LongBody[1] and C_LongBody[2]
+    if C_BlackBody and C_BlackBody[1] and C_BlackBody[2]
+        C_ThreeBlackCrowsBearish := close < close[1] and close[1] < close[2] and open > close[1] and open < open[1] and open[1] > close[2] and open[1] < open[2] and C_3BCrw_HaveNotDnShadow and C_3BCrw_HaveNotDnShadow[1] and C_3BCrw_HaveNotDnShadow[2]
+//alertcondition(C_ThreeBlackCrowsBearish, title = "Three Black Crows – Bearish", message = "New Three Black Crows – Bearish pattern detected")
+if C_ThreeBlackCrowsBearish  and  ThreeBlackCrowsInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishThreeBlackCrows = "Three Black Crows\nThis is a bearish reversal pattern that consists of three long, red-bodied candles in immediate succession. For each of these candles, each day opens within the body of the day before and closes either at or near its low."
+    label.new(bar_index, patternLabelPosHigh, text="3BC", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishThreeBlackCrows)
+C_EngulfingBullishNumberOfCandles = 2
+C_EngulfingBullish = C_DownTrend and C_WhiteBody and C_LongBody and C_BlackBody[1] and C_SmallBody[1] and close >= open[1] and open <= close[1] and ( close > open[1] or open < close[1] )
+//alertcondition(C_EngulfingBullish, title = "Engulfing – Bullish", message = "New Engulfing – Bullish pattern detected")
+if C_EngulfingBullish  and  EngulfingInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishEngulfing = "Engulfing\nAt the end of a given downward trend, there will most likely be a reversal pattern. To distinguish the first day, this candlestick pattern uses a small body, followed by a day where the candle body fully overtakes the body from the day before, and closes in the trend’s opposite direction. Although similar to the outside reversal chart pattern, it is not essential for this pattern to completely overtake the range (high to low), rather only the open and the close."
+    label.new(bar_index, patternLabelPosLow, text="BE", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishEngulfing)
+C_EngulfingBearishNumberOfCandles = 2
+C_EngulfingBearish = C_UpTrend and C_BlackBody and C_LongBody and C_WhiteBody[1] and C_SmallBody[1] and close <= open[1] and open >= close[1] and ( close < open[1] or open > close[1] )
+//alertcondition(C_EngulfingBearish, title = "Engulfing – Bearish", message = "New Engulfing – Bearish pattern detected")
+if C_EngulfingBearish  and  EngulfingInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishEngulfing = "Engulfing\nAt the end of a given uptrend, a reversal pattern will most likely appear. During the first day, this candlestick pattern uses a small body. It is then followed by a day where the candle body fully overtakes the body from the day before it and closes in the trend’s opposite direction. Although similar to the outside reversal chart pattern, it is not essential for this pattern to fully overtake the range (high to low), rather only the open and the close."
+    label.new(bar_index, patternLabelPosHigh, text="BE", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishEngulfing)
+C_AbandonedBabyBullishNumberOfCandles = 3
+C_AbandonedBabyBullish = C_DownTrend[2] and C_BlackBody[2] and C_IsDojiBody[1] and low[2] > high[1] and C_WhiteBody and high[1] < low
+//alertcondition(C_AbandonedBabyBullish, title = "Abandoned Baby – Bullish", message = "New Abandoned Baby – Bullish pattern detected")
+if C_AbandonedBabyBullish  and  AbandonedBabyInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishAbandonedBaby = "Abandoned Baby\nThis candlestick pattern is quite rare as far as reversal patterns go. The first of the pattern is a large down candle. Next comes a doji candle that gaps below the candle before it. The doji candle is then followed by another candle that opens even higher and swiftly moves to the upside."
+    label.new(bar_index, patternLabelPosLow, text="AB", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishAbandonedBaby)
+C_AbandonedBabyBearishNumberOfCandles = 3
+C_AbandonedBabyBearish = C_UpTrend[2] and C_WhiteBody[2] and C_IsDojiBody[1] and high[2] < low[1] and C_BlackBody and low[1] > high
+//alertcondition(C_AbandonedBabyBearish, title = "Abandoned Baby – Bearish", message = "New Abandoned Baby – Bearish pattern detected")
+if C_AbandonedBabyBearish  and  AbandonedBabyInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishAbandonedBaby = "Abandoned Baby\nA bearish abandoned baby is a specific candlestick pattern that often signals a downward reversal trend in terms of security price. It is formed when a gap appears between the lowest price of a doji-like candle and the candlestick of the day before. The earlier candlestick is green, tall, and has small shadows. The doji candle is also tailed by a gap between its lowest price point and the highest price point of the candle that comes next, which is red, tall and also has small shadows. The doji candle shadows must completely gap either below or above the shadows of the first and third day in order to have the abandoned baby pattern effect."
+    label.new(bar_index, patternLabelPosHigh, text="AB", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishAbandonedBaby)
+C_TriStarBullishNumberOfCandles = 3
+C_3DojisBullish = C_Doji[2] and C_Doji[1] and C_Doji
+C_BodyGapUpBullish = C_BodyHi[1] < C_BodyLo
+C_BodyGapDnBullish = C_BodyLo[1] > C_BodyHi
+C_TriStarBullish = C_3DojisBullish and C_DownTrend[2] and C_BodyGapDnBullish[1] and C_BodyGapUpBullish
+//alertcondition(C_TriStarBullish, title = "Tri-Star – Bullish", message = "New Tri-Star – Bullish pattern detected")
+if C_TriStarBullish  and  TriStarInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishTriStar = "Tri-Star\nA bullish TriStar candlestick pattern can form when three doji candlesticks materialize in immediate succession at the tail-end of an extended downtrend. The first doji candle marks indecision between bull and bear. The second doji gaps in the direction of the leading trend. The third changes the attitude of the market once the candlestick opens in the direction opposite to the trend. Each doji candle has a shadow, all comparatively shallow, which signify an interim cutback in volatility."
+    label.new(bar_index, patternLabelPosLow, text="3S", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishTriStar)
+C_TriStarBearishNumberOfCandles = 3
+C_3Dojis = C_Doji[2] and C_Doji[1] and C_Doji
+C_BodyGapUp = C_BodyHi[1] < C_BodyLo
+C_BodyGapDn = C_BodyLo[1] > C_BodyHi
+C_TriStarBearish = C_3Dojis and C_UpTrend[2] and C_BodyGapUp[1] and C_BodyGapDn
+//alertcondition(C_TriStarBearish, title = "Tri-Star – Bearish", message = "New Tri-Star – Bearish pattern detected")
+if C_TriStarBearish  and  TriStarInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishTriStar = "Tri-Star\nThis particular pattern can form when three doji candlesticks appear in immediate succession at the end of an extended uptrend. The first doji candle marks indecision between bull and bear. The second doji gaps in the direction of the leading trend. The third changes the attitude of the market once the candlestick opens in the direction opposite to the trend. Each doji candle has a shadow, all comparatively shallow, which signify an interim cutback in volatility."
+    label.new(bar_index, patternLabelPosHigh, text="3S", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishTriStar)
+C_KickingBullishNumberOfCandles = 2
+C_MarubozuShadowPercent = 5.0
+C_Marubozu = C_LongBody and C_UpShadow <= C_MarubozuShadowPercent/100*C_Body and C_DnShadow <= C_MarubozuShadowPercent/100*C_Body
+C_MarubozuWhiteBullishKicking = C_Marubozu and C_WhiteBody
+C_MarubozuBlackBullish = C_Marubozu and C_BlackBody
+C_KickingBullish = C_MarubozuBlackBullish[1] and C_MarubozuWhiteBullishKicking and high[1] < low
+//alertcondition(C_KickingBullish, title = "Kicking – Bullish", message = "New Kicking – Bullish pattern detected")
+if C_KickingBullish  and  KickingInput and (("Bullish" == CandleType) or CandleType == "Both")
+
+    var ttBullishKicking = "Kicking\nThe first day candlestick is a bearish marubozu candlestick with next to no upper or lower shadow and where the price opens at the day’s high and closes at the day’s low. The second day is a bullish marubozu pattern, with next to no upper or lower shadow and where the price opens at the day’s low and closes at the day’s high. Additionally, the second day gaps up extensively and opens above the opening price of the day before. This gap or window, as the Japanese call it, lies between day one and day two’s bullish candlesticks."
+    label.new(bar_index, patternLabelPosLow, text="K", style=label.style_label_up, color = label_color_bullish, textcolor=color.white, tooltip = ttBullishKicking)
+C_KickingBearishNumberOfCandles = 2
+C_MarubozuBullishShadowPercent = 5.0
+C_MarubozuBearishKicking = C_LongBody and C_UpShadow <= C_MarubozuBullishShadowPercent/100*C_Body and C_DnShadow <= C_MarubozuBullishShadowPercent/100*C_Body
+C_MarubozuWhiteBearish = C_MarubozuBearishKicking and C_WhiteBody
+C_MarubozuBlackBearishKicking = C_MarubozuBearishKicking and C_BlackBody
+C_KickingBearish = C_MarubozuWhiteBearish[1] and C_MarubozuBlackBearishKicking and low[1] > high
+//alertcondition(C_KickingBearish, title = "Kicking – Bearish", message = "New Kicking – Bearish pattern detected")
+if C_KickingBearish  and  KickingInput and (("Bearish" == CandleType) or CandleType == "Both")
+
+    var ttBearishKicking = "Kicking\nA bearish kicking pattern will occur, subsequently signaling a reversal for a new downtrend. The first day candlestick is a bullish marubozu. The second day gaps down extensively and opens below the opening price of the day before. There is a gap between day one and two’s bearish candlesticks."
+    label.new(bar_index, patternLabelPosHigh, text="K", style=label.style_label_down, color = label_color_bearish, textcolor=color.white, tooltip = ttBearishKicking)
+    var ttAllCandlestickPatterns = "All Candlestick Patterns\n"
+    label.new(bar_index, patternLabelPosLow, text="Collection", style=label.style_label_up, color = label_color_neutral, textcolor=color.white, tooltip = ttAllCandlestickPatterns)
 
 
 
 
+//TABLOLAR
+fiyat = str.tostring(src, '##.00')
+fiyatYon = src>src[1]
+myHisseA = myHisse=="" ? str.tostring(syminfo.ticker) : myHisse
+xCalismaMumA = xCalismaMum== "Grafik" ? "Grafik: " + xMumKontrolA(str.tostring(timeframe.period)) : xCalismaMum
+
+var table tblPanoMobil = table.new(xTabloKonumKontrol(xPanoKonumu), 4, 1, bgcolor = color.black, frame_width = 1, frame_color = color.white, border_color = color.white, border_width=1)
+table.clear(tblPanoMobil, 0, 0, 3, 0)
+
+//Formül
+//customFunc() => [renkVer(close,myRsiUzunluk), str.tostring(math.round(ta.rsi(close,myRsiUzunluk)),"#"), ta.crossover(high,xMaKontrol(xMaTip100, source_100, length6a)), close>xMaKontrol(xMaTip100, source_100, length6a)]
+//customFunc() => [renkVer(close,myRsiD), str.tostring(math.round(ta.rsi(close,myRsiD)),"#"), ta.crossover(high,ta.ema(close, 100)), close>ta.ema(close, 100), ta.rsi(close,myRsiD)]
+//customFunc() => [renkVer(close,myRsiD), str.tostring(math.round(nz(ta.rsi(close,myRsiD))),"#"), renkVerE100(high,close, 100), close>ta.ema(close, 100), str.tostring(math.round(nz(ta.mfi(hlc3, lengthMFI))),"#"),renkVerMfi(hlc3,lengthMFI)]
+
+
+
+
+tBos = "Mum"
+tTarih = str.tostring(dayofmonth(timenow)) + "." + str.tostring(month(timenow)) + "." + str.tostring(year(timenow))
 
 if barstate.islast
 
-    if acTabloPanoOzet or acTabloPanoMobil 
+	tsizeP = xHarfKontrol(xPanoHarfBuyuklugu)
 
-        tsize = size.tiny
-        if acTabloPanoOzet 
-            tsize := size.small
+    if acTabloPanoOzet 
 
-        table.cell(tblPanoMobil, 0, 0, t_ust_b, text_color = color.white, text_size = tsize, bgcolor=color.teal)
-        table.cell(tblPanoMobil, 0, 1, t_ust_d, text_color = color.white, text_size = tsize, bgcolor=t_ust_bc)
-
-        table.cell(tblPanoMobil, 0, 2, t_orta_b, text_color = color.white, text_size = tsize, bgcolor=color.teal)
-        table.cell(tblPanoMobil, 0, 3, t_orta_d, text_color = color.white, text_size = tsize, bgcolor=t_orta_bc)
-        
-        table.cell(tblPanoMobil, 0, 4, t_alt_b, text_color = color.white, text_size = tsize, bgcolor=color.teal)
-        table.cell(tblPanoMobil, 0, 5, t_alt_d, text_color = color.white, text_size = tsize, bgcolor=t_alt_bc)
-
-        table.cell(tblPanoMobil, 0, 6, "RSI", text_color = color.white, text_size = tsize, bgcolor=color.maroon)
-        table.cell(tblPanoMobil, 0, 7, tRsi , text_color = color.white, text_size = tsize, bgcolor=(tRsiYon) ? color.new(color.lime,50) : color.new(#ff0000,0))
-
-        table.cell(tblPanoMobil, 0, 8, "MFI", text_color = color.white, text_size = tsize, bgcolor=color.maroon)
-        table.cell(tblPanoMobil, 0, 9, tMfi , text_color = color.white, text_size = tsize, bgcolor=(tMfiYon) ? color.new(color.lime,50) : color.new(#ff0000,0))
-
-        table.cell(tblPanoMobil, 0, 10, "ADX", text_color = color.white, text_size = tsize, bgcolor=color.maroon)
-        table.cell(tblPanoMobil, 0, 11, tAdx , text_color = color.black, text_size = tsize, bgcolor=myColorAdx)
-
+        table.cell(tblPanoMobil, 0, 0, myHisseA , text_color = color.white, text_size = tsizeP, bgcolor=color.maroon)
+        table.cell(tblPanoMobil, 1, 0, tTarih, text_color = color.white, text_size = tsizeP, bgcolor=color.maroon)
+        table.cell(tblPanoMobil, 2, 0, xCalismaMumA , text_color = color.white, text_size = tsizeP, bgcolor=color.teal)
+        table.cell(tblPanoMobil, 3, 0, "Fiyat: " + fiyat , text_color =fiyatYon ? color.new(color.lime,0) : color.new(#FF0000,0), text_size = tsizeP, bgcolor=color.rgb(13, 35, 44, 52))
 
 
 
