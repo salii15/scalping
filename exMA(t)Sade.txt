@@ -94,7 +94,7 @@ xPanoHarfBuyuklugu = input.string(defval = "size.huge", title = "Pano Karakter B
 
 
 // Fibo Ayarları
-acFiboLines = input(defval = true, title = 'Fibo Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
+acFiboLines = input(defval = false, title = 'Fibo Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlUst = input(defval = true, title = 'Fibo Üst Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlOrta = input(defval = true, title = 'Fibo Orta Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlAlt = input(defval = true, title = 'Fibo Alt Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
@@ -171,14 +171,14 @@ xMaMumKontrol(xMaMumTip)=>
 
 
 
-acxMaCizgisi = input(defval = false, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
+acxMaCizgisi = input(defval = true, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
 acxMa9Cizgisi = input(defval = false, title = 'xMA9 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 acxMa13Cizgisi = input(defval = false, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 acxMa21Cizgisi = input(defval = false, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 acxMa34Cizgisi = input(defval = false, title = 'xMA34 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 acxMa50Cizgisi = input(defval = true, title = 'xMA50 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
-acxMa89Cizgisi = input(defval = true, title = 'xMA89 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
-acxMa100Cizgisi = input(defval = true, title = 'xMA100 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa89Cizgisi = input(defval = false, title = 'xMA89 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
+acxMa100Cizgisi = input(defval = false, title = 'xMA100 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 acxMa144Cizgisi = input(defval = false, title = 'xMA144 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 acxMa200Cizgisi = input(defval = false, title = 'xMA200 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 
@@ -865,16 +865,18 @@ plotshape(alFirsat and kosul100_0 ? kosul100_0 : na ,title ='ema 20 Üstü', tex
 
 
 //MUM FORMASYONLARI
+xMumFormasyonBuyuklugu = input.string(defval = "size.tiny", title = "Mum Etiket Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Mum Formasyon Ayarları")
+myMumFSize = size.tiny //  xHarfKontrol(xMumFormasyonBuyuklugu)
 //acDoji = input.bool(defval = false, title = 'Doji Gözüksün mü?', group="Mum Formasyon Ayarları") 
 //dojiOlcusu = input.float(0.05, minval=0.01, title="Doji Ölçüsü", step=0.01, group="Mum Formasyon Ayarları")
 
-acBullishEngulfing = input.bool(defval = false, title = 'Bullnish Engulfning (Yutan Ayı) Gözüksün mü?', group="Mum Formasyon Ayarları") 
-acBearishEngulfing = input.bool(defval = false, title = 'Bearish Engulfning (Yutan Boğa) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acBullishEngulfing = input.bool(defval = true, title = 'Bullnish Engulfning (Yutan Ayı) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acBearishEngulfing = input.bool(defval = true, title = 'Bearish Engulfning (Yutan Boğa) Gözüksün mü?', group="Mum Formasyon Ayarları") 
 //acShootingStar = input.bool(defval = false, title = 'Shooting Star (Kayan Yıldız) Gözüksün mü?', group="Mum Formasyon Ayarları")
 //acEveningStar =  input.bool(defval = false, title = 'Evening Star (Akşam Yıldızı) Gözüksün mü?', group="Mum Formasyon Ayarları")
 //acMorningStar =  input.bool(defval = false, title = 'Morning Star (Sabah Yıldızı) Gözüksün mü?', group="Mum Formasyon Ayarları")
-acDusenHarami = input.bool(defval = false, title = 'Bearish Harami (Düşen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
-acYukselenHarami = input.bool(defval = false, title = 'Bullish Harami (Yükselen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acDusenHarami = input.bool(defval = true, title = 'Bearish Harami (Düşen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acYukselenHarami = input.bool(defval = true, title = 'Bullish Harami (Yükselen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
 
 
 //acCekic =  input.bool(defval = false, title = 'Hammer (Çekiç) Sembolü (Ç) Gözüksün mü?', group="Mum Formasyon Ayarları")
@@ -884,14 +886,20 @@ acYukselenHarami = input.bool(defval = false, title = 'Bullish Harami (Yükselen
 //plotchar(Dojidata and acDoji ? Dojidata : na, title="Doji", char="!", text="Doji\n", color=color.white,size=size.tiny)
 
 bullishEngulfing = (open[1] > close[1] and close > open and close >= open[1] and close[1] >= open and close - open > open[1] - close[1] )
-plotshape(bullishEngulfing and acBullishEngulfing ? bullishEngulfing : na, style = shape.arrowup, location = location.belowbar, title="Yutan Ayı", text = "YA", color = color.lime,textcolor = color.lime, size = size.normal)
+plotshape(bullishEngulfing and acBullishEngulfing ? bullishEngulfing : na, style = shape.labelup, location = location.belowbar, title="Yutan Ayı", text = "YA", color = #056656,textcolor = color.white, size = myMumFSize)
 
 bearishEngulfing = (close[1] > open[1] and open > close and open >= close[1] and open[1] >= close and open - close > close[1] - open[1] )
-plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , style = shape.arrowdown , location = location.abovebar, title="Yutan Boğa", text = "YB", color = #ff0000 ,textcolor = #ff0000, size = size.normal)
+plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , style = shape.labeldown , location = location.abovebar, title="Yutan Boğa", text = "YB", color = #800000 ,textcolor = color.white, size = myMumFSize)
+
+
+yukselenHarami=(open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1] )
+plotshape(yukselenHarami and acYukselenHarami ? yukselenHarami : na,  title= "Yükselen Harami", location=location.belowbar, color = #056656,textcolor = color.white, style=shape.labelup, text="YH", size = myMumFSize)
+
+dusenHarami=(close[1] > open[1] and open > close and open <= close[1] and open[1] <= close and open - close < close[1] - open[1] )
+plotshape(dusenHarami and acDusenHarami ? dusenHarami : na, title= "Düşen Harami",  color = #800000 ,textcolor = color.white, style=shape.labeldown, text="DH", size = myMumFSize)
 
 //shootingStar = (open[1] < close[1] and open > close[1] and high - math.max(open, close) >= math.abs(open - close) * 3 and math.min(close, open) - low <= math.abs(open - close))
 //plotshape(shootingStar and acShootingStar ? shootingStar : na, title= "Kayan Yıldız", color=color.orange, style=shape.arrowdown, text="Kayan\nYıldız\n")
-
 
 //eveningStar=(close[2] > open[2] and math.min(open[1], close[1]) > close[2] and open < math.min(open[1], close[1]) and close < open )
 //plotshape(eveningStar and acEveningStar ? eveningStar : na , title= "Akşam Yıldızı", color=color.red, style=shape.arrowdown, text="Akşam\nYıldızı\n")
@@ -899,21 +907,11 @@ plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , styl
 //morningStar=(close[2] < open[2] and math.max(open[1], close[1]) < close[2] and open > math.max(open[1], close[1]) and close > open )
 //plotshape(morningStar and acMorningStar ? morningStar : na,  title= "Sabah Yıldızı", location=location.belowbar, color=color.lime, style=shape.arrowup, text="Sabah\nYıldızı\n")
 
-
-dusenHarami=(close[1] > open[1] and open > close and open <= close[1] and open[1] <= close and open - close < close[1] - open[1] )
-plotshape(dusenHarami and acDusenHarami ? dusenHarami : na, title= "Düşen Harami",  color= #ff0000,  textcolor= #ff0000, style=shape.arrowdown, text="DH", size = size.normal)
-
-yukselenHarami=(open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1] )
-plotshape(yukselenHarami and acYukselenHarami ? yukselenHarami : na,  title= "Yükselen Harami", location=location.belowbar, color = color.lime, textcolor = color.lime, style=shape.arrowup, text="YH", size = size.normal)
-
-
-
 //cekic=(((high - low)>3*(open -close)) and  ((close - low)/(.001 + high - low) > 0.6) and ((open - low)/(.001 + high - low) > 0.6))
 //plotshape(cekic and acCekic ? cekic : na , title= "Çekiç", location=location.belowbar, color=color.white, style=shape.diamond, text="Ç")
 
 //tersCekic=(((high - low)>3*(open -close)) and  ((high - close)/(.001 + high - low) > 0.6) and ((high - open)/(.001 + high - low) > 0.6))
 //plotshape(tersCekic and acTersCekic ? tersCekic : na , title= "Ters Çekiç", location=location.belowbar, color=color.white, style=shape.diamond, text="tÇ")
-
 
 
 
@@ -960,18 +958,18 @@ C_ShadowEquals = C_UpShadow == C_DnShadow or (math.abs(C_UpShadow - C_DnShadow) 
 C_IsDojiBody = C_Range > 0 and C_Body <= C_Range * C_DojiBodyPercent / 100
 C_Doji = C_IsDojiBody and C_ShadowEquals
 
-patternLabelPosLow = low - (ta.atr(30) * 0.6)
-patternLabelPosHigh = high + (ta.atr(30) * 0.6)
+patternLabelPosLow = low - (ta.atr(30) * 1.2)
+patternLabelPosHigh = high + (ta.atr(30) * 1.2)
 
 label_color_bullish = input(color.blue, "Label Color Bullish")
 label_color_bearish = input(color.red, "Label Color Bearish")
 label_color_neutral = input(color.gray, "Label Color Neutral")
 CandleType = input.string(title = "Pattern Type", defval="Both", options=["Bullish", "Bearish", "Both"])
 
-DarkCloudCoverInput = input(title = "Dark Cloud Cover" ,defval=false) 
+DarkCloudCoverInput = input(title = "Dark Cloud Cover" ,defval=true) 
 EngulfingInput = input(title = "Engulfing" ,defval=false) 
-TweezerBottomInput = input(title = "Tweezer Bottom" ,defval=false) 
-TweezerTopInput = input(title = "Tweezer Top" ,defval=false) 
+TweezerBottomInput = input(title = "Tweezer Bottom" ,defval=true) 
+TweezerTopInput = input(title = "Tweezer Top" ,defval=true) 
 
 
 AbandonedBabyInput = input(title = "Abandoned Baby" ,defval=false) 
