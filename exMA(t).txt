@@ -91,7 +91,7 @@ alFirsat = input.bool(true, title="AL Fırsatı İşaretlerini Göster", group="
 //Tablo
 acTablo = input(defval = true, title = 'Tablo, Gösterilsin mi?', group="Tablo Ayarları")  
 xTabloKonumu =  input.string(defval = "position.top_right", title = "Tablo Konumu" ,options=["position.top_left", "position.top_center", "position.top_right", "position.middle_left", "position.middle_center", "position.middle_right", "position.bottom_left", "position.bottom_center", "position.bottom_right"] , group="Tablo Ayarları")
-xHarfBuyuklugu = input.string(defval = "size.normal", title = "Tablo Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Tablo Ayarları")
+xHarfBuyuklugu = input.string(defval = "size.large", title = "Tablo Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Tablo Ayarları")
 
 //Tablo Üst Satır
 rsiUstBarajEmaRenk = input.color(color.new(#00897b,0),"RSI > EMA100 Rengi", group="Tablo Ayarları (üst satır)")
@@ -913,29 +913,26 @@ acYukselenHarami = input.bool(defval = false, title = 'Bullish Harami (Yükselen
 //plotchar(Dojidata and acDoji ? Dojidata : na, title="Doji", char="!", text="Doji\n", color=color.white,size=size.tiny)
 
 bullishEngulfing = (open[1] > close[1] and close > open and close >= open[1] and close[1] >= open and close - open > open[1] - close[1] )
-plotshape(bullishEngulfing and acBullishEngulfing ? bullishEngulfing : na, style = shape.arrowup, location = location.belowbar, title="Yutan Ayı", text = "YA", color = color.lime,textcolor = color.lime, size = size.normal)
+plotshape(bullishEngulfing and acBullishEngulfing ? bullishEngulfing : na, style = shape.labelup, location = location.belowbar, title="Yutan Ayı", text = "YA", color = #056656,textcolor = color.white, size = size.large)
 
 bearishEngulfing = (close[1] > open[1] and open > close and open >= close[1] and open[1] >= close and open - close > close[1] - open[1] )
-plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , style = shape.arrowdown , location = location.abovebar, title="Yutan Boğa", text = "YB", color = #ff0000 ,textcolor = #ff0000, size = size.normal)
+plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , style = shape.labeldown , location = location.abovebar, title="Yutan Boğa", text = "YB", color = #800000 ,textcolor = color.white, size = size.large)
+
+
+yukselenHarami=(open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1] )
+plotshape(yukselenHarami and acYukselenHarami ? yukselenHarami : na,  title= "Yükselen Harami", location=location.belowbar, color = #056656,textcolor = color.white, style=shape.labelup, text="YH", size = size.large)
+
+dusenHarami=(close[1] > open[1] and open > close and open <= close[1] and open[1] <= close and open - close < close[1] - open[1] )
+plotshape(dusenHarami and acDusenHarami ? dusenHarami : na, title= "Düşen Harami",  color = #800000 ,textcolor = color.white, style=shape.labeldown, text="DH", size = size.large)
 
 //shootingStar = (open[1] < close[1] and open > close[1] and high - math.max(open, close) >= math.abs(open - close) * 3 and math.min(close, open) - low <= math.abs(open - close))
 //plotshape(shootingStar and acShootingStar ? shootingStar : na, title= "Kayan Yıldız", color=color.orange, style=shape.arrowdown, text="Kayan\nYıldız\n")
-
 
 //eveningStar=(close[2] > open[2] and math.min(open[1], close[1]) > close[2] and open < math.min(open[1], close[1]) and close < open )
 //plotshape(eveningStar and acEveningStar ? eveningStar : na , title= "Akşam Yıldızı", color=color.red, style=shape.arrowdown, text="Akşam\nYıldızı\n")
 
 //morningStar=(close[2] < open[2] and math.max(open[1], close[1]) < close[2] and open > math.max(open[1], close[1]) and close > open )
 //plotshape(morningStar and acMorningStar ? morningStar : na,  title= "Sabah Yıldızı", location=location.belowbar, color=color.lime, style=shape.arrowup, text="Sabah\nYıldızı\n")
-
-
-dusenHarami=(close[1] > open[1] and open > close and open <= close[1] and open[1] <= close and open - close < close[1] - open[1] )
-plotshape(dusenHarami and acDusenHarami ? dusenHarami : na, title= "Düşen Harami",  color= #ff0000,  textcolor= #ff0000, style=shape.arrowdown, text="DH", size = size.normal)
-
-yukselenHarami=(open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1] )
-plotshape(yukselenHarami and acYukselenHarami ? yukselenHarami : na,  title= "Yükselen Harami", location=location.belowbar, color = color.lime, textcolor = color.lime, style=shape.arrowup, text="YH", size = size.normal)
-
-
 
 //cekic=(((high - low)>3*(open -close)) and  ((close - low)/(.001 + high - low) > 0.6) and ((open - low)/(.001 + high - low) > 0.6))
 //plotshape(cekic and acCekic ? cekic : na , title= "Çekiç", location=location.belowbar, color=color.white, style=shape.diamond, text="Ç")
