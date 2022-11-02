@@ -873,6 +873,8 @@ acBearishEngulfing = input.bool(defval = false, title = 'Bearish Engulfning (Yut
 //acShootingStar = input.bool(defval = false, title = 'Shooting Star (Kayan Yıldız) Gözüksün mü?', group="Mum Formasyon Ayarları")
 //acEveningStar =  input.bool(defval = false, title = 'Evening Star (Akşam Yıldızı) Gözüksün mü?', group="Mum Formasyon Ayarları")
 //acMorningStar =  input.bool(defval = false, title = 'Morning Star (Sabah Yıldızı) Gözüksün mü?', group="Mum Formasyon Ayarları")
+acDusenHarami = input.bool(defval = false, title = 'Bearish Harami (Düşen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acYukselenHarami = input.bool(defval = false, title = 'Bullish Harami (Yükselen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
 
 
 //acCekic =  input.bool(defval = false, title = 'Hammer (Çekiç) Sembolü (Ç) Gözüksün mü?', group="Mum Formasyon Ayarları")
@@ -885,7 +887,7 @@ bullishEngulfing = (open[1] > close[1] and close > open and close >= open[1] and
 plotshape(bullishEngulfing and acBullishEngulfing ? bullishEngulfing : na, style = shape.arrowup, location = location.belowbar, title="Yutan Ayı", text = "YA", color = color.lime,textcolor = color.lime, size = size.normal)
 
 bearishEngulfing = (close[1] > open[1] and open > close and open >= close[1] and open[1] >= close and open - close > close[1] - open[1] )
-plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , style = shape.arrowdown , location = location.abovebar, title="Yutan Boğa", text = "YB", color = color.red,textcolor = color.red, size = size.normal)
+plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , style = shape.arrowdown , location = location.abovebar, title="Yutan Boğa", text = "YB", color = #ff0000 ,textcolor = #ff0000, size = size.normal)
 
 //shootingStar = (open[1] < close[1] and open > close[1] and high - math.max(open, close) >= math.abs(open - close) * 3 and math.min(close, open) - low <= math.abs(open - close))
 //plotshape(shootingStar and acShootingStar ? shootingStar : na, title= "Kayan Yıldız", color=color.orange, style=shape.arrowdown, text="Kayan\nYıldız\n")
@@ -896,6 +898,13 @@ plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , styl
 
 //morningStar=(close[2] < open[2] and math.max(open[1], close[1]) < close[2] and open > math.max(open[1], close[1]) and close > open )
 //plotshape(morningStar and acMorningStar ? morningStar : na,  title= "Sabah Yıldızı", location=location.belowbar, color=color.lime, style=shape.arrowup, text="Sabah\nYıldızı\n")
+
+
+dusenHarami=(close[1] > open[1] and open > close and open <= close[1] and open[1] <= close and open - close < close[1] - open[1] )
+plotshape(dusenHarami and acDusenHarami ? dusenHarami : na, title= "Düşen Harami",  color= #ff0000,  textcolor= #ff0000, style=shape.arrowdown, text="DH", size = size.normal)
+
+yukselenHarami=(open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1] )
+plotshape(yukselenHarami and acYukselenHarami ? yukselenHarami : na,  title= "Yükselen Harami", location=location.belowbar, color = color.lime, textcolor = color.lime, style=shape.arrowup, text="YH", size = size.normal)
 
 
 
