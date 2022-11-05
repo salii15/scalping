@@ -91,7 +91,7 @@ alFirsat = input.bool(true, title="AL Fırsatı İşaretlerini Göster", group="
 //Tablo
 acTablo = input(defval = true, title = 'Tablo, Gösterilsin mi?', group="Tablo Ayarları")  
 xTabloKonumu =  input.string(defval = "position.top_right", title = "Tablo Konumu" ,options=["position.top_left", "position.top_center", "position.top_right", "position.middle_left", "position.middle_center", "position.middle_right", "position.bottom_left", "position.bottom_center", "position.bottom_right"] , group="Tablo Ayarları")
-xHarfBuyuklugu = input.string(defval = "size.large", title = "Tablo Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Tablo Ayarları")
+xHarfBuyuklugu = input.string(defval = "size.normal", title = "Tablo Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Tablo Ayarları")
 
 //Tablo Üst Satır
 rsiUstBarajEmaRenk = input.color(color.new(#00897b,0),"RSI > EMA100 Rengi", group="Tablo Ayarları (üst satır)")
@@ -117,7 +117,7 @@ rsiAltBolgeRenk = input.color(color.new(#880e4f,0),"MFI (alt bölge) Rengi", gro
 //Pano
 acTabloPanoOzet = input(defval = true, title = 'Pano Gösterilsin mi?', group="Pano Ayarları")  
 xPanoKonumu =  input.string(defval = "position.bottom_center", title = "Tablo Konumu" ,options=["position.top_left", "position.top_center", "position.top_right", "position.middle_left", "position.middle_center", "position.middle_right", "position.bottom_left", "position.bottom_center", "position.bottom_right"] , group="Pano Ayarları")
-xPanoHarfBuyuklugu = input.string(defval = "size.huge", title = "Pano Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Pano Ayarları")
+xPanoHarfBuyuklugu = input.string(defval = "size.large", title = "Pano Karakter Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Pano Ayarları")
 
 
 
@@ -199,7 +199,7 @@ xMaMumKontrol(xMaMumTip)=>
 
 
 
-acxMaCizgisi = input(defval = false, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
+acxMaCizgisi = input(defval = true, title = 'xMA Çizgileri Gözüksün mü?', group="xMA Çizgileri")  
 acxMa9Cizgisi = input(defval = false, title = 'xMA9 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 acxMa13Cizgisi = input(defval = false, title = 'xMA13 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
 acxMa21Cizgisi = input(defval = false, title = 'xMA21 Çizgisi Gözüksün mü?', group="xMA Çizgileri")   
@@ -609,7 +609,7 @@ fill(ilk, son , title = 'Birinci Bölge', color = myBoya, fillgaps = true, trans
 
 //BOYAMALAR 2
 
-acBoyama2 = input(defval = false, title = 'Boyama Gözüksün mü?', group="2. Boyama Bölümü")   
+acBoyama2 = input(defval = true, title = 'Boyama Gözüksün mü?', group="2. Boyama Bölümü")   
 
 string boyaBir2 = input.string(defval = "xMA89", title = "Boya Birinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="2. Boyama Bölümü")
 string boyaIki2 = input.string(defval = "xMA100", title = "Boya İkinci Sınır" ,options=["xMA9", "xMA13", "xMA21", "xMA34", "xMA50", "xMA89", "xMA100", "xMA144", "xMA200","xMum","Rsi/Ema Çizgisi","2.272", "2.000", "1.618", "1.414", "1.272", "1.000", "0.786", "0.618", "0.500", "0.382", "0.236", "0.000", "-0.272", "-0.414", "-0.618", "-1.000", "-1.272"] , group="2. Boyama Bölümü")
@@ -893,17 +893,20 @@ plotshape(alFirsat and kosul100_0 ? kosul100_0 : na ,title ='ema 20 Üstü', tex
 
 
 
+
 //MUM FORMASYONLARI
+xMumFormasyonBuyuklugu = input.string(defval = "size.tiny", title = "Mum Etiket Büyüklüğü" ,options=["size.auto", "size.tiny", "size.small", "size.normal", "size.large", "size.huge"] , group="Mum Formasyon Ayarları")
+myMumFSize = size.tiny //  xHarfKontrol(xMumFormasyonBuyuklugu)
 //acDoji = input.bool(defval = false, title = 'Doji Gözüksün mü?', group="Mum Formasyon Ayarları") 
 //dojiOlcusu = input.float(0.05, minval=0.01, title="Doji Ölçüsü", step=0.01, group="Mum Formasyon Ayarları")
 
-acBullishEngulfing = input.bool(defval = false, title = 'Bullnish Engulfning (Yutan Ayı) Gözüksün mü?', group="Mum Formasyon Ayarları") 
-acBearishEngulfing = input.bool(defval = false, title = 'Bearish Engulfning (Yutan Boğa) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acBullishEngulfing = input.bool(defval = true, title = 'Bullnish Engulfning (Yutan Ayı) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acBearishEngulfing = input.bool(defval = true, title = 'Bearish Engulfning (Yutan Boğa) Gözüksün mü?', group="Mum Formasyon Ayarları") 
 //acShootingStar = input.bool(defval = false, title = 'Shooting Star (Kayan Yıldız) Gözüksün mü?', group="Mum Formasyon Ayarları")
 //acEveningStar =  input.bool(defval = false, title = 'Evening Star (Akşam Yıldızı) Gözüksün mü?', group="Mum Formasyon Ayarları")
 //acMorningStar =  input.bool(defval = false, title = 'Morning Star (Sabah Yıldızı) Gözüksün mü?', group="Mum Formasyon Ayarları")
-acDusenHarami = input.bool(defval = false, title = 'Bearish Harami (Düşen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
-acYukselenHarami = input.bool(defval = false, title = 'Bullish Harami (Yükselen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acDusenHarami = input.bool(defval = true, title = 'Bearish Harami (Düşen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
+acYukselenHarami = input.bool(defval = true, title = 'Bullish Harami (Yükselen Harami) Gözüksün mü?', group="Mum Formasyon Ayarları") 
 
 
 //acCekic =  input.bool(defval = false, title = 'Hammer (Çekiç) Sembolü (Ç) Gözüksün mü?', group="Mum Formasyon Ayarları")
@@ -913,17 +916,17 @@ acYukselenHarami = input.bool(defval = false, title = 'Bullish Harami (Yükselen
 //plotchar(Dojidata and acDoji ? Dojidata : na, title="Doji", char="!", text="Doji\n", color=color.white,size=size.tiny)
 
 bullishEngulfing = (open[1] > close[1] and close > open and close >= open[1] and close[1] >= open and close - open > open[1] - close[1] )
-plotshape(bullishEngulfing and acBullishEngulfing ? bullishEngulfing : na, style = shape.labelup, location = location.belowbar, title="Yutan Ayı", text = "YA", color = #056656,textcolor = color.white, size = size.large)
+plotshape(bullishEngulfing and acBullishEngulfing ? bullishEngulfing : na, style = shape.labelup, location = location.belowbar, title="Yutan Ayı", text = "YA", color = #056656,textcolor = color.white, size = myMumFSize)
 
 bearishEngulfing = (close[1] > open[1] and open > close and open >= close[1] and open[1] >= close and open - close > close[1] - open[1] )
-plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , style = shape.labeldown , location = location.abovebar, title="Yutan Boğa", text = "YB", color = #800000 ,textcolor = color.white, size = size.large)
+plotshape(bearishEngulfing and acBearishEngulfing ? bearishEngulfing : na , style = shape.labeldown , location = location.abovebar, title="Yutan Boğa", text = "YB", color = #800000 ,textcolor = color.white, size = myMumFSize)
 
 
 yukselenHarami=(open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1] )
-plotshape(yukselenHarami and acYukselenHarami ? yukselenHarami : na,  title= "Yükselen Harami", location=location.belowbar, color = #056656,textcolor = color.white, style=shape.labelup, text="YH", size = size.large)
+plotshape(yukselenHarami and acYukselenHarami ? yukselenHarami : na,  title= "Yükselen Harami", location=location.belowbar, color = #056656,textcolor = color.white, style=shape.labelup, text="YH", size = myMumFSize)
 
 dusenHarami=(close[1] > open[1] and open > close and open <= close[1] and open[1] <= close and open - close < close[1] - open[1] )
-plotshape(dusenHarami and acDusenHarami ? dusenHarami : na, title= "Düşen Harami",  color = #800000 ,textcolor = color.white, style=shape.labeldown, text="DH", size = size.large)
+plotshape(dusenHarami and acDusenHarami ? dusenHarami : na, title= "Düşen Harami",  color = #800000 ,textcolor = color.white, style=shape.labeldown, text="DH", size = myMumFSize)
 
 //shootingStar = (open[1] < close[1] and open > close[1] and high - math.max(open, close) >= math.abs(open - close) * 3 and math.min(close, open) - low <= math.abs(open - close))
 //plotshape(shootingStar and acShootingStar ? shootingStar : na, title= "Kayan Yıldız", color=color.orange, style=shape.arrowdown, text="Kayan\nYıldız\n")
@@ -939,6 +942,7 @@ plotshape(dusenHarami and acDusenHarami ? dusenHarami : na, title= "Düşen Hara
 
 //tersCekic=(((high - low)>3*(open -close)) and  ((high - close)/(.001 + high - low) > 0.6) and ((high - open)/(.001 + high - low) > 0.6))
 //plotshape(tersCekic and acTersCekic ? tersCekic : na , title= "Ters Çekiç", location=location.belowbar, color=color.white, style=shape.diamond, text="tÇ")
+
 
 
 
