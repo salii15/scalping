@@ -94,7 +94,7 @@ xPanoHarfBuyuklugu = input.string(defval = "size.huge", title = "Pano Karakter B
 
 
 // Fibo Ayarları
-acFiboLines = input(defval = false, title = 'Fibo Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
+acFiboLines = input(defval = true, title = 'Fibo Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlUst = input(defval = true, title = 'Fibo Üst Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlOrta = input(defval = true, title = 'Fibo Orta Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
 acFlAlt = input(defval = true, title = 'Fibo Alt Yatay Çizgileri Gözüksün mü?', group="Fibo Ayarları")   
